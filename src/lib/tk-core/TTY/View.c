@@ -369,7 +369,7 @@ TK_CORE_RESULT tk_core_forwardBoxes(
 
             tk_core_Program *Program_p = TK_CORE_MICRO_TILE(MicroTiles.pp[j])->Program_p;
             tk_core_Program *CurrentProgram_p = tk_core_getCurrentProgram(&TK_CORE_MACRO_TAB(TTY_p->Window_p->Tile_p)->MicroWindow);
-            if (CurrentProgram_p == Program_p && TTY_p->hasFocus) {continue;}
+            if (Program_p == NULL || CurrentProgram_p == Program_p && TTY_p->hasFocus) {continue;}
 
             int x = 0, y = 0;
             TK_CHECK(tk_core_getCursorPosition(Config_p, MacroTiles.pp[i], MicroTiles.pp[j], View_p->standardIO, &x, &y))

@@ -46,7 +46,7 @@ static TK_TERMINAL_RESULT tk_terminal_drawOpenGLBackground(
     for (int i = 0, offset = 0; i < Data_p->Background.Ranges.length; ++i) {
         tk_terminal_AttributeRange *Range_p = ((tk_terminal_AttributeRange*)Data_p->Background.Ranges.p)+i;
         nh_gfx_addOpenGLCommand(CommandBuffer_p, "glDrawElements", 
-            nh_gfx_glenum(NULL, GL_TRIANGLES), nh_gfx_glsizei(NULL, Range_p->indices), 
+            nh_gfx_glenum(NULL, GL_TRIANGLES), nh_gfx_glsizei(NULL, Range_p->indices),
             nh_gfx_glenum(NULL, GL_UNSIGNED_INT),
             nh_gfx_glpointer(NULL, (void*)(sizeof(uint32_t)*offset)));
         offset += Range_p->indices;
@@ -119,14 +119,13 @@ static TK_TERMINAL_RESULT tk_terminal_drawOpenGLInactiveCursor(
     tk_terminal_Graphics *Graphics_p, tk_terminal_Grid *Grid_p)
 {
     nh_gfx_OpenGLCommandBuffer *CommandBuffer_p = Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p;
-    nh_gfx_addOpenGLCommand(CommandBuffer_p, "glUseProgram", &Graphics_p->MainData.Background.OpenGL.Program_p->Result);
-    nh_gfx_addOpenGLCommand(CommandBuffer_p, "glBindVertexArray", Graphics_p->Boxes.OpenGL.VertexArray_p);
 
-    int offset = 0;
-    for (int i = 0; i < Graphics_p->Boxes.Data.length; ++i) {
+    for (int i = 0, offset = 0; i < Graphics_p->Boxes.Data.length; ++i) {
         tk_terminal_Box *Box_p = ((tk_terminal_Box*)Graphics_p->Boxes.Data.p)+i;
-        if (Box_p->UpperLeft.x < 0 || Box_p->UpperLeft.y < 0 || Box_p->LowerRight.x < 0 || Box_p->LowerRight.y < 0) {continue;}
-        if (Box_p->UpperLeft.x != Box_p->LowerRight.x) {continue;}
+        if (Box_p->UpperLeft.x < 0 || Box_p->UpperLeft.y < 0 || Box_p->LowerRight.x < 0 || Box_p->LowerRight.y < 0) {offset+=12;continue;}
+        if (Box_p->UpperLeft.x != Box_p->LowerRight.x) {offset+=12;continue;}
+        nh_gfx_addOpenGLCommand(CommandBuffer_p, "glUseProgram", &Graphics_p->MainData.Background.OpenGL.Program_p->Result);
+        nh_gfx_addOpenGLCommand(CommandBuffer_p, "glBindVertexArray", Graphics_p->Boxes.OpenGL.VertexArray_p);
         // Render inner box.
         nh_gfx_addOpenGLCommand(CommandBuffer_p, "glDrawArrays", 
             nh_gfx_glenum(NULL, GL_TRIANGLES), nh_gfx_glint(NULL, offset), nh_gfx_glsizei(NULL, 6));
@@ -143,6 +142,13 @@ static TK_TERMINAL_RESULT tk_terminal_drawOpenGLInactiveCursor(
             nh_gfx_glsizei(NULL, Grid_p->TileSize.width-Grid_p->borderPixel),
             nh_gfx_glsizei(NULL, Grid_p->TileSize.height-Grid_p->borderPixel));
         tk_terminal_drawOpenGLDim(Graphics_p, Grid_p);
+        nh_gfx_addOpenGLCommand(
+            Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p,
+            "glScissor",
+            nh_gfx_glint(NULL, 0),
+            nh_gfx_glint(NULL, 0),
+            nh_gfx_glsizei(NULL, Grid_p->Size.width+Grid_p->borderPixel),
+            nh_gfx_glsizei(NULL, Grid_p->Size.height+Grid_p->borderPixel));
     }
 
     return TK_TERMINAL_SUCCESS;

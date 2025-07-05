@@ -76,10 +76,11 @@ static TK_TERMINAL_RESULT tk_terminal_updateOpenGLBoxesVertices(
         nh_gfx_glsizeiptr(NULL, Boxes_p->Colors.length * sizeof(GLfloat)),
         nh_gfx_glubyte(NULL, Boxes_p->Colors.p, Boxes_p->Colors.length * sizeof(GLfloat)),
         nh_gfx_glenum(NULL, GL_DYNAMIC_DRAW));
+
     nh_gfx_addOpenGLCommand(CommandBuffer_p, "glEnableVertexAttribArray", nh_gfx_gluint(NULL, 1));
     nh_gfx_addOpenGLCommand(CommandBuffer_p, "glVertexAttribPointer",
         nh_gfx_gluint(NULL, 1), nh_gfx_gluint(NULL, 3), nh_gfx_glenum(NULL, GL_FLOAT),
-        nh_gfx_glboolean(NULL, GL_FALSE), nh_gfx_glsizei(NULL, sizeof(float) * 3),
+        nh_gfx_glboolean(NULL, GL_FALSE), nh_gfx_glsizei(NULL, sizeof(float)*3),
         nh_gfx_glpointer(NULL, NULL));
 
     return TK_TERMINAL_SUCCESS;
