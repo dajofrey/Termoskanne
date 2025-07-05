@@ -19,7 +19,7 @@
  */
 
     TK_TERMINAL_RESULT tk_terminal_renderUsingVulkan(
-        tk_terminal_Graphics *Graphics_p
+        tk_terminal_Config *Config_p, tk_terminal_Graphics *Graphics_p
     );
 
 /** @} */

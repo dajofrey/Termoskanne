@@ -41,10 +41,10 @@ static int handleArgs(
         if (!strcmp(argv_pp[i], "--vulkan")) {
             Args.renderer = NH_API_GRAPHICS_BACKEND_VULKAN;
         }
-        if (!strcmp(argv_pp[i], "--no-unload")) {
+        else if (!strcmp(argv_pp[i], "--no-unload")) {
             Args.no_unload = true;
         }
-        if (!strcmp(argv_pp[i], "--stdio")) {
+        else if (!strcmp(argv_pp[i], "--stdio")) {
             Args.stdio = true;
         }
         else {

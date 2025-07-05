@@ -611,8 +611,7 @@ TK_TERMINAL_RESULT tk_terminal_handleViewportChange(
         switch (Viewport_p->Surface_p->api)
         {
             case NH_API_GRAPHICS_BACKEND_VULKAN :
-//                tk_terminal_initVulkanText(Viewport_p->Surface_p->Vulkan.GPU_p, 
-//                    &Graphics_p->Foreground.Vulkan);
+                tk_terminal_initVulkanText(Viewport_p->Surface_p->Vulkan.GPU_p, &Graphics_p->MainData.Foreground.Vulkan);
                 break;
             case NH_API_GRAPHICS_BACKEND_OPENGL :
                 break;
@@ -639,7 +638,7 @@ TK_TERMINAL_RESULT tk_terminal_renderGraphics(
     switch (Graphics_p->State.Viewport_p->Surface_p->api)
     {
         case NH_API_GRAPHICS_BACKEND_VULKAN :
-//            TK_TERMINAL_CHECK(tk_terminal_renderUsingVulkan(Graphics_p))
+            TK_TERMINAL_CHECK(tk_terminal_renderUsingVulkan(Config_p, Graphics_p))
             break;
        case NH_API_GRAPHICS_BACKEND_OPENGL :
             TK_TERMINAL_CHECK(tk_terminal_renderUsingOpenGL(Config_p, Graphics_p, Grid_p, BackdropGrid_p))
