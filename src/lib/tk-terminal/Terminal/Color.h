@@ -4,7 +4,7 @@
 #include "Grid.h"
 #include "Graphics.h"
 
-#include "../Vulkan/Text.h"
+#include "../Vulkan/Foreground.h"
 #include "../OpenGL/Foreground.h"
 #include "../OpenGL/Background.h"
 #include "../OpenGL/Boxes.h"

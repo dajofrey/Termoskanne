@@ -23,14 +23,14 @@
  *  @{
  */
 
-    typedef struct tk_terminal_VulkanText {
+    typedef struct tk_terminal_VulkanForeground {
         bool destroy;
         nh_gfx_VulkanBuffer VertexBuffer;
         nh_gfx_VulkanBuffer IndexBuffer;
         nh_gfx_VulkanBuffer VertShaderBuffer;
         nh_gfx_VulkanBuffer FragShaderBuffer;
         nh_gfx_VulkanDescriptorSet DescriptorSet;
-    } tk_terminal_VulkanText;
+    } tk_terminal_VulkanForeground;
 
 /** @} */
 
@@ -38,12 +38,12 @@
  *  @{
  */
 
-    TK_TERMINAL_RESULT tk_terminal_initVulkanText(
-        nh_gfx_VulkanGPU *GPU_p, tk_terminal_VulkanText *Text_p
+    TK_TERMINAL_RESULT tk_terminal_initVulkanForeground(
+        nh_gfx_VulkanGPU *GPU_p, tk_terminal_VulkanForeground *Text_p
     );
 
-    TK_TERMINAL_RESULT tk_terminal_updateVulkanText(
-        nh_gfx_VulkanGPU *GPU_p, nh_gfx_FontInstance *FontInstance_p, tk_terminal_VulkanText *Text_p, nh_core_Array *Vertices_p, 
+    TK_TERMINAL_RESULT tk_terminal_updateVulkanForeground(
+        nh_gfx_VulkanGPU *GPU_p, nh_gfx_FontInstance *FontInstance_p, tk_terminal_VulkanForeground *Text_p, nh_core_Array *Vertices_p, 
         nh_core_Array *Indices_p
     );
 

@@ -8,7 +8,7 @@
 
 // INCLUDES ========================================================================================
 
-#include "Background.h"
+#include "Dim.h"
 
 #include "../Common/Macros.h"
 
@@ -22,8 +22,8 @@
 
 // FUNCTIONS =======================================================================================
 
-static TK_TERMINAL_RESULT tk_terminal_createBackgroundVertices(
-    nh_gfx_VulkanDriver *Driver_p, tk_terminal_VulkanBackground *Bg_p, nh_core_Array *Vertices_p, nh_core_Array *Indices_p)
+static TK_TERMINAL_RESULT tk_terminal_createVulkanDimVertices(
+    nh_gfx_VulkanDriver *Driver_p, tk_terminal_VulkanDim *Bg_p, nh_core_Array *Vertices_p)
 {
     VkBufferCreateInfo BufferCreateInfo =
     {
@@ -45,34 +45,24 @@ static TK_TERMINAL_RESULT tk_terminal_createBackgroundVertices(
         Driver_p, &BufferInfo, &Bg_p->VertexBuffer
     ))
 
-    BufferCreateInfo.size  = Indices_p->length * sizeof(uint32_t);
-    BufferCreateInfo.usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
-    BufferInfo.data_p = Indices_p->p;
-    BufferInfo.Info_p = &BufferCreateInfo;
-
-    NH_CORE_CHECK_2(TK_TERMINAL_ERROR_BAD_STATE, nh_gfx_createVulkanBuffer(
-        Driver_p, &BufferInfo, &Bg_p->IndexBuffer
-    ))
-
     return TK_TERMINAL_SUCCESS;
 }
 
-TK_TERMINAL_RESULT tk_terminal_initVulkanBackground(
-    nh_gfx_VulkanGPU *GPU_p, tk_terminal_VulkanBackground *Bg_p)
+TK_TERMINAL_RESULT tk_terminal_initVulkanDim(
+    nh_gfx_VulkanGPU *GPU_p, tk_terminal_VulkanDim *Bg_p)
 {
     Bg_p->destroy = false;
     return TK_TERMINAL_SUCCESS;
 }
 
-TK_TERMINAL_RESULT tk_terminal_updateVulkanBackground(
-    nh_gfx_VulkanGPU *GPU_p, tk_terminal_VulkanBackground *Bg_p, nh_core_Array *Vertices_p, nh_core_Array *Indices_p)
+TK_TERMINAL_RESULT tk_terminal_updateVulkanDim(
+    nh_gfx_VulkanGPU *GPU_p, tk_terminal_VulkanDim *Bg_p, nh_core_Array *Vertices_p)
 {
     if (Bg_p->destroy) {
         nh_gfx_destroyVulkanBuffer(&GPU_p->Driver, &Bg_p->VertexBuffer);
-        nh_gfx_destroyVulkanBuffer(&GPU_p->Driver, &Bg_p->IndexBuffer);
     }
 
-    TK_TERMINAL_CHECK(tk_terminal_createBackgroundVertices(&GPU_p->Driver, Bg_p, Vertices_p, Indices_p))
+    TK_TERMINAL_CHECK(tk_terminal_createVulkanDimVertices(&GPU_p->Driver, Bg_p, Vertices_p))
     Bg_p->destroy = true;
 
     return TK_TERMINAL_SUCCESS;

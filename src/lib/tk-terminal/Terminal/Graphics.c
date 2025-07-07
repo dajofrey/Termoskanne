@@ -63,12 +63,9 @@ static TK_TERMINAL_RESULT tk_terminal_createDimData(
     tk_terminal_Dim *Dim_p)
 {
     nh_core_freeArray(&Dim_p->Vertices);
-    nh_core_freeArray(&Dim_p->Colors);
-
     nh_core_Array Vertices = nh_core_initArray(sizeof(float), 255);
-    nh_core_Array Colors = nh_core_initArray(sizeof(float), 255);
 
-    float z = 0.45f; // or whatever z-layer you want for dimming
+    float z = 0.45f;
     
     float vertices[] = {
         // x, y, z
@@ -90,16 +87,17 @@ static TK_TERMINAL_RESULT tk_terminal_createDimData(
         0.0f, 0.0f, 0.0f, 0.7f
     };
 
-    for (int i = 0; i < 18; ++i) {
+    for (int i = 0, j = 0; i < 18; i+=3, j+=4) {
         nh_core_appendToArray(&Vertices, &vertices[i], 1);
-    }
-
-    for (int i = 0; i < 24; ++i) {
-        nh_core_appendToArray(&Colors, &quadColors[i], 1);
+        nh_core_appendToArray(&Vertices, &vertices[i+1], 1);
+        nh_core_appendToArray(&Vertices, &vertices[i+2], 1);
+        nh_core_appendToArray(&Vertices, &quadColors[j], 1);
+        nh_core_appendToArray(&Vertices, &quadColors[j+1], 1);
+        nh_core_appendToArray(&Vertices, &quadColors[j+2], 1);
+        nh_core_appendToArray(&Vertices, &quadColors[j+3], 1);
     }
 
     Dim_p->Vertices = Vertices;
-    Dim_p->Colors = Colors;
 
     return TK_TERMINAL_SUCCESS;
 }
@@ -167,7 +165,6 @@ TK_TERMINAL_RESULT tk_terminal_initGraphics(
  
     Graphics_p->Dim.Action = tk_terminal_initGraphicsAction();
     Graphics_p->Dim.Vertices = nh_core_initArray(sizeof(float), 255);
-    Graphics_p->Dim.Colors = nh_core_initArray(sizeof(float), 255);
 
     tk_terminal_createDimData(&Graphics_p->Dim);
     tk_terminal_initOpenGLDim(&Graphics_p->Dim.OpenGL);
@@ -212,7 +209,6 @@ TK_TERMINAL_RESULT tk_terminal_freeGraphics(
     TK_TERMINAL_CHECK(tk_terminal_freeGraphicsData(&Graphics_p->BackdropData))
 
     nh_core_freeArray(&Graphics_p->Dim.Vertices);
-    nh_core_freeArray(&Graphics_p->Dim.Colors);
     nh_core_freeArray(&Graphics_p->Boxes.Data);
 
     tk_terminal_freeOpenGLBoxes(&Graphics_p->Boxes.OpenGL);
@@ -465,17 +461,27 @@ static TK_TERMINAL_RESULT tk_terminal_updateBackgroundData(
             tk_terminal_Tile *Tile_p = Row_p->pp[j];
             if (!Tile_p->Glyph.Background.custom && !Tile_p->Glyph.Attributes.reverse && !Tile_p->Glyph.Attributes.blink) {continue;}
 
-            nh_core_appendToArray(&Background_p->Vertices, Tile_p->Background.vertices_p, 12);
+            tk_core_Color Color = tk_terminal_getGlyphColor(Config_p, State_p, &Tile_p->Glyph, false, j+shift, i, Grid_p);
+            for (int k = 0; k < 4; ++k) {
+                nh_core_appendToArray(&Background_p->Vertices, Tile_p->Background.vertices_p+k*3, 3);
+                if (State_p->Viewport_p->Surface_p->api == NH_API_GRAPHICS_BACKEND_VULKAN) {
+float alpha = 1.0f;
+                    nh_core_appendToArray(&Background_p->Vertices, &Color.r, 1);
+                    nh_core_appendToArray(&Background_p->Vertices, &Color.g, 1);
+                    nh_core_appendToArray(&Background_p->Vertices, &Color.b, 1);
+                    nh_core_appendToArray(&Background_p->Vertices, &alpha, 1);
+                }
+            }
+
             uint32_t indices_p[6] = {offset, offset + 1, offset + 2, offset, offset + 2, offset + 3};
             nh_core_appendToArray(&Background_p->Indices, indices_p, 6);
             offset += 4;
 
             // add color data
-            tk_core_Color Color = tk_terminal_getGlyphColor(Config_p, State_p, &Tile_p->Glyph, false, j+shift, i, Grid_p);
             for (int v = 0; v < 4; ++v) {
-                nh_core_appendToArray(&Background_p->Colors, &Color.r, 1);
-                nh_core_appendToArray(&Background_p->Colors, &Color.g, 1);
-                nh_core_appendToArray(&Background_p->Colors, &Color.b, 1);
+                    nh_core_appendToArray(&Background_p->Colors, &Color.r, 1);
+                    nh_core_appendToArray(&Background_p->Colors, &Color.g, 1);
+                    nh_core_appendToArray(&Background_p->Colors, &Color.b, 1);
             }
         }
     }
@@ -611,7 +617,7 @@ TK_TERMINAL_RESULT tk_terminal_handleViewportChange(
         switch (Viewport_p->Surface_p->api)
         {
             case NH_API_GRAPHICS_BACKEND_VULKAN :
-                tk_terminal_initVulkanText(Viewport_p->Surface_p->Vulkan.GPU_p, &Graphics_p->MainData.Foreground.Vulkan);
+                tk_terminal_initVulkanForeground(Viewport_p->Surface_p->Vulkan.GPU_p, &Graphics_p->MainData.Foreground.Vulkan);
                 break;
             case NH_API_GRAPHICS_BACKEND_OPENGL :
                 break;
@@ -638,7 +644,7 @@ TK_TERMINAL_RESULT tk_terminal_renderGraphics(
     switch (Graphics_p->State.Viewport_p->Surface_p->api)
     {
         case NH_API_GRAPHICS_BACKEND_VULKAN :
-            TK_TERMINAL_CHECK(tk_terminal_renderUsingVulkan(Config_p, Graphics_p))
+            TK_TERMINAL_CHECK(tk_terminal_renderUsingVulkan(Config_p, Graphics_p, Grid_p, BackdropGrid_p))
             break;
        case NH_API_GRAPHICS_BACKEND_OPENGL :
             TK_TERMINAL_CHECK(tk_terminal_renderUsingOpenGL(Config_p, Graphics_p, Grid_p, BackdropGrid_p))

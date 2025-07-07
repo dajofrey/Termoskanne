@@ -206,7 +206,7 @@ TK_TERMINAL_RESULT tk_terminal_renderUsingOpenGL(
         nh_gfx_addOpenGLCommand(
             Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p, 
             "glClear", 
-            nh_gfx_glenum(NULL, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+            nh_gfx_glenum(NULL, GL_COLOR_BUFFER_BIT));
     }
 
 // render main grid
@@ -224,10 +224,6 @@ TK_TERMINAL_RESULT tk_terminal_renderUsingOpenGL(
         "glEnable", 
         nh_gfx_glenum(NULL, GL_BLEND));
     nh_gfx_addOpenGLCommand(
-        Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p,
-        "glEnable",
-        nh_gfx_glenum(NULL, GL_DEPTH_TEST));
-    nh_gfx_addOpenGLCommand(
         Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p, 
         "glBlendFunc", 
         nh_gfx_glenum(NULL, GL_SRC_ALPHA),
@@ -239,18 +235,8 @@ TK_TERMINAL_RESULT tk_terminal_renderUsingOpenGL(
         TK_TERMINAL_CHECK(tk_terminal_drawOpenGLDim(Graphics_p, Grid_p))
     }
 
-    nh_gfx_addOpenGLCommand(
-        Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p,
-        "glDisable", 
-        nh_gfx_glenum(NULL, GL_DEPTH_TEST));
- 
     TK_TERMINAL_CHECK(tk_terminal_updateOpenGLBackground(&Graphics_p->State, &Graphics_p->MainData))
     TK_TERMINAL_CHECK(tk_terminal_drawOpenGLBackground(&Graphics_p->State, &Graphics_p->MainData))
-
-    nh_gfx_addOpenGLCommand(
-        Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p,
-        "glDisable", 
-        nh_gfx_glenum(NULL, GL_DEPTH_TEST));
 
     TK_TERMINAL_CHECK(tk_terminal_updateOpenGLBoxes(&Graphics_p->State, &Graphics_p->Boxes))
     TK_TERMINAL_CHECK(tk_terminal_drawOpenGLInactiveCursor(Graphics_p, Grid_p))

@@ -274,7 +274,7 @@ static TK_TERMINAL_RESULT tk_terminal_updateOpenGLForegroundVertices(
     nh_gfx_addOpenGLCommand(CommandBuffer_p, "glVertexAttribPointer",
         nh_gfx_gluint(NULL, 1), nh_gfx_gluint(NULL, 2), nh_gfx_glenum(NULL, GL_FLOAT),
         nh_gfx_glboolean(NULL, GL_FALSE), nh_gfx_glsizei(NULL, sizeof(float)*5),
-        nh_gfx_glsizei(NULL, sizeof(float)*3));
+        nh_gfx_glpointer(NULL, (void*)(sizeof(float)*3)));
     nh_gfx_addOpenGLCommand(CommandBuffer_p, "glBindBuffer",
         nh_gfx_glenum(NULL, GL_ARRAY_BUFFER), Foreground_p->OpenGL.ColorBuffer_p);
     nh_gfx_addOpenGLCommand(CommandBuffer_p, "glBufferData", 

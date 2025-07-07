@@ -1,7 +1,7 @@
 // LICENSE NOTICE ==================================================================================
 
 /**
- * TTýr - Terminal Emulator
+ * Termoskanne - Terminal Emulator
  * Copyright (C) 2022  Dajo Frey
  * Published under GNU LGPL. See TTyr/LICENSE.LGPL file.
  */

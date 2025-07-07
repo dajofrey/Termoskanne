@@ -8,7 +8,7 @@
 
 // INCLUDES =======================================================================================
 
-#include "Text.h"
+#include "Foreground.h"
 
 #include "../Common/Macros.h"
 
@@ -28,7 +28,7 @@
 // FUNCTIONS =======================================================================================
 
 static TK_TERMINAL_RESULT tk_terminal_createTextVertices(
-    nh_gfx_VulkanDriver *Driver_p, tk_terminal_VulkanText *Text_p, nh_core_Array *Vertices_p, nh_core_Array *Indices_p)
+    nh_gfx_VulkanDriver *Driver_p, tk_terminal_VulkanForeground *Text_p, nh_core_Array *Vertices_p, nh_core_Array *Indices_p)
 {
     VkBufferCreateInfo BufferCreateInfo = 
     {
@@ -62,7 +62,7 @@ static TK_TERMINAL_RESULT tk_terminal_createTextVertices(
 }
 
 static TK_TERMINAL_RESULT tk_terminal_createTextUniform(
-    nh_gfx_VulkanDriver *Driver_p, tk_terminal_VulkanText *Text_p)
+    nh_gfx_VulkanDriver *Driver_p, tk_terminal_VulkanForeground *Text_p)
 {
     // MVP
     float vsData_p[16];
@@ -120,7 +120,7 @@ static TK_TERMINAL_RESULT tk_terminal_createTextUniform(
 }
 
 static TK_TERMINAL_RESULT tk_terminal_createTextDescriptor(
-    nh_gfx_VulkanGPU *GPU_p, tk_terminal_VulkanText *Text_p)
+    nh_gfx_VulkanGPU *GPU_p, tk_terminal_VulkanForeground *Text_p)
 {
     nh_gfx_VulkanDriver *Driver_p = &GPU_p->Driver;
 
@@ -170,7 +170,7 @@ static TK_TERMINAL_RESULT tk_terminal_createTextDescriptor(
 }
 
 static TK_TERMINAL_RESULT tk_terminal_updateTextDescriptor(
-    nh_gfx_VulkanGPU *GPU_p, tk_terminal_VulkanText *Text_p, nh_vk_Texture *Texture_p)
+    nh_gfx_VulkanGPU *GPU_p, tk_terminal_VulkanForeground *Text_p, nh_vk_Texture *Texture_p)
 {
     nh_gfx_VulkanDriver *Driver_p = &GPU_p->Driver;
 
@@ -227,8 +227,8 @@ static TK_TERMINAL_RESULT tk_terminal_updateTextDescriptor(
     return TK_TERMINAL_SUCCESS;
 }
 
-TK_TERMINAL_RESULT tk_terminal_initVulkanText(
-    nh_gfx_VulkanGPU *GPU_p, tk_terminal_VulkanText *Text_p)
+TK_TERMINAL_RESULT tk_terminal_initVulkanForeground(
+    nh_gfx_VulkanGPU *GPU_p, tk_terminal_VulkanForeground *Text_p)
 {
     Text_p->destroy = false;
     TK_TERMINAL_CHECK(tk_terminal_createTextDescriptor(GPU_p, Text_p))
@@ -236,8 +236,8 @@ TK_TERMINAL_RESULT tk_terminal_initVulkanText(
     return TK_TERMINAL_SUCCESS;
 }
 
-TK_TERMINAL_RESULT tk_terminal_updateVulkanText(
-    nh_gfx_VulkanGPU *GPU_p, nh_gfx_FontInstance *FontInstance_p, tk_terminal_VulkanText *Text_p, nh_core_Array *Vertices_p, 
+TK_TERMINAL_RESULT tk_terminal_updateVulkanForeground(
+    nh_gfx_VulkanGPU *GPU_p, nh_gfx_FontInstance *FontInstance_p, tk_terminal_VulkanForeground *Text_p, nh_core_Array *Vertices_p, 
     nh_core_Array *Indices_p)
 {
     nh_vk_Texture *Texture_p = nh_vk_reloadFontTexture(GPU_p, FontInstance_p->Font_p);
@@ -258,8 +258,8 @@ TK_TERMINAL_RESULT tk_terminal_updateVulkanText(
     return TK_TERMINAL_SUCCESS;
 }
 
-//TK_TERMINAL_RESULT tk_terminal_destroyVulkanText(
-//    nh_gfx_VulkanGPU *GPU_p, tk_terminal_VulkanText *Text_p)
+//TK_TERMINAL_RESULT tk_terminal_destroyVulkanForeground(
+//    nh_gfx_VulkanGPU *GPU_p, tk_terminal_VulkanForeground *Text_p)
 //{
 //    nh_gfx_destroyVulkanBuffer(&GPU_p->Driver, &Text_p->VertexBuffer);
 //    nh_gfx_destroyVulkanBuffer(&GPU_p->Driver, &Text_p->IndexBuffer);

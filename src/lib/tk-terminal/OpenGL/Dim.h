@@ -32,7 +32,6 @@ typedef struct tk_terminal_Graphics tk_terminal_Graphics;
         nh_gfx_OpenGLCommand *Program_p;
         nh_gfx_OpenGLData *VertexArray_p;
         nh_gfx_OpenGLData *VerticesBuffer_p;
-        nh_gfx_OpenGLData *ColorBuffer_p;
     } tk_terminal_OpenGLDim;
 
 /** @} */

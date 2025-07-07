@@ -20,3 +20,5 @@ cd ${SCRIPT_DIR}/../external/glslang-main/StandAlone
 ./glslangValidator -V -x -o ../../../src/lib/tk-terminal/Common/Data/GLSL/TextSDF.frag.inc ../../../build/glsl/TextSDF.frag
 ./glslangValidator -V -x -o ../../../src/lib/tk-terminal/Common/Data/GLSL/Background.vert.inc ../../../build/glsl/Background.vert
 ./glslangValidator -V -x -o ../../../src/lib/tk-terminal/Common/Data/GLSL/Background.frag.inc ../../../build/glsl/Background.frag
+./glslangValidator -V -x -o ../../../src/lib/tk-terminal/Common/Data/GLSL/ClearAlpha.vert.inc ../../../build/glsl/ClearAlpha.vert
+./glslangValidator -V -x -o ../../../src/lib/tk-terminal/Common/Data/GLSL/ClearAlpha.frag.inc ../../../build/glsl/ClearAlpha.frag

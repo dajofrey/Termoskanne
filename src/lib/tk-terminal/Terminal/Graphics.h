@@ -5,7 +5,10 @@
 
 #include "Grid.h"
 
-#include "../Vulkan/Text.h"
+#include "../Vulkan/Foreground.h"
+#include "../Vulkan/Background.h"
+#include "../Vulkan/Dim.h"
+
 #include "../OpenGL/Foreground.h"
 #include "../OpenGL/Background.h"
 #include "../OpenGL/Boxes.h"
@@ -28,8 +31,8 @@ typedef struct tk_terminal_GraphicsAction {
 typedef struct tk_terminal_Dim {
     tk_terminal_GraphicsAction Action;
     tk_terminal_OpenGLDim OpenGL;
+    tk_terminal_VulkanDim Vulkan;
     nh_core_Array Vertices;
-    nh_core_Array Colors;
 } tk_terminal_Dim;
 
 /**
@@ -38,7 +41,7 @@ typedef struct tk_terminal_Dim {
  */
 typedef struct tk_terminal_GraphicsForeground {
     tk_terminal_GraphicsAction Action;
-    tk_terminal_VulkanText Vulkan;
+    tk_terminal_VulkanForeground Vulkan;
     tk_terminal_OpenGLForeground OpenGL;
     nh_core_Array Vertices;
     nh_core_Array Indices;
@@ -56,6 +59,7 @@ typedef struct tk_terminal_GraphicsForeground {
 typedef struct tk_terminal_GraphicsBackground {
     tk_terminal_GraphicsAction Action;
     tk_terminal_OpenGLBackground OpenGL;
+    tk_terminal_VulkanBackground Vulkan;
     nh_core_Array Vertices;
     nh_core_Array Indices;
     nh_core_Array Ranges;

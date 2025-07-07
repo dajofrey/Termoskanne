@@ -56,8 +56,10 @@ SRC_FILES_TK_TERMINAL = \
     Terminal/Vertices.c \
     Terminal/Color.c \
     Vulkan/Pipeline.c \
-    Vulkan/Text.c \
+    Vulkan/Foreground.c \
+    Vulkan/Background.c \
     Vulkan/Render.c \
+    Vulkan/Dim.c \
     OpenGL/Foreground.c \
     OpenGL/Background.c \
     OpenGL/Boxes.c \
