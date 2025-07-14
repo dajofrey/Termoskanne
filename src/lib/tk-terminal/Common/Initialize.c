@@ -11,10 +11,11 @@
 #include "Initialize.h"
 #include "Macros.h"
 
-#include "../Vulkan/Pipeline.h"
-
-#include "nh-gfx/Vulkan/GPU.h"
-#include "nh-gfx/Vulkan/Vulkan.h"
+#if defined(__unix__)
+    #include "../Vulkan/Pipeline.h"
+    #include "nh-gfx/Vulkan/GPU.h"
+    #include "nh-gfx/Vulkan/Vulkan.h"
+#endif
 
 #include "nh-core/Config/Config.h"
 #include "nh-core/System/Memory.h"
@@ -27,6 +28,7 @@
 
 TK_TERMINAL_RESULT tk_terminal_initialize()
 {
+#if defined(__unix__)
     for (int i = 0; i < NH_VULKAN.GPUs.size; ++i) 
     {
         nh_gfx_VulkanGPU *GPU_p = NH_VULKAN.GPUs.pp[0];
@@ -36,6 +38,6 @@ TK_TERMINAL_RESULT tk_terminal_initialize()
  
         TK_TERMINAL_CHECK(tk_terminal_createVulkanPipelines(&GPU_p->Driver, GPU_p->Term.Pipelines_p))
     }
-
+#endif
     return TK_TERMINAL_SUCCESS;
 }

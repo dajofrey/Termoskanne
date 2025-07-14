@@ -12,7 +12,6 @@
 #include "Graphics.h"
 #include "Vertices.h"
 
-#include "../Vulkan/Render.h"
 #include "../Common/Macros.h"
 
 #include "nh-gfx/Base/Viewport.h"

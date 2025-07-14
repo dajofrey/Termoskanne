@@ -4,7 +4,10 @@
 #include "Grid.h"
 #include "Graphics.h"
 
-#include "../Vulkan/Foreground.h"
+#if defined(__unix__)
+    #include "../Vulkan/Foreground.h"
+#endif
+
 #include "../OpenGL/Foreground.h"
 #include "../OpenGL/Background.h"
 #include "../OpenGL/Boxes.h"

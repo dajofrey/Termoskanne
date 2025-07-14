@@ -13,9 +13,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <elf.h>
-#include <link.h>
 #include <string.h>
+
+#if defined(__APPLE__)
+    #include <dlfcn.h>
+#elif defined(__unix__)
+    #include <elf.h>
+    #include <link.h>
+#endif
 
 // FUNCTIONS =======================================================================================
 
@@ -23,6 +28,7 @@ char TK_API_PATH_P[255] = {0};
 
 void tk_api_initialize() 
 {
+#if defined(__unix__)
     const ElfW(Dyn) *dyn = _DYNAMIC;
     const ElfW(Dyn) *rpath = NULL;
     const ElfW(Dyn) *runpath = NULL;
@@ -46,4 +52,12 @@ void tk_api_initialize()
     } else if (runpath != NULL) {
         sprintf(TK_API_PATH_P, strtab + runpath->d_un.d_val);
     }
+#elif defined(__APPLE__)
+    Dl_info info;
+    if (dladdr((void*)&tk_api_initialize, &info) && info.dli_fname) {
+        snprintf(TK_API_PATH_P, sizeof(TK_API_PATH_P), "%s", info.dli_fname);
+    } else {
+        snprintf(TK_API_PATH_P, sizeof(TK_API_PATH_P), "<unknown>");
+    }
+#endif
 }

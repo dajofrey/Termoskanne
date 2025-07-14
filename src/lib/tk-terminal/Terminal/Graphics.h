@@ -5,9 +5,11 @@
 
 #include "Grid.h"
 
-#include "../Vulkan/Foreground.h"
-#include "../Vulkan/Background.h"
-#include "../Vulkan/Dim.h"
+#if defined(__unix__)
+    #include "../Vulkan/Foreground.h"
+    #include "../Vulkan/Background.h"
+    #include "../Vulkan/Dim.h"
+#endif
 
 #include "../OpenGL/Foreground.h"
 #include "../OpenGL/Background.h"
@@ -31,7 +33,9 @@ typedef struct tk_terminal_GraphicsAction {
 typedef struct tk_terminal_Dim {
     tk_terminal_GraphicsAction Action;
     tk_terminal_OpenGLDim OpenGL;
+#if defined(__unix__)
     tk_terminal_VulkanDim Vulkan;
+#endif
     nh_core_Array Vertices;
 } tk_terminal_Dim;
 
@@ -41,7 +45,9 @@ typedef struct tk_terminal_Dim {
  */
 typedef struct tk_terminal_GraphicsForeground {
     tk_terminal_GraphicsAction Action;
+#if defined(__unix__)
     tk_terminal_VulkanForeground Vulkan;
+#endif
     tk_terminal_OpenGLForeground OpenGL;
     nh_core_Array Vertices;
     nh_core_Array Indices;
@@ -59,7 +65,9 @@ typedef struct tk_terminal_GraphicsForeground {
 typedef struct tk_terminal_GraphicsBackground {
     tk_terminal_GraphicsAction Action;
     tk_terminal_OpenGLBackground OpenGL;
+#if defined(__unix__)
     tk_terminal_VulkanBackground Vulkan;
+#endif
     nh_core_Array Vertices;
     nh_core_Array Indices;
     nh_core_Array Ranges;

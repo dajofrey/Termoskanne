@@ -1,3 +1,12 @@
+UNAME_S := $(shell uname -s)
+
+ifeq ($(UNAME_S),Darwin)
+    OS := macOS
+endif
+ifeq ($(UNAME_S),Linux)
+    OS := Linux
+endif
+
 # Defaults
 NETZHAUT_PATH ?= $(CURDIR)/external/Netzhaut
 
@@ -5,9 +14,14 @@ NETZHAUT_PATH ?= $(CURDIR)/external/Netzhaut
 CC = gcc
 CFLAGS = -fPIC -std=gnu99 -Wl,-rpath,$(CURDIR)/lib,-rpath,$(NETZHAUT_PATH)/lib
 
+ifeq ($(OS),macOS)
+    CFLAGS += -Wl,-undefined,dynamic_lookup
+    OBJC = clang
+endif
+
 # Define the linker and linker flags
 LD = gcc
-LDFLAGS_TK_CORE = -lutil -Lexternal/st-0.8.5/ -l:libst.so
+LDFLAGS_TK_CORE = -lutil -Lexternal/st-0.8.5/ -lst
 LDFLAGS_TK_TERMINAL =
 LDFLAGS_TK = -Llib -ltk-api -L$(NETZHAUT_PATH)/lib -lnh-api
 
@@ -55,11 +69,6 @@ SRC_FILES_TK_TERMINAL = \
     Terminal/Graphics.c \
     Terminal/Vertices.c \
     Terminal/Color.c \
-    Vulkan/Pipeline.c \
-    Vulkan/Foreground.c \
-    Vulkan/Background.c \
-    Vulkan/Render.c \
-    Vulkan/Dim.c \
     OpenGL/Foreground.c \
     OpenGL/Background.c \
     OpenGL/Boxes.c \
@@ -72,6 +81,15 @@ SRC_FILES_TK_TERMINAL = \
     Common/Terminate.c \
     Common/Config.c \
 	
+ifeq ($(OS),Linux)
+    SRC_FILES_TK_TERMINAL += \
+        Vulkan/Pipeline.c \
+        Vulkan/Foreground.c \
+        Vulkan/Background.c \
+        Vulkan/Render.c \
+        Vulkan/Dim.c
+endif
+
 SRC_FILES_TK_API = \
     tk-api.c \
     tk-core.c \
@@ -110,7 +128,13 @@ create_bin_dir:
 	mkdir -p bin
 
 # Custom compiler flags
-$(OBJ_FILES_TK_TERMINAL): CFLAGS += -I$(NETZHAUT_PATH)/external -I$(NETZHAUT_PATH)/src/lib -I$(NETZHAUT_PATH)/external/Vulkan-Headers/include -DINCLUDE_VOLK -DVK_VERSION_1_2 -DVK_USE_PLATFORM_XLIB_KHR -DVK_KHR_xlib_surface
+
+ifeq ($(OS),macOS)
+    $(OBJ_FILES_TK_TERMINAL): CFLAGS += -I$(NETZHAUT_PATH)/external -I$(NETZHAUT_PATH)/src/lib
+else
+    $(OBJ_FILES_TK_TERMINAL): CFLAGS += -I$(NETZHAUT_PATH)/external -I$(NETZHAUT_PATH)/src/lib -I$(NETZHAUT_PATH)/external/Vulkan-Headers/include -DINCLUDE_VOLK -DVK_VERSION_1_2 -DVK_USE_PLATFORM_XLIB_KHR -DVK_KHR_xlib_surface
+endif
+
 $(OBJ_FILES_TK_CORE): CFLAGS += -I$(NETZHAUT_PATH)/external -I$(NETZHAUT_PATH)/src/lib
 $(OBJ_FILES_TK_API): CFLAGS += -I$(NETZHAUT_PATH)/external -I$(NETZHAUT_PATH)/src/lib
 $(OBJ_FILES_TK): CFLAGS += -Iexternal -I$(NETZHAUT_PATH)/src/lib -Isrc/lib

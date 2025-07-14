@@ -10,9 +10,6 @@
 
 #include "Vertices.h"
 
-#include "../Vulkan/Render.h"
-#include "../OpenGL/Render.h"
-
 #include "../Common/Log.h"
 #include "../Common/Macros.h"
 

@@ -28,6 +28,11 @@
 #include <netinet/in.h>
 #include <stdlib.h>
 
+#if defined(__APPLE__)
+    #include <unistd.h>
+    #include <fcntl.h>
+#endif
+
 // SOCKET ==========================================================================================
 
 static void tk_core_setUDSFilePath(
@@ -44,9 +49,21 @@ TK_CORE_RESULT tk_core_createShellSocket(
     char path_p[255] = {0};
     tk_core_setUDSFilePath(path_p, pid);
 
+#if defined(__unix__)
     if ((Socket_p->fd = socket(AF_LOCAL, SOCK_STREAM | SOCK_NONBLOCK, 0)) <= 0) {
         return TK_CORE_ERROR_BAD_STATE;
     }
+#else defined(__APPLE__)
+    if ((Socket_p->fd = socket(AF_LOCAL, SOCK_STREAM, 0)) <= 0) {
+        return TK_CORE_ERROR_BAD_STATE;
+    }
+    if (Socket_p->fd >= 0) {
+        int flags = fcntl(Socket_p->fd, F_GETFL, 0);
+        if (flags != -1) {
+            fcntl(Socket_p->fd, F_SETFL, flags | O_NONBLOCK);
+        }
+    }
+#endif
 
     unlink(path_p);
 

@@ -286,10 +286,12 @@ static NH_SIGNAL tk_core_runTTYCommand(
             TK_CHECK(tk_core_unclaimStandardIO(TTY_p))
             break;
         case TK_CORE_COMMAND_SEND_EVENT :
+        {
             nh_api_WSIEvent *Event2_p = (nh_api_WSIEvent*)nh_core_advanceRingBuffer(&TTY_p->Events);
             TK_CHECK_NULL(Event2_p)
             *Event2_p = *((nh_api_WSIEvent*)Command_p->p);
             break;
+        }
     }
 
     return NH_SIGNAL_OK;
@@ -342,6 +344,7 @@ TK_CORE_RESULT tk_core_cmd_sendEvent(
         case NH_API_WSI_EVENT_WINDOW :
             nh_core_executeWorkloadCommand(TTY_p, TK_CORE_COMMAND_SEND_EVENT, &Event, sizeof(nh_api_WSIEvent));
         default :
+            break;
             // Ignore other events.
     }
 

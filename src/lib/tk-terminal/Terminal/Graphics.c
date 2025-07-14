@@ -11,7 +11,9 @@
 #include "Graphics.h"
 #include "Color.h"
 
-#include "../Vulkan/Render.h"
+#if defined(__unix__)
+    #include "../Vulkan/Render.h"
+#endif
 #include "../OpenGL/Render.h"
 
 #include "../Common/Log.h"
@@ -617,8 +619,12 @@ TK_TERMINAL_RESULT tk_terminal_handleViewportChange(
         switch (Viewport_p->Surface_p->api)
         {
             case NH_API_GRAPHICS_BACKEND_VULKAN :
+#if defined(__unix__)
                 tk_terminal_initVulkanForeground(Viewport_p->Surface_p->Vulkan.GPU_p, &Graphics_p->MainData.Foreground.Vulkan);
                 break;
+#else
+                return TK_TERMINAL_ERROR_BAD_STATE;
+#endif
             case NH_API_GRAPHICS_BACKEND_OPENGL :
                 break;
             default :
@@ -644,8 +650,12 @@ TK_TERMINAL_RESULT tk_terminal_renderGraphics(
     switch (Graphics_p->State.Viewport_p->Surface_p->api)
     {
         case NH_API_GRAPHICS_BACKEND_VULKAN :
+#if defined(__unix__)
             TK_TERMINAL_CHECK(tk_terminal_renderUsingVulkan(Config_p, Graphics_p, Grid_p, BackdropGrid_p))
             break;
+#else
+            return TK_TERMINAL_ERROR_BAD_STATE;
+#endif
        case NH_API_GRAPHICS_BACKEND_OPENGL :
             TK_TERMINAL_CHECK(tk_terminal_renderUsingOpenGL(Config_p, Graphics_p, Grid_p, BackdropGrid_p))
             break;

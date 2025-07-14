@@ -10,9 +10,6 @@
 
 #include "Color.h"
 
-#include "../Vulkan/Render.h"
-#include "../OpenGL/Render.h"
-
 #include "../Common/Log.h"
 #include "../Common/Macros.h"
 #include "../Common/Config.h"
@@ -28,6 +25,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+#if defined(__APPLE__)
+    #include <math.h>
+#endif
 
 // FUNCTIONS =======================================================================================
 
