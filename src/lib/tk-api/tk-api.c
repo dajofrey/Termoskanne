@@ -1,7 +1,7 @@
 // LICENSE NOTICE ==================================================================================
 
 /**
- * TTýr - Terminal Emulator
+ * Termoskanne - Terminal Emulator
  * Copyright (C) 2022  Dajo Frey
  * Published under GNU LGPL. See TTyr/LICENSE.LGPL file.
  */
@@ -16,6 +16,8 @@
 #include <string.h>
 
 #if defined(__APPLE__)
+    #include <limits.h>
+    #include <libgen.h>
     #include <dlfcn.h>
 #elif defined(__unix__)
     #include <elf.h>
@@ -55,7 +57,10 @@ void tk_api_initialize()
 #elif defined(__APPLE__)
     Dl_info info;
     if (dladdr((void*)&tk_api_initialize, &info) && info.dli_fname) {
-        snprintf(TK_API_PATH_P, sizeof(TK_API_PATH_P), "%s", info.dli_fname);
+        char path_copy[PATH_MAX];
+        snprintf(path_copy, sizeof(path_copy), "%s", info.dli_fname);
+        char *dir = dirname(path_copy);
+        snprintf(TK_API_PATH_P, sizeof(TK_API_PATH_P), "%s", dir);
     } else {
         snprintf(TK_API_PATH_P, sizeof(TK_API_PATH_P), "<unknown>");
     }

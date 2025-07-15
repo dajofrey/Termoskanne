@@ -23,7 +23,11 @@ endif
 LD = gcc
 LDFLAGS_TK_CORE = -lutil -Lexternal/st-0.8.5/ -lst
 LDFLAGS_TK_TERMINAL =
-LDFLAGS_TK_API = -Llib -ltk-api -L$(NETZHAUT_PATH)/lib -lnh-api
+LDFLAGS_TK = -Llib -ltk-api -L$(NETZHAUT_PATH)/lib -lnh-api
+
+ifeq ($(OS),macOS)
+    LDFLAGS_TK += -Wl,-rpath,@loader_path/../external/Netzhaut/lib
+endif
 
 # Define the source file directory for each library
 SRC_DIR_TK_CORE = src/lib/tk-core
