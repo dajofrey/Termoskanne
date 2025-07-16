@@ -14,6 +14,9 @@ NETZHAUT_PATH ?= $(CURDIR)/external/Netzhaut
 CC = gcc
 CFLAGS = -fPIC -std=gnu99 -Wl,-rpath,$(CURDIR)/lib,-rpath,$(NETZHAUT_PATH)/lib
 
+# Add debug symbols
+CFLAGS += -g
+
 ifeq ($(OS),macOS)
     CFLAGS += -Wl,-undefined,dynamic_lookup
     OBJC = clang

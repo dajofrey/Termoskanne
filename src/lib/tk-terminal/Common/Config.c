@@ -23,7 +23,7 @@
 // FUNCTIONS =======================================================================================
 
 static TK_TERMINAL_RESULT tk_terminal_getSetting(
-    tk_terminal_Config *Config_p, char namespace_p[255], int setting, char *setting_p)
+    tk_terminal_Config *Config_p, char *namespace_p, int setting, char *setting_p)
 {
     nh_core_List *Setting_p = nh_core_getGlobalConfigSetting(namespace_p, -1, setting_p);
     TK_TERMINAL_CHECK_NULL(Setting_p)
