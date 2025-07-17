@@ -1,7 +1,7 @@
 // LICENSE NOTICE ==================================================================================
 
 /**
- * TTýr - Terminal Emulator
+ * Termoskanne - Terminal Emulator
  * Copyright (C) 2022  Dajo Frey
  * Published under GNU LGPL. See TTyr/LICENSE.LGPL file.
  */
@@ -520,29 +520,16 @@ tk_core_ContextMenu *tk_core_createMouseMenu(
 //        }
 //    }
 
-    if (TTY_p->Config.Menu.close) {
-        if (border) {
-            nh_encoding_appendUTF32Codepoint(&Menu, ',');
-        } 
-        NH_API_UTF32 close_p[] = {'C', 'l', 'o', 's', 'e', ','};
-        nh_encoding_appendUTF32(&Menu, close_p, sizeof(close_p)/sizeof(close_p[0]));
-        border = true;
-    }
-
-    if (TTY_p->Config.Menu.debug) {
-        if (border) {
-            nh_encoding_appendUTF32Codepoint(&Menu, ',');
-        } 
- 
-        NH_API_UTF32 debug_p[] = {'D', 'e', 'b', 'u', 'g', '{', 0};
+    if (1) {
+        NH_API_UTF32 debug_p[] = {',', 'D', 'e', 'b', 'u', 'g', '{'};
         nh_encoding_appendUTF32(&Menu, debug_p, sizeof(debug_p)/sizeof(debug_p[0]));
-     
+    
         NH_API_UTF32 x_p[16];
         NH_API_UTF32 y_p[16];
     
         int xLength = nh_encoding_integerToUTF32(x, x_p, 64);
         int yLength = nh_encoding_integerToUTF32(y, y_p, 64);
-     
+   
         nh_encoding_appendUTF32Codepoint(&Menu, 'x');
         nh_encoding_appendUTF32Codepoint(&Menu, ':');
         for (int i = 0; i < xLength; ++i) {
@@ -569,8 +556,17 @@ tk_core_ContextMenu *tk_core_createMouseMenu(
         nh_encoding_appendUTF8ToUTF32(&Menu, Glyph.Attributes.struck ? "Attr.struck:1," : "Attr.struck:0,", 14);
         nh_encoding_appendUTF8ToUTF32(&Menu, Glyph.Attributes.wrap ? "Attr.wrap:1," : "Attr.wrap:0,", 12);
         nh_encoding_appendUTF8ToUTF32(&Menu, Glyph.Attributes.wide ? "Attr.wide:1}" : "Attr.wide:0}", 12);
-     
-        nh_encoding_appendUTF32Codepoint(&Menu, '}');
+
+        nh_encoding_appendUTF32Codepoint(&Menu, ',');
+    }
+
+    if (TTY_p->Config.Menu.close) {
+        if (border) {
+            nh_encoding_appendUTF32Codepoint(&Menu, ',');
+        } 
+        NH_API_UTF32 close_p[] = {'C', 'l', 'o', 's', 'e', '}'};
+        nh_encoding_appendUTF32(&Menu, close_p, sizeof(close_p)/sizeof(close_p[0]));
+        border = true;
     }
 
     NH_API_UTF32 *p = Menu.p;
