@@ -466,7 +466,7 @@ static TK_TERMINAL_RESULT tk_terminal_updateBackgroundData(
             tk_core_Color Color = tk_terminal_getGlyphColor(Config_p, State_p, &Tile_p->Glyph, false, j+shift, i, Grid_p);
             for (int k = 0; k < 4; ++k) {
                 nh_core_appendToArray(&Background_p->Vertices, Tile_p->Background.vertices_p+k*3, 3);
-                if (State_p->Viewport_p->Surface_p->api == NH_API_GRAPHICS_BACKEND_VULKAN) {
+                if (State_p->Viewport_p->Surface_p->api == NH_GFX_API_VULKAN) {
 float alpha = 1.0f;
                     nh_core_appendToArray(&Background_p->Vertices, &Color.r, 1);
                     nh_core_appendToArray(&Background_p->Vertices, &Color.g, 1);
@@ -619,14 +619,14 @@ TK_TERMINAL_RESULT tk_terminal_handleViewportChange(
     {
         switch (Viewport_p->Surface_p->api)
         {
-            case NH_API_GRAPHICS_BACKEND_VULKAN :
+            case NH_GFX_API_VULKAN :
 #if defined(__unix__)
                 tk_terminal_initVulkanForeground(Viewport_p->Surface_p->Vulkan.GPU_p, &Graphics_p->MainData.Foreground.Vulkan);
                 break;
 #else
                 return TK_TERMINAL_ERROR_BAD_STATE;
 #endif
-            case NH_API_GRAPHICS_BACKEND_OPENGL :
+            case NH_GFX_API_OPENGL :
                 break;
             default :
                 return TK_TERMINAL_ERROR_BAD_STATE;
@@ -650,14 +650,14 @@ TK_TERMINAL_RESULT tk_terminal_renderGraphics(
 {
     switch (Graphics_p->State.Viewport_p->Surface_p->api)
     {
-        case NH_API_GRAPHICS_BACKEND_VULKAN :
+        case NH_GFX_API_VULKAN :
 #if defined(__unix__)
             TK_TERMINAL_CHECK(tk_terminal_renderUsingVulkan(Config_p, Graphics_p, Grid_p, BackdropGrid_p))
             break;
 #else
             return TK_TERMINAL_ERROR_BAD_STATE;
 #endif
-       case NH_API_GRAPHICS_BACKEND_OPENGL :
+       case NH_GFX_API_OPENGL :
             TK_TERMINAL_CHECK(tk_terminal_renderUsingOpenGL(Config_p, Graphics_p, Grid_p, BackdropGrid_p))
             break;
         default :

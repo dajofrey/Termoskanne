@@ -53,7 +53,7 @@ TK_TERMINAL_RESULT tk_terminal_getBackgroundVertices(
     float y1 = y;
     float y2 = y + height;
 
-    if (State_p->Viewport_p->Surface_p->api == NH_API_GRAPHICS_BACKEND_OPENGL) {
+    if (State_p->Viewport_p->Surface_p->api == NH_GFX_API_OPENGL) {
         y1 = -y1;
         y2 = -y2;
     }
@@ -103,7 +103,7 @@ TK_TERMINAL_RESULT tk_terminal_getBoxVertices(
     float y1 = y;
     float y2 = y + height;
 
-    if (State_p->Viewport_p->Surface_p->api == NH_API_GRAPHICS_BACKEND_OPENGL) {
+    if (State_p->Viewport_p->Surface_p->api == NH_GFX_API_OPENGL) {
         y1 = -y1;
         y2 = -y2;
     }
@@ -172,7 +172,7 @@ TK_TERMINAL_RESULT tk_terminal_getOutlineVertices(
     float y1 = y;
     float y2 = y + height;
 
-    if (State_p->Viewport_p->Surface_p->api == NH_API_GRAPHICS_BACKEND_OPENGL) {
+    if (State_p->Viewport_p->Surface_p->api == NH_GFX_API_OPENGL) {
         y1 = -y1;
         y2 = -y2;
     }
@@ -254,7 +254,7 @@ static TK_TERMINAL_RESULT tk_terminal_getForegroundVerticesDefault(
     float y1 = y;
     float y2 = y + height;
 
-    if (State_p->Viewport_p->Surface_p->api == NH_API_GRAPHICS_BACKEND_OPENGL) {
+    if (State_p->Viewport_p->Surface_p->api == NH_GFX_API_OPENGL) {
         y1 = -y1;
         y2 = -y2;
     }
@@ -569,7 +569,7 @@ static TK_TERMINAL_RESULT tk_terminal_getForegroundVerticesForLineGraphics(
 
     }
 
-    if (State_p->Viewport_p->Surface_p->api == NH_API_GRAPHICS_BACKEND_OPENGL) {
+    if (State_p->Viewport_p->Surface_p->api == NH_GFX_API_OPENGL) {
         y1 = -y1;
         y2 = -y2;
         y3 = -y3;
