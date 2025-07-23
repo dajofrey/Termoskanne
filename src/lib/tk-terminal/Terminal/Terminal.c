@@ -125,9 +125,11 @@ static TK_TERMINAL_RESULT tk_terminal_updateBoxes(
 static TK_TERMINAL_RESULT tk_terminal_updateSize(
     tk_terminal_Terminal *Terminal_p)
 {
-    nh_gfx_FontInstance *FontInstance_p = nh_gfx_claimFontInstance(
-        Terminal_p->Graphics.State.Fonts.pp[Terminal_p->Graphics.State.font], 
-        Terminal_p->Config.fontSize
+    nh_gfx_claimFontInstance(
+        Terminal_p->Graphics.State.Fonts.pp[0], Terminal_p->Config.fontSize
+    );
+    nh_gfx_claimFontInstance(
+        Terminal_p->Graphics.State.Fonts.pp[1], Terminal_p->Config.fontSize
     );
 
     nh_gfx_freeText(&Terminal_p->Text);
@@ -197,8 +199,9 @@ static TK_TERMINAL_RESULT tk_terminal_handleEvent(
             tk_terminal_updateConfig(Terminal_p);
 
             nh_gfx_unclaimFontInstance(nh_gfx_claimFontInstance(
-                Terminal_p->Graphics.State.Fonts.pp[Terminal_p->Graphics.State.font], 
-                newFontSize));
+                Terminal_p->Graphics.State.Fonts.pp[0], newFontSize));
+            nh_gfx_unclaimFontInstance(nh_gfx_claimFontInstance(
+                Terminal_p->Graphics.State.Fonts.pp[1], newFontSize));
 
             TK_TERMINAL_CHECK(tk_terminal_updateSize(Terminal_p))
         }

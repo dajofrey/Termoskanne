@@ -37,15 +37,30 @@
 static TK_TERMINAL_RESULT tk_terminal_getInternalMonospaceFonts(
     nh_core_List *Fonts_p)
 {
+    *Fonts_p = nh_core_initList(8);
+
+    // regular
     nh_gfx_FontStyle Style;
     nh_gfx_parseFontStyle(&Style, "normal");
 
     nh_gfx_FontFamily Family = nh_gfx_initFontFamily(NULL);
     Family.generic_p[NH_GFX_GENERIC_FONT_FAMILY_MONOSPACE] = true;
 
-    *Fonts_p = nh_gfx_getFonts(Family, Style, true);
-    if (Fonts_p->size <= 0) {return TK_TERMINAL_ERROR_BAD_STATE;}
+    nh_core_List RegularFonts = nh_gfx_getFonts(Family, Style, true);
+    if (RegularFonts.size <= 0) {return TK_TERMINAL_ERROR_BAD_STATE;}
 
+    nh_core_appendToList(Fonts_p, RegularFonts.pp[0]);
+    nh_core_freeList(&RegularFonts, false);
+    nh_gfx_freeFontStyle(&Style);
+
+    // bold
+    nh_gfx_parseFontStyle(&Style, "bold");
+
+    nh_core_List BoldFonts = nh_gfx_getFonts(Family, Style, true);
+    if (BoldFonts.size <= 0) {return TK_TERMINAL_ERROR_BAD_STATE;}
+
+    nh_core_appendToList(Fonts_p, BoldFonts.pp[0]);
+    nh_core_freeList(&BoldFonts, false);
     nh_gfx_freeFontStyle(&Style);
 
     return TK_TERMINAL_SUCCESS;
@@ -139,7 +154,8 @@ static TK_TERMINAL_RESULT tk_terminal_initGraphicsState(
 
     TK_TERMINAL_CHECK(tk_terminal_getInternalMonospaceFonts(&State_p->Fonts))
 
-    State_p->Map = nh_core_createHashMap();
+    State_p->RegularMap = nh_core_createHashMap();
+    State_p->BoldMap = nh_core_createHashMap();
     State_p->Glyphs = nh_core_initList(128);
     State_p->Codepoints = nh_core_initList(128);
 
@@ -219,7 +235,8 @@ TK_TERMINAL_RESULT tk_terminal_freeGraphics(
     nh_core_freeList(&Graphics_p->State.Glyphs, true);
     nh_core_freeList(&Graphics_p->State.Codepoints, true);
 
-    nh_core_freeHashMap(Graphics_p->State.Map);
+    nh_core_freeHashMap(Graphics_p->State.RegularMap);
+    nh_core_freeHashMap(Graphics_p->State.BoldMap);
 
     return TK_TERMINAL_SUCCESS;
 }

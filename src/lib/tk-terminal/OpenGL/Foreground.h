@@ -34,6 +34,7 @@ typedef struct tk_terminal_Graphics tk_terminal_Graphics;
         nh_gfx_OpenGLCommand *FragmentShader2_p;
         nh_gfx_OpenGLCommand *Program2_p;
         nh_gfx_OpenGLData *Texture_p;
+        nh_gfx_OpenGLData *BoldTexture_p;
         nh_gfx_OpenGLData *VertexArray_p;
         nh_gfx_OpenGLData *VertexArray2_p;
         nh_gfx_OpenGLData *IndicesBuffer_p;

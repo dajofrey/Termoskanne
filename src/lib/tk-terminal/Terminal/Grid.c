@@ -266,7 +266,7 @@ TK_TERMINAL_RESULT tk_terminal_updateTile(
     tk_terminal_Tile *Tile_p = ((nh_core_List*)Grid_p->Rows.pp[Update_p->row])->pp[Update_p->col];
 
     // Compare codepoint.
-    if (Tile_p->Glyph.codepoint != Update_p->Glyph.codepoint || Tile_p->Glyph.mark != Update_p->Glyph.mark)
+    if (Tile_p->Glyph.codepoint != Update_p->Glyph.codepoint || Tile_p->Glyph.mark != Update_p->Glyph.mark || Tile_p->Glyph.Attributes.bold != Update_p->Glyph.Attributes.bold)
     {
         TK_TERMINAL_CHECK(tk_terminal_updateTileVertices(
             &Update_p->Glyph, state_p, Grid_p, Update_p->col, Update_p->row, Tile_p, true, fontSize))
@@ -342,7 +342,7 @@ TK_TERMINAL_RESULT tk_terminal_updateBackdropGrid(
 
     // Update data.
     BackdropGrid_p->TileSize.width = nh_gfx_getTextWidth(Text_p);
-    BackdropGrid_p->TileSize.height = Config_p->fontSize+abs(State_p->FontInstance_p->descender);
+    BackdropGrid_p->TileSize.height = Config_p->fontSize+abs(State_p->RegularFontInstance_p->descender);
 
     BackdropGrid_p->borderPixel = BackdropGrid_p->TileSize.width/3;
 
@@ -388,22 +388,28 @@ TK_TERMINAL_RESULT tk_terminal_updateGrid(
 {
     tk_terminal_GraphicsState *State_p = state_p;
 
-    State_p->FontInstance_p = nh_gfx_claimFontInstance(
-        State_p->Fonts.pp[State_p->font], Config_p->fontSize
+    State_p->RegularFontInstance_p = nh_gfx_claimFontInstance(
+        State_p->Fonts.pp[0], Config_p->fontSize
+    );
+    State_p->BoldFontInstance_p = nh_gfx_claimFontInstance(
+        State_p->Fonts.pp[1], Config_p->fontSize
     );
 
     // Free data.
     nh_core_freeList(&State_p->Glyphs, true);
     nh_core_freeList(&State_p->Codepoints, true);
 
-    nh_core_freeHashMap(State_p->Map);
-    State_p->Map = nh_core_createHashMap();
+    nh_core_freeHashMap(State_p->RegularMap);
+    nh_core_freeHashMap(State_p->BoldMap);
+
+    State_p->RegularMap = nh_core_createHashMap();
+    State_p->BoldMap = nh_core_createHashMap();
 
     tk_terminal_freeGrid(Grid_p);
 
     // Update data.
     Grid_p->TileSize.width = nh_gfx_getTextWidth(Text_p);
-    Grid_p->TileSize.height = Config_p->fontSize+abs(State_p->FontInstance_p->descender);
+    Grid_p->TileSize.height = Config_p->fontSize+abs(State_p->RegularFontInstance_p->descender);
 
     Grid_p->borderPixel = Grid_p->TileSize.width/3;
 

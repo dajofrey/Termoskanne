@@ -63,8 +63,19 @@ static TK_TERMINAL_RESULT tk_terminal_drawOpenGLForeground(
     nh_gfx_addOpenGLCommand(CommandBuffer_p, "glBindVertexArray", Data_p->Foreground.OpenGL.VertexArray_p);
     nh_gfx_addOpenGLCommand(CommandBuffer_p, "glUseProgram", &Data_p->Foreground.OpenGL.Program_p->Result);
  
+    // regular
+    nh_gfx_addOpenGLCommand(CommandBuffer_p, "glActiveTexture", nh_gfx_glenum(NULL, GL_TEXTURE0));
+    nh_gfx_addOpenGLCommand(CommandBuffer_p, "glBindTexture",
+        nh_gfx_glenum(NULL, GL_TEXTURE_2D), Data_p->Foreground.OpenGL.Texture_p);
+    nh_gfx_addOpenGLCommand(CommandBuffer_p, "glUniform1i",
+        &Data_p->Foreground.OpenGL.GetUniformLocationTexture_p->Result, nh_gfx_glint(NULL, 0));
+
     for (int i = 0, offset = 0; i < Data_p->Foreground.Ranges.length; ++i) {
         tk_terminal_AttributeRange *Range_p = ((tk_terminal_AttributeRange*)Data_p->Foreground.Ranges.p)+i;
+        if (Range_p->Glyph.Attributes.bold) {
+            offset += Range_p->indices;
+            continue;
+        }
         nh_gfx_addOpenGLCommand(CommandBuffer_p, "glDrawElements", 
             nh_gfx_glenum(NULL, GL_TRIANGLES), nh_gfx_glsizei(NULL, Range_p->indices), 
             nh_gfx_glenum(NULL, GL_UNSIGNED_INT),
@@ -72,6 +83,27 @@ static TK_TERMINAL_RESULT tk_terminal_drawOpenGLForeground(
         offset += Range_p->indices;
     }
 
+    // bold 
+    nh_gfx_addOpenGLCommand(CommandBuffer_p, "glActiveTexture", nh_gfx_glenum(NULL, GL_TEXTURE1));
+    nh_gfx_addOpenGLCommand(CommandBuffer_p, "glBindTexture",
+        nh_gfx_glenum(NULL, GL_TEXTURE_2D), Data_p->Foreground.OpenGL.BoldTexture_p);
+    nh_gfx_addOpenGLCommand(CommandBuffer_p, "glUniform1i",
+        &Data_p->Foreground.OpenGL.GetUniformLocationTexture_p->Result, nh_gfx_glint(NULL, 1));
+
+    for (int i = 0, offset = 0; i < Data_p->Foreground.Ranges.length; ++i) {
+        tk_terminal_AttributeRange *Range_p = ((tk_terminal_AttributeRange*)Data_p->Foreground.Ranges.p)+i;
+        if (!Range_p->Glyph.Attributes.bold) {
+            offset += Range_p->indices;
+            continue;
+        }
+        nh_gfx_addOpenGLCommand(CommandBuffer_p, "glDrawElements", 
+            nh_gfx_glenum(NULL, GL_TRIANGLES), nh_gfx_glsizei(NULL, Range_p->indices), 
+            nh_gfx_glenum(NULL, GL_UNSIGNED_INT),
+            nh_gfx_glpointer(NULL, (void*)(sizeof(uint32_t)*offset)));
+        offset += Range_p->indices;
+    }
+
+    // line graphics
     nh_gfx_addOpenGLCommand(CommandBuffer_p, "glUseProgram", &Data_p->Foreground.OpenGL.Program2_p->Result);
     nh_gfx_addOpenGLCommand(CommandBuffer_p, "glBindVertexArray", Data_p->Foreground.OpenGL.VertexArray2_p);
 

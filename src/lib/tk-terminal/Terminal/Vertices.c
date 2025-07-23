@@ -1,7 +1,7 @@
 // LICENSE NOTICE ==================================================================================
 
 /**
- * TTýr - Terminal Emulator
+ * Terminator - Terminal Emulator
  * Copyright (C) 2022  Dajo Frey
  * Published under GNU LGPL. See TTyr/LICENSE.LGPL file.
  */
@@ -34,9 +34,6 @@ TK_TERMINAL_RESULT tk_terminal_getBackgroundVertices(
     int row, float vertices_p[12], int fontSize)
 {
     nh_Vertex Vertices_p[4];
-    nh_gfx_FontInstance *FontInstance_p = nh_gfx_claimFontInstance(
-        State_p->Fonts.pp[State_p->font], fontSize
-    );
 
     float depth = Glyph_p->mark & TK_CORE_MARK_ELEVATED ? 0.15f : 0.5f;
     int pixel = row * Grid_p->TileSize.height;
@@ -84,9 +81,6 @@ TK_TERMINAL_RESULT tk_terminal_getBoxVertices(
     bool inner, int fontSize)
 {
     nh_core_Array Vertices = nh_core_initArray(sizeof(nh_Vertex), 8);
-    nh_gfx_FontInstance *FontInstance_p = nh_gfx_claimFontInstance(
-        State_p->Fonts.pp[State_p->font], fontSize
-    );
 
     float depth = 0.2f;
     int pixel = Box_p->UpperLeft.y * Grid_p->TileSize.height;
@@ -149,9 +143,6 @@ TK_TERMINAL_RESULT tk_terminal_getOutlineVertices(
     bool inner, int fontSize)
 {
     nh_Vertex Vertices_p[6];
-    nh_gfx_FontInstance *FontInstance_p = nh_gfx_claimFontInstance(
-        State_p->Fonts.pp[State_p->font], fontSize
-    );
 
     float depth = inner ? 0.4f : 0.45f;
     int pixel = Box_p->UpperLeft.y * Grid_p->TileSize.height;
@@ -207,25 +198,44 @@ TK_TERMINAL_RESULT tk_terminal_getOutlineVertices(
 }
 
 static TK_TERMINAL_RESULT tk_terminal_getForegroundVerticesDefault(
-    tk_terminal_GraphicsState *State_p, tk_terminal_Grid *Grid_p, NH_API_UTF32 codepoint, int col, 
+    tk_terminal_GraphicsState *State_p, tk_terminal_Grid *Grid_p, tk_core_Glyph *G_p, int col, 
     int row, float depth, float vertices_p[20])
 {
     char p[4] = {0};
-    nh_encoding_encodeUTF8Single(codepoint, p);
-    nh_gfx_Glyph *Glyph_p = nh_core_getFromHashMap(&State_p->Map, p);
+    nh_encoding_encodeUTF8Single(G_p->codepoint, p);
+    nh_gfx_Glyph *Glyph_p = NULL;
+
+    if (G_p->Attributes.bold) {
+        Glyph_p = nh_core_getFromHashMap(&State_p->BoldMap, p);
+    } else {
+        Glyph_p = nh_core_getFromHashMap(&State_p->RegularMap, p);
+    }
 
     if (!Glyph_p) {
-        if (nh_gfx_loadGlyphs(State_p->FontInstance_p, &codepoint, 1)) {
+        if (G_p->Attributes.bold && nh_gfx_loadGlyphs(State_p->BoldFontInstance_p, &G_p->codepoint, 1)) {
+            return TK_TERMINAL_ERROR_BAD_STATE;
+        } else if (nh_gfx_loadGlyphs(State_p->RegularFontInstance_p, &G_p->codepoint, 1)) {
             return TK_TERMINAL_ERROR_BAD_STATE;
         }
     
         unsigned int glyphs = 0;
-        nh_gfx_HarfBuzzBuffer Buffer = nh_gfx_createHarfBuzzBuffer(State_p->FontInstance_p, &codepoint, 1);
+        nh_gfx_HarfBuzzBuffer Buffer;
+
+        if (G_p->Attributes.bold) {
+            Buffer = nh_gfx_createHarfBuzzBuffer(State_p->BoldFontInstance_p, &G_p->codepoint, 1);
+        } else {
+            Buffer = nh_gfx_createHarfBuzzBuffer(State_p->RegularFontInstance_p, &G_p->codepoint, 1);
+        }
         nh_gfx_HarfBuzzGlyphInfo *Infos_p = nh_gfx_getHarfBuzzGlyphInfos(Buffer, &glyphs);
     
         if (glyphs != 1) {return TK_TERMINAL_ERROR_BAD_STATE;}
 
-        nh_gfx_Glyph Glyph = nh_gfx_getGlyph(State_p->FontInstance_p, Infos_p[0].id);
+        nh_gfx_Glyph Glyph;
+        if (G_p->Attributes.bold) {
+            Glyph = nh_gfx_getGlyph(State_p->BoldFontInstance_p, Infos_p[0].id);
+        } else {
+            Glyph = nh_gfx_getGlyph(State_p->RegularFontInstance_p, Infos_p[0].id);
+        }
 
         Glyph_p = (nh_gfx_Glyph*)nh_core_allocate(sizeof(nh_gfx_Glyph));
         TK_TERMINAL_CHECK_MEM(Glyph_p)
@@ -234,7 +244,13 @@ static TK_TERMINAL_RESULT tk_terminal_getForegroundVerticesDefault(
         memcpy(codepoint_p, p, 4);
 
         *Glyph_p = Glyph;
-        nh_core_addToHashMap(&State_p->Map, codepoint_p, Glyph_p);
+
+        if (G_p->Attributes.bold) {
+            nh_core_addToHashMap(&State_p->BoldMap, codepoint_p, Glyph_p);
+        } else {
+            nh_core_addToHashMap(&State_p->RegularMap, codepoint_p, Glyph_p);
+        }
+
         nh_core_appendToList(&State_p->Glyphs, Glyph_p);
         nh_core_appendToList(&State_p->Codepoints, codepoint_p);
  
@@ -242,8 +258,15 @@ static TK_TERMINAL_RESULT tk_terminal_getForegroundVerticesDefault(
         nh_gfx_destroyHarfBuzzBuffer(Buffer);
     }
 
-    int pixel = row * Grid_p->TileSize.height + abs(State_p->FontInstance_p->descender);
-    pixel += State_p->FontInstance_p->ascender + State_p->FontInstance_p->descender;
+    int pixel = 0;
+    if (G_p->Attributes.bold) {
+        pixel = row * Grid_p->TileSize.height + abs(State_p->BoldFontInstance_p->descender);
+        pixel += State_p->BoldFontInstance_p->ascender + State_p->BoldFontInstance_p->descender;
+    } else {
+        pixel = row * Grid_p->TileSize.height + abs(State_p->RegularFontInstance_p->descender);
+        pixel += State_p->RegularFontInstance_p->ascender + State_p->RegularFontInstance_p->descender;
+    }
+
     pixel -= Glyph_p->yOffset;
 
     float x = (float)((float)((col * Grid_p->TileSize.width)+Glyph_p->xOffset) / (float)Grid_p->Size.width) * 2.0f - 1.0f;
@@ -294,10 +317,6 @@ static TK_TERMINAL_RESULT tk_terminal_getForegroundVerticesForLineGraphics(
     tk_terminal_GraphicsState *State_p, tk_terminal_Grid *Grid_p, NH_API_UTF32 codepoint, int col,
     int row, float depth, float vertices_p[24], int fontSize)
 {
-    nh_gfx_FontInstance *FontInstance_p = nh_gfx_claimFontInstance(
-        State_p->Fonts.pp[State_p->font], fontSize
-    );
-
     nh_Vertex Vertices_p[8];
 
     int tmp = row * Grid_p->TileSize.height;
@@ -625,7 +644,7 @@ TK_TERMINAL_RESULT tk_terminal_getForegroundVertices(
         ))
     } else {
         TK_TERMINAL_CHECK(tk_terminal_getForegroundVerticesDefault(
-            State_p, Grid_p, Glyph_p->codepoint, col, row, depth, vertices_p
+            State_p, Grid_p, Glyph_p, col, row, depth, vertices_p
         ))
     }
 

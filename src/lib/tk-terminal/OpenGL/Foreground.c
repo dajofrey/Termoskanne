@@ -1,7 +1,7 @@
 // LICENSE NOTICE ==================================================================================
 
 /**
- * TTýr - Terminal Emulator
+ * Termoskanne - Terminal Emulator
  * Copyright (C) 2022  Dajo Frey
  * Published under GNU LGPL. See TTyr/LICENSE.LGPL file.
  */
@@ -145,15 +145,36 @@ static TK_TERMINAL_RESULT tk_terminal_initOpenGLForegroundPrograms(
     return TK_TERMINAL_SUCCESS;
 }
 
-static TK_TERMINAL_RESULT tk_terminal_initOpenGLFontTexture(
+static TK_TERMINAL_RESULT tk_terminal_initOpenGLFontTextures(
     tk_terminal_OpenGLForeground *Foreground_p, nh_gfx_OpenGLCommandBuffer *CommandBuffer_p)
 {
     Foreground_p->Texture_p = nh_gfx_disableOpenGLDataAutoFree(nh_gfx_gluint(NULL, 0));
+    Foreground_p->BoldTexture_p = nh_gfx_disableOpenGLDataAutoFree(nh_gfx_gluint(NULL, 0));
 
+    // regular
     nh_gfx_addOpenGLCommand(CommandBuffer_p, "glGenTextures", nh_gfx_glsizei(NULL, 1), Foreground_p->Texture_p);
     nh_gfx_addOpenGLCommand(CommandBuffer_p, "glActiveTexture", nh_gfx_glenum(NULL, GL_TEXTURE0));
     nh_gfx_addOpenGLCommand(CommandBuffer_p, "glBindTexture",
         nh_gfx_glenum(NULL, GL_TEXTURE_2D), Foreground_p->Texture_p);
+
+    nh_gfx_addOpenGLCommand(CommandBuffer_p, "glTexParameteri",
+        nh_gfx_glenum(NULL, GL_TEXTURE_2D), nh_gfx_glenum(NULL, GL_TEXTURE_WRAP_S),
+        nh_gfx_glenum(NULL, GL_CLAMP_TO_EDGE));
+    nh_gfx_addOpenGLCommand(CommandBuffer_p, "glTexParameteri",
+        nh_gfx_glenum(NULL, GL_TEXTURE_2D), nh_gfx_glenum(NULL, GL_TEXTURE_WRAP_T),
+        nh_gfx_glenum(NULL, GL_CLAMP_TO_EDGE));
+    nh_gfx_addOpenGLCommand(CommandBuffer_p, "glTexParameteri",
+        nh_gfx_glenum(NULL, GL_TEXTURE_2D), nh_gfx_glenum(NULL, GL_TEXTURE_MAG_FILTER),
+        nh_gfx_glenum(NULL, GL_LINEAR));
+    nh_gfx_addOpenGLCommand(CommandBuffer_p, "glTexParameteri",
+        nh_gfx_glenum(NULL, GL_TEXTURE_2D), nh_gfx_glenum(NULL, GL_TEXTURE_MIN_FILTER),
+        nh_gfx_glenum(NULL, GL_LINEAR));
+
+    // bold
+    nh_gfx_addOpenGLCommand(CommandBuffer_p, "glGenTextures", nh_gfx_glsizei(NULL, 1), Foreground_p->BoldTexture_p);
+    nh_gfx_addOpenGLCommand(CommandBuffer_p, "glActiveTexture", nh_gfx_glenum(NULL, GL_TEXTURE1));
+    nh_gfx_addOpenGLCommand(CommandBuffer_p, "glBindTexture",
+        nh_gfx_glenum(NULL, GL_TEXTURE_2D), Foreground_p->BoldTexture_p);
 
     nh_gfx_addOpenGLCommand(CommandBuffer_p, "glTexParameteri",
         nh_gfx_glenum(NULL, GL_TEXTURE_2D), nh_gfx_glenum(NULL, GL_TEXTURE_WRAP_S),
@@ -224,11 +245,12 @@ static TK_TERMINAL_RESULT tk_terminal_initOpenGLForegroundVertices(
 }
 
 static TK_TERMINAL_RESULT tk_terminal_updateOpenGLForegroundFont(
-    tk_terminal_Config *Config_p, tk_terminal_GraphicsState *State_p, 
+    tk_terminal_Config *Config_p, tk_terminal_GraphicsState *State_p,
     tk_terminal_GraphicsForeground *Foreground_p, nh_gfx_OpenGLCommandBuffer *CommandBuffer_p)
 {
-    nh_gfx_FontInstance *FontInstance_p = 
-        nh_gfx_claimFontInstance(State_p->Fonts.pp[State_p->font], Config_p->fontSize);
+    // regular
+    nh_gfx_FontInstance *FontInstance_p =
+        nh_gfx_claimFontInstance(State_p->Fonts.pp[0], Config_p->fontSize);
 
     nh_gfx_addOpenGLCommand(CommandBuffer_p, "glBindTexture",
         nh_gfx_glenum(NULL, GL_TEXTURE_2D), Foreground_p->OpenGL.Texture_p);
@@ -239,6 +261,20 @@ static TK_TERMINAL_RESULT tk_terminal_updateOpenGLForegroundFont(
         nh_gfx_glsizei(NULL, FontInstance_p->Font_p->Atlas.height),
         nh_gfx_glint(NULL, 0), nh_gfx_glenum(NULL, GL_RED), nh_gfx_glenum(NULL, GL_UNSIGNED_BYTE),
         nh_gfx_glchar(NULL, NULL, 0, (GLchar**)&FontInstance_p->Font_p->Atlas.data_p));
+
+    // bold
+    nh_gfx_FontInstance *BoldFontInstance_p =
+        nh_gfx_claimFontInstance(State_p->Fonts.pp[1], Config_p->fontSize);
+
+    nh_gfx_addOpenGLCommand(CommandBuffer_p, "glBindTexture",
+        nh_gfx_glenum(NULL, GL_TEXTURE_2D), Foreground_p->OpenGL.BoldTexture_p);
+
+    nh_gfx_addOpenGLCommand(CommandBuffer_p, "glTexImage2D",
+        nh_gfx_glenum(NULL, GL_TEXTURE_2D), nh_gfx_glint(NULL, 0), nh_gfx_glint(NULL, GL_RED),
+        nh_gfx_glsizei(NULL, BoldFontInstance_p->Font_p->Atlas.width),
+        nh_gfx_glsizei(NULL, BoldFontInstance_p->Font_p->Atlas.height),
+        nh_gfx_glint(NULL, 0), nh_gfx_glenum(NULL, GL_RED), nh_gfx_glenum(NULL, GL_UNSIGNED_BYTE),
+        nh_gfx_glchar(NULL, NULL, 0, (GLchar**)&BoldFontInstance_p->Font_p->Atlas.data_p));
 
     return TK_TERMINAL_SUCCESS;
 }
@@ -335,7 +371,7 @@ TK_TERMINAL_RESULT tk_terminal_updateOpenGLForeground(
     tk_terminal_GraphicsData *Data_p = data_p;
 
     if (Data_p->Foreground.Action.init) {
-        tk_terminal_initOpenGLFontTexture(&Data_p->Foreground.OpenGL, 
+        tk_terminal_initOpenGLFontTextures(&Data_p->Foreground.OpenGL, 
             State_p->Viewport_p->OpenGL.CommandBuffer_p);
         tk_terminal_initOpenGLForegroundPrograms(&Data_p->Foreground.OpenGL, 
             State_p->Viewport_p->OpenGL.CommandBuffer_p);
@@ -373,6 +409,7 @@ TK_TERMINAL_RESULT tk_terminal_freeOpenGLForeground(
     nh_gfx_freeOpenGLCommand(Foreground_p->GetUniformLocationTexture_p);
  
     nh_gfx_freeOpenGLData(Foreground_p->Texture_p);
+    nh_gfx_freeOpenGLData(Foreground_p->BoldTexture_p);
     nh_gfx_freeOpenGLData(Foreground_p->VertexArray_p);
     nh_gfx_freeOpenGLData(Foreground_p->VertexArray2_p);
     nh_gfx_freeOpenGLData(Foreground_p->IndicesBuffer_p);

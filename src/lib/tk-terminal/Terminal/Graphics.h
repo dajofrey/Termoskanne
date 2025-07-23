@@ -109,8 +109,10 @@ typedef struct tk_terminal_GraphicsState {
     tk_terminal_GraphicsBlink Blink;
     tk_terminal_GraphicsGradient AccentGradient;
     tk_terminal_GraphicsGradient BackgroundGradient;
-    nh_core_HashMap Map;
-    nh_gfx_FontInstance *FontInstance_p;
+    nh_core_HashMap RegularMap;
+    nh_core_HashMap BoldMap;
+    nh_gfx_FontInstance *RegularFontInstance_p;
+    nh_gfx_FontInstance *BoldFontInstance_p;
     nh_core_List Fonts;
     int font;
     nh_core_List Glyphs;

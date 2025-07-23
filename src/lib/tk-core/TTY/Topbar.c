@@ -1,7 +1,7 @@
 // LICENSE NOTICE ==================================================================================
 
 /**
- * TTýr - Terminal Emulator
+ * Termoskanne - Terminal Emulator
  * Copyright (C) 2022  Dajo Frey
  * Published under GNU LGPL. See TTyr/LICENSE.LGPL file.
  */
@@ -679,6 +679,10 @@ TK_CORE_RESULT tk_core_drawTopbarRow(
         }
     }
 
+    for (int i = 0; TTY_p->Window_p->Tile_p == Tile_p && i < cols; ++i) {
+        Glyphs_p[i].Attributes.bold = true;
+    }
+ 
 //    if (Tile_p && tk_core_getConfig().Topbar.on == false && tk_core_getConfig().Titlebar.on == true) {
 //        for (int i = 1, j = 1; i <= tk_core_getConfig().tabs; ++i, j+=2) {
 //            Glyphs_p[cols-(i+j)].codepoint = 'p';
