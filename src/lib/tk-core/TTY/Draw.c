@@ -19,6 +19,7 @@
 #include "View.h"
 #include "Program.h"
 #include "Menu.h"
+#include "Sidebar.h"
 
 #include "../Common/Macros.h"
 
@@ -146,7 +147,6 @@ static TK_CORE_RESULT tk_core_drawMicroTile(
 static TK_CORE_RESULT tk_core_drawMacroTile(
     tk_core_Config *Config_p, tk_core_Tile *Tile_p, tk_core_View *View_p, int row)
 {
-
     // Get relative row with 0 being the first row of the tile.
     row = row - Tile_p->rowPosition;
 
@@ -256,11 +256,10 @@ static TK_CORE_RESULT tk_core_postProcessRow(
         if (Glyph_p->mark & TK_CORE_MARK_LINE_VERTICAL) {
             if (i > 0 && (Glyph_p-1)->Attributes.reverse && i < View_p->cols-1 && (Glyph_p+1)->Attributes.reverse) {
                 Glyph_p->Attributes.reverse = true;
-                Glyph_p->mark = 0;
+                Glyph_p->mark |= TK_CORE_MARK_ACCENT;
                 Glyph_p->codepoint = 0;
             }
         }
-
     }
 
     return TK_CORE_SUCCESS;
@@ -270,9 +269,8 @@ TK_CORE_RESULT tk_core_refreshGrid1Row(
     tk_core_Config *Config_p, nh_core_List *Tiles_p, tk_core_View *View_p, int row)
 {
     memset(View_p->Row.Glyphs_p, 0, sizeof(tk_core_Glyph)*View_p->cols);
-    int offset = 0;
 
-    for (int col = offset; col < View_p->cols;) {
+    for (int col = 0; col < View_p->cols;) {
         for (int tile = 0; tile < Tiles_p->size; ++tile) {
 
             tk_core_Tile *Tile_p = Tiles_p->pp[tile];
@@ -282,7 +280,7 @@ TK_CORE_RESULT tk_core_refreshGrid1Row(
 
             if (Tile_p->rowPosition <= row
             &&  Tile_p->rowPosition  + Tile_p->rowSize > row
-            &&  Tile_p->colPosition == col-offset)
+            &&  Tile_p->colPosition == col)
             {
                 TK_CHECK(tk_core_draw(Config_p, Tile_p, View_p, row))
 
@@ -311,17 +309,43 @@ TK_CORE_RESULT tk_core_refreshGrid1(
     tk_core_TTY *TTY_p) 
 {
     tk_core_View *View_p = TTY_p->Views.pp[0];
-    int offset = 0;
 
-    tk_core_updateTiling(TTY_p->Window_p->RootTile_p, View_p->rows, View_p->cols-offset);
+    if (TTY_p->Config.sidebar) {
+        View_p->cols -= 2;
+    }
+
+    tk_core_updateTiling(TTY_p->Window_p->RootTile_p, View_p->rows, View_p->cols);
     nh_core_List Tiles = tk_core_getTiles(TTY_p->Window_p->RootTile_p);
 
     for (int row = 0; row < View_p->rows; ++row) {
+
+        if (TTY_p->Config.sidebar) {
+            View_p->Grid1_p[row].Glyphs_p[0].Attributes.bold= true;
+            View_p->Grid1_p[row].Glyphs_p[0].mark = TK_CORE_MARK_ACCENT;
+            View_p->Grid1_p[row].Glyphs_p[0].codepoint = 0;
+            View_p->Grid1_p[row].Glyphs_p[1].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_LINE_VERTICAL | TK_CORE_MARK_LINE_GRAPHICS;
+            View_p->Grid1_p[row].Glyphs_p[1].codepoint = 'x';
+        }
+
+        if (TTY_p->Config.sidebar) {
+            View_p->Grid1_p[row].Glyphs_p = View_p->Grid1_p[row].Glyphs_p+2;
+            View_p->Grid1_p[row].update_p = View_p->Grid1_p[row].update_p+2;
+        }
+
         TK_CHECK(tk_core_refreshGrid1Row(&TTY_p->Config, &Tiles, View_p, row))
+
+        if (TTY_p->Config.sidebar) {
+            View_p->Grid1_p[row].Glyphs_p = View_p->Grid1_p[row].Glyphs_p-2;
+            View_p->Grid1_p[row].update_p = View_p->Grid1_p[row].update_p-2;
+        }
+    }
+
+    if (TTY_p->Config.sidebar) {
+        View_p->cols += 2;
+        tk_core_drawSidebar(TTY_p);
     }
 
     nh_core_freeList(&Tiles, false);
-
     TK_CHECK(tk_core_forwardGrid1(&TTY_p->Config, View_p))
 
     return TK_CORE_SUCCESS;

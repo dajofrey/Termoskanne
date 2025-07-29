@@ -24,4 +24,8 @@ TK_TERMINAL_RESULT tk_terminal_getForegroundVertices(
     int row, float *vertices_p, int fontSize
 );
 
+unsigned int tk_terminal_getSidebarOffset(
+    tk_terminal_Grid *Grid_p
+);
+
 #endif // TK_TERMINAL_TERMINAL_VERTICES_H 

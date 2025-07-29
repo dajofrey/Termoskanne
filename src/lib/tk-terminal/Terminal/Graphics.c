@@ -10,6 +10,7 @@
 
 #include "Graphics.h"
 #include "Color.h"
+#include "Vertices.h"
 
 #if defined(__unix__)
     #include "../Vulkan/Render.h"
@@ -663,22 +664,27 @@ TK_TERMINAL_RESULT tk_terminal_handleViewportChange(
 
 TK_TERMINAL_RESULT tk_terminal_renderGraphics(
     tk_terminal_Config *Config_p, tk_terminal_Graphics *Graphics_p, tk_terminal_Grid *Grid_p,
-    tk_terminal_Grid *ElevatedGrid_p, tk_terminal_Grid *BackdropGrid_p)
+    tk_terminal_Grid *ElevatedGrid_p, tk_terminal_Grid *BackdropGrid_p, bool sidebar)
 {
+    unsigned int offset = 0;
+    if (sidebar) {
+        offset = tk_terminal_getSidebarOffset(Grid_p);
+    }
+
     switch (Graphics_p->State.Viewport_p->Surface_p->api)
     {
         case NH_GFX_API_VULKAN :
 #if defined(__unix__)
-            TK_TERMINAL_CHECK(tk_terminal_renderUsingVulkan(Config_p, Graphics_p, Grid_p, BackdropGrid_p))
-            break;
+           TK_TERMINAL_CHECK(tk_terminal_renderUsingVulkan(Config_p, Graphics_p, Grid_p, BackdropGrid_p))
+           break;
 #else
-            return TK_TERMINAL_ERROR_BAD_STATE;
+           return TK_TERMINAL_ERROR_BAD_STATE;
 #endif
        case NH_GFX_API_OPENGL :
-            TK_TERMINAL_CHECK(tk_terminal_renderUsingOpenGL(Config_p, Graphics_p, Grid_p, BackdropGrid_p))
-            break;
-        default :
-            return TK_TERMINAL_ERROR_BAD_STATE;
+           TK_TERMINAL_CHECK(tk_terminal_renderUsingOpenGL(Config_p, Graphics_p, Grid_p, BackdropGrid_p, offset))
+           break;
+       default :
+           return TK_TERMINAL_ERROR_BAD_STATE;
     }
 
     return TK_TERMINAL_SUCCESS;

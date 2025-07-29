@@ -36,6 +36,7 @@ typedef struct tk_core_Config {
     tk_core_MenuConfig Menu;
     int windows;
     int tabs;
+    bool sidebar;
 } tk_core_Config;
 
 tk_core_Config tk_core_updateConfig(

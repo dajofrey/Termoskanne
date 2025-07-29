@@ -1,7 +1,7 @@
 // LICENSE NOTICE ==================================================================================
 
 /**
- * TTýr - Terminal Emulator
+ * Termoskanne - Terminal Emulator
  * Copyright (C) 2022  Dajo Frey
  * Published under GNU LGPL. See TTyr/LICENSE.LGPL file.
  */
@@ -91,6 +91,10 @@ static TK_CORE_RESULT tk_core_getSetting(
             if (Values_p->size != 1) {return TK_CORE_ERROR_BAD_STATE;}
             Config_p->Topbar.on = atoi(Values_p->pp[0]);
             break;
+        case 14 :
+            if (Values_p->size != 1) {return TK_CORE_ERROR_BAD_STATE;}
+            Config_p->sidebar = atoi(Values_p->pp[0]);
+            break;
     }
 
     return TK_CORE_SUCCESS;
@@ -116,6 +120,7 @@ static tk_core_Config tk_core_getStaticConfig()
         "tk-core.titlebar.foreground",
         "tk-core.titlebar.background",
         "tk-core.topbar.on",
+        "tk-core.sidebar.on",
     };
 
     int options = sizeof(options_pp)/sizeof(options_pp[0]);

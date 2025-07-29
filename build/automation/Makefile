@@ -54,6 +54,7 @@ SRC_FILES_TK_CORE = \
     TTY/Micro.c \
     TTY/ContextMenu.c \
     TTY/Menu.c \
+    TTY/Sidebar.c \
     Editor/TreeListing.c \
     Editor/Editor.c \
     Editor/FileEditor.c \

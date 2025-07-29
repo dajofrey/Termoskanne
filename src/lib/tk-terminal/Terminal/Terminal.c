@@ -370,7 +370,7 @@ static NH_SIGNAL tk_terminal_runTerminal(
             &Terminal_p->Config, &Terminal_p->Graphics, &Terminal_p->Grid, &Terminal_p->BackdropGrid, 
             &Terminal_p->ElevatedGrid, Terminal_p->TTY_p->Config.Titlebar.on))
         TK_TERMINAL_CHECK_2(NH_SIGNAL_ERROR, tk_terminal_renderGraphics(&Terminal_p->Config, &Terminal_p->Graphics, 
-            &Terminal_p->Grid, &Terminal_p->ElevatedGrid, &Terminal_p->BackdropGrid))
+            &Terminal_p->Grid, &Terminal_p->ElevatedGrid, &Terminal_p->BackdropGrid, Terminal_p->TTY_p->Config.sidebar))
         return NH_SIGNAL_OK;
     }
 

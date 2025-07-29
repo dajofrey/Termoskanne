@@ -1,7 +1,7 @@
 // LICENSE NOTICE ==================================================================================
 
 /**
- * TTýr - Terminal Emulator
+ * Termoskanne - Terminal Emulator
  * Copyright (C) 2022  Dajo Frey
  * Published under GNU LGPL. See TTyr/LICENSE.LGPL file.
  */
@@ -552,7 +552,7 @@ static TK_CORE_RESULT tk_core_handleMouseInput(
         // Forward program hit.
         Event.Window.Position.x = Event.Mouse.Position.x;
         Event.Window.Position.y = Event.Mouse.Position.y;
-        Event.Mouse.Position.x = cCol;
+        Event.Mouse.Position.x = Config_p->sidebar ? cCol-2 : cCol;
         Event.Mouse.Position.y = cRow - 1; // Subtract topbar. 
         TK_CHECK(TK_CORE_MICRO_TILE(MicroTile_p)->Program_p->Prototype_p->Callbacks.handleInput_f(
             TK_CORE_MICRO_TILE(MicroTile_p)->Program_p, Event

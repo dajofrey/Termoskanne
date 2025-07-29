@@ -1,7 +1,7 @@
 // LICENSE NOTICE ==================================================================================
 
 /**
- * TTýr - Terminal Emulator
+ * Termoskanne - Terminal Emulator
  * Copyright (C) 2022  Dajo Frey
  * Published under GNU LGPL. See TTyr/LICENSE.LGPL file.
  */
@@ -213,12 +213,12 @@ static NH_SIGNAL tk_core_runTTY(
     tk_core_TTY *TTY_p = p;
     bool idle = true;
 
+    tk_core_updateConfig(TTY_p);
+
     for (int i = 0; i < TTY_p->Views.size; ++i) {
         TK_CHECK_2(NH_SIGNAL_ERROR, tk_core_handleWindowResize(TTY_p, TTY_p->Views.pp[i]))
     }
     if (TTY_p->Views.size <= 0 || ((tk_core_View*)TTY_p->Views.pp[0])->cols <= 0) {return NH_SIGNAL_IDLE;}
-
-    tk_core_updateConfig(TTY_p);
 
     TK_CHECK_2(NH_SIGNAL_ERROR, tk_core_handleInput(TTY_p))
     TK_CHECK_2(NH_SIGNAL_ERROR, tk_core_updateMacroWindow(TTY_p->Window_p))
