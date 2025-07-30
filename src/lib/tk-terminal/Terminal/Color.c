@@ -172,8 +172,9 @@ static tk_core_Color tk_terminal_getAccentColor(
     return base;
 }
 
-tk_core_Color tk_terminal_getGlyphColor(
-    tk_terminal_Config *Config_p, tk_terminal_GraphicsState *State_p, tk_core_Glyph *Glyph_p, bool foreground, int col, int row, tk_terminal_Grid *Grid_p)
+static inline tk_core_Color tk_terminal_getGlyphColor2(
+    tk_terminal_Config *Config_p, tk_terminal_GraphicsState *State_p, tk_core_Glyph *Glyph_p, bool foreground,
+    int col, int row, tk_terminal_Grid *Grid_p)
 {
     if (foreground) {
         if (Glyph_p->Attributes.reverse || (Glyph_p->Attributes.blink && State_p->Blink.on)) {
@@ -214,6 +215,21 @@ tk_core_Color tk_terminal_getGlyphColor(
     }
 
     return State_p->BackgroundGradient.Color;
+}
+
+tk_core_Color tk_terminal_getGlyphColor(
+    tk_terminal_Config *Config_p, tk_terminal_GraphicsState *State_p, tk_core_Glyph *Glyph_p,
+    bool foreground, int col, int row, tk_terminal_Grid *Grid_p)
+{
+    tk_core_Color Color = tk_terminal_getGlyphColor2(Config_p, State_p, Glyph_p, foreground, col, row, Grid_p);
+
+    if (Glyph_p->Attributes.faint) {
+        Color.r *= 0.7f;
+        Color.g *= 0.7f;
+        Color.b *= 0.7f;
+    }
+
+    return Color;
 }
 
 tk_core_Color tk_terminal_getGradientColor(

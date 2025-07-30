@@ -141,6 +141,13 @@ static TK_CORE_RESULT tk_core_drawMicroTile(
         ))
     }
 
+    tk_core_TTY *TTY_p = nh_core_getWorkloadArg();
+    if (Tile_p != TK_CORE_MICRO_TAB(TK_CORE_MACRO_TAB(TTY_p->Window_p->Tile_p))->Tile_p) {
+        for (int col = 0; col < cols; ++col) {
+            View_p->Row.Glyphs_p[col].Attributes.faint = true;
+        } 
+    }
+
     return TK_CORE_SUCCESS;
 }
 

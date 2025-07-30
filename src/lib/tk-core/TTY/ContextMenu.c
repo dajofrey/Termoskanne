@@ -524,6 +524,10 @@ tk_core_ContextMenu *tk_core_createMouseMenu(
         NH_API_UTF32 debug_p[] = {',', 'D', 'e', 'b', 'u', 'g', '{'};
         nh_encoding_appendUTF32(&Menu, debug_p, sizeof(debug_p)/sizeof(debug_p[0]));
     
+        tk_core_Glyph Glyph = ((tk_core_View*)TTY_p->Views.pp[0])->Grid1_p[y].Glyphs_p[x];
+        nh_encoding_appendUTF32Codepoint(&Menu, Glyph.codepoint);
+        nh_encoding_appendUTF32Codepoint(&Menu, ',');
+
         NH_API_UTF32 x_p[16];
         NH_API_UTF32 y_p[16];
     
@@ -543,8 +547,6 @@ tk_core_ContextMenu *tk_core_createMouseMenu(
             nh_encoding_appendUTF32Codepoint(&Menu, y_p[i]);
         }
         nh_encoding_appendUTF32Codepoint(&Menu, ',');
-    
-        tk_core_Glyph Glyph = ((tk_core_View*)TTY_p->Views.pp[0])->Grid1_p[y].Glyphs_p[x];
     
         nh_encoding_appendUTF8ToUTF32(&Menu, Glyph.Attributes.bold ? "Attr.bold:1," : "Attr.bold:0,", 12);
         nh_encoding_appendUTF8ToUTF32(&Menu, Glyph.Attributes.faint ? "Attr.faint:1," : "Attr.faint:0,", 13);
