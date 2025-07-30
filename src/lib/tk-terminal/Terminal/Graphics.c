@@ -433,6 +433,7 @@ static TK_TERMINAL_RESULT tk_terminal_updateForegroundData(
                     nh_core_appendToArray(&Colors2, &Color.r, 1);
                     nh_core_appendToArray(&Colors2, &Color.g, 1);
                     nh_core_appendToArray(&Colors2, &Color.b, 1);
+                    nh_core_appendToArray(&Colors2, &Color.a, 1);
                 }
             } else {
                 nh_core_appendToArray(&Vertices, Tile_p->Foreground.vertices_p, 20);
@@ -446,6 +447,7 @@ static TK_TERMINAL_RESULT tk_terminal_updateForegroundData(
                     nh_core_appendToArray(&Colors, &Color.r, 1);
                     nh_core_appendToArray(&Colors, &Color.g, 1);
                     nh_core_appendToArray(&Colors, &Color.b, 1);
+                    nh_core_appendToArray(&Colors, &Color.a, 1);
                 }
             }
         }

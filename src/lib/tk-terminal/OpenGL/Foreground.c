@@ -36,9 +36,9 @@ static TK_TERMINAL_RESULT tk_terminal_initOpenGLForegroundPrograms(
         "#version 450\n"
         "layout(location=0) in vec3 position;\n"
         "layout(location=1) in vec2 uv;\n"
-        "layout(location=2) in vec3 in_color;\n"
+        "layout(location=2) in vec4 in_color;\n"
         "out vec2 texcoord;\n"
-        "out vec3 color;\n"
+        "out vec4 color;\n"
         "void main() {\n"
         "    texcoord = uv.xy;\n"
         "    color = in_color;\n"
@@ -54,13 +54,13 @@ static TK_TERMINAL_RESULT tk_terminal_initOpenGLForegroundPrograms(
         "#endif\n"
         "uniform sampler2D u_texture;\n"
         "in vec2 texcoord;\n"
-        "in vec3 color;\n"
+        "in vec4 color;\n"
         "out vec4 fragColor;\n"
         "void main() {\n"
         "    float dist = TEXTURE2D(u_texture, texcoord.st).r;\n"
         "    float width = fwidth(dist);\n"
         "    float alpha = smoothstep(0.5-width, 0.5+width, dist);\n"
-        "    fragColor = vec4(color, alpha);\n"
+        "    fragColor = vec4(color.rgb, alpha*color.a);\n"
         "}\n";
 
     Foreground_p->VertexShader_p =
@@ -99,8 +99,8 @@ static TK_TERMINAL_RESULT tk_terminal_initOpenGLForegroundPrograms(
     static const char* vsSource2_p =
         "#version 450\n"
         "layout(location=0) in vec3 position;\n"
-        "layout(location=1) in vec3 in_color;\n"
-        "out vec3 color;\n"
+        "layout(location=1) in vec4 in_color;\n"
+        "out vec4 color;\n"
         "void main() {\n"
         "    color = in_color;\n"
         "    gl_Position = vec4(position, 1.0);\n"
@@ -108,10 +108,10 @@ static TK_TERMINAL_RESULT tk_terminal_initOpenGLForegroundPrograms(
 
     static const char* fsSource2_p =
         "#version 450\n"
-        "in vec3 color;\n"
+        "in vec4 color;\n"
         "out vec4 fragColor;\n"
         "void main() {\n"
-        "    fragColor = vec4(color, 1.0);\n"
+        "    fragColor = vec4(color.rgb, color.a);\n"
         "}\n";
 
     Foreground_p->VertexShader2_p =
@@ -320,8 +320,8 @@ static TK_TERMINAL_RESULT tk_terminal_updateOpenGLForegroundVertices(
         nh_gfx_glenum(NULL, GL_DYNAMIC_DRAW));
     nh_gfx_addOpenGLCommand(CommandBuffer_p, "glEnableVertexAttribArray", nh_gfx_gluint(NULL, 2));
     nh_gfx_addOpenGLCommand(CommandBuffer_p, "glVertexAttribPointer",
-        nh_gfx_gluint(NULL, 2), nh_gfx_gluint(NULL, 3), nh_gfx_glenum(NULL, GL_FLOAT),
-        nh_gfx_glboolean(NULL, GL_FALSE), nh_gfx_glsizei(NULL, sizeof(float)*3), 
+        nh_gfx_gluint(NULL, 2), nh_gfx_gluint(NULL, 4), nh_gfx_glenum(NULL, GL_FLOAT),
+        nh_gfx_glboolean(NULL, GL_FALSE), nh_gfx_glsizei(NULL, sizeof(float)*4), 
         nh_gfx_glpointer(NULL, NULL));
 
     nh_gfx_addOpenGLCommand(CommandBuffer_p, "glBindVertexArray", Foreground_p->OpenGL.VertexArray2_p);
@@ -357,8 +357,8 @@ static TK_TERMINAL_RESULT tk_terminal_updateOpenGLForegroundVertices(
         nh_gfx_glenum(NULL, GL_DYNAMIC_DRAW));
     nh_gfx_addOpenGLCommand(CommandBuffer_p, "glEnableVertexAttribArray", nh_gfx_gluint(NULL, 1));
     nh_gfx_addOpenGLCommand(CommandBuffer_p, "glVertexAttribPointer",
-        nh_gfx_gluint(NULL, 1), nh_gfx_gluint(NULL, 3), nh_gfx_glenum(NULL, GL_FLOAT),
-        nh_gfx_glboolean(NULL, GL_FALSE), nh_gfx_glsizei(NULL, sizeof(float)*3), 
+        nh_gfx_gluint(NULL, 1), nh_gfx_gluint(NULL, 4), nh_gfx_glenum(NULL, GL_FLOAT),
+        nh_gfx_glboolean(NULL, GL_FALSE), nh_gfx_glsizei(NULL, sizeof(float)*4), 
         nh_gfx_glpointer(NULL, NULL));
 
     return TK_TERMINAL_SUCCESS;

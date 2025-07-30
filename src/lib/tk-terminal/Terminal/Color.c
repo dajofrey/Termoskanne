@@ -222,11 +222,10 @@ tk_core_Color tk_terminal_getGlyphColor(
     bool foreground, int col, int row, tk_terminal_Grid *Grid_p)
 {
     tk_core_Color Color = tk_terminal_getGlyphColor2(Config_p, State_p, Glyph_p, foreground, col, row, Grid_p);
+    Color.a = 1.0f;
 
     if (Glyph_p->Attributes.faint) {
-        Color.r *= 0.7f;
-        Color.g *= 0.7f;
-        Color.b *= 0.7f;
+        Color.a = 0.7f;
     }
 
     return Color;
