@@ -1,10 +1,15 @@
 #ifndef TK_TERMINAL_GRID_H
 #define TK_TERMINAL_GRID_H
 
+// INCLUDES ========================================================================================
+
 #include "../Common/Includes.h"
 #include "../Common/Config.h"
+
 #include "nh-core/Util/Time.h"
 #include "nh-gfx/Fonts/Text.h"
+
+#include "../../tk-core/Common/Config.h"
 
 // STRUCTS =========================================================================================
 
@@ -75,11 +80,13 @@ TK_TERMINAL_RESULT tk_terminal_freeGrid(
 );
 
 TK_TERMINAL_RESULT tk_terminal_updateBackdropGrid(
-    tk_terminal_Config *Config_p, tk_terminal_Grid *BackdropGrid_p, void *state_p, nh_gfx_Text *Text_p
+    tk_terminal_Config *Config_p, tk_core_Config *CoreConfig_p, tk_terminal_Grid *BackdropGrid_p,
+    void *state_p, nh_gfx_Text *Text_p
 );
 
 TK_TERMINAL_RESULT tk_terminal_updateGrid(
-    tk_terminal_Config *Config_p, tk_terminal_Grid *Grid_p, void *state_p, nh_gfx_Text *Text_p
+    tk_terminal_Config *Config_p, tk_core_Config *CoreConfig_p, tk_terminal_Grid *Grid_p, void *state_p,
+    nh_gfx_Text *Text_p
 );
 
 bool tk_terminal_compareBackgroundAttributes(

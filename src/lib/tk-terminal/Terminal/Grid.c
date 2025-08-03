@@ -344,7 +344,8 @@ TK_TERMINAL_RESULT tk_terminal_updateTile(
 }
 
 TK_TERMINAL_RESULT tk_terminal_updateBackdropGrid(
-    tk_terminal_Config *Config_p, tk_terminal_Grid *BackdropGrid_p, void *state_p, nh_gfx_Text *Text_p)
+    tk_terminal_Config *Config_p, tk_core_Config *CoreConfig_p, tk_terminal_Grid *BackdropGrid_p,
+    void *state_p, nh_gfx_Text *Text_p)
 {
     tk_terminal_GraphicsState *State_p = state_p;
 
@@ -371,6 +372,10 @@ TK_TERMINAL_RESULT tk_terminal_updateBackdropGrid(
     BackdropGrid_p->Size.width = State_p->Viewport_p->Settings.Size.width+(borderColsPixel*2);
     BackdropGrid_p->Size.height = State_p->Viewport_p->Settings.Size.height+(borderRowsPixel*2);
 
+    if (!CoreConfig_p->Titlebar.on && CoreConfig_p->Topbar.on) {
+        BackdropGrid_p->Size.height = State_p->Viewport_p->Settings.Size.height+(BackdropGrid_p->borderPixel*1);
+    }
+
     BackdropGrid_p->cols = BackdropGrid_p->Size.width / nh_gfx_getTextWidth(Text_p) + 2;
     BackdropGrid_p->rows = BackdropGrid_p->Size.height / BackdropGrid_p->TileSize.height + 2;
 
@@ -395,7 +400,8 @@ TK_TERMINAL_RESULT tk_terminal_updateBackdropGrid(
 }
 
 TK_TERMINAL_RESULT tk_terminal_updateGrid(
-    tk_terminal_Config *Config_p, tk_terminal_Grid *Grid_p, void *state_p, nh_gfx_Text *Text_p)
+    tk_terminal_Config *Config_p, tk_core_Config *CoreConfig_p, tk_terminal_Grid *Grid_p,
+    void *state_p, nh_gfx_Text *Text_p)
 {
     tk_terminal_GraphicsState *State_p = state_p;
 
@@ -426,6 +432,10 @@ TK_TERMINAL_RESULT tk_terminal_updateGrid(
 
     Grid_p->Size.width = State_p->Viewport_p->Settings.Size.width-(Grid_p->borderPixel*2);
     Grid_p->Size.height = State_p->Viewport_p->Settings.Size.height-(Grid_p->borderPixel*2);
+
+    if (!CoreConfig_p->Titlebar.on && CoreConfig_p->Topbar.on) {
+        Grid_p->Size.height = State_p->Viewport_p->Settings.Size.height-(Grid_p->borderPixel*1);
+    }
 
     Grid_p->cols = Grid_p->Size.width / nh_gfx_getTextWidth(Text_p);
     Grid_p->rows = Grid_p->Size.height / Grid_p->TileSize.height;

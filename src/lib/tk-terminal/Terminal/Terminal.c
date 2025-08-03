@@ -147,9 +147,9 @@ static TK_TERMINAL_RESULT tk_terminal_updateSize(
 
     if (failure) {return TK_TERMINAL_ERROR_BAD_STATE;}
     
-    TK_TERMINAL_CHECK(tk_terminal_updateGrid(&Terminal_p->Config, &Terminal_p->Grid, &Terminal_p->Graphics.State, &Terminal_p->Text))
-    TK_TERMINAL_CHECK(tk_terminal_updateGrid(&Terminal_p->Config, &Terminal_p->ElevatedGrid, &Terminal_p->Graphics.State, &Terminal_p->Text))
-    TK_TERMINAL_CHECK(tk_terminal_updateBackdropGrid(&Terminal_p->Config, &Terminal_p->BackdropGrid, &Terminal_p->Graphics.State, &Terminal_p->Text))
+    TK_TERMINAL_CHECK(tk_terminal_updateGrid(&Terminal_p->Config, &Terminal_p->TTY_p->Config, &Terminal_p->Grid, &Terminal_p->Graphics.State, &Terminal_p->Text))
+    TK_TERMINAL_CHECK(tk_terminal_updateGrid(&Terminal_p->Config, &Terminal_p->TTY_p->Config, &Terminal_p->ElevatedGrid, &Terminal_p->Graphics.State, &Terminal_p->Text))
+    TK_TERMINAL_CHECK(tk_terminal_updateBackdropGrid(&Terminal_p->Config, &Terminal_p->TTY_p->Config, &Terminal_p->BackdropGrid, &Terminal_p->Graphics.State, &Terminal_p->Text))
 
     // Update view size, subtract gap tiles.
     Terminal_p->View_p->cols = Terminal_p->Grid.cols-1;
@@ -170,8 +170,14 @@ static TK_TERMINAL_RESULT tk_terminal_updateSize(
 static TK_TERMINAL_RESULT tk_terminal_updateSizeIfRequired(
     tk_terminal_Terminal *Terminal_p, bool *update_p)
 {
-    if (Terminal_p->Graphics.State.Viewport_p->Settings.Size.width - (Terminal_p->Grid.borderPixel*2) == Terminal_p->Grid.Size.width
-    &&  Terminal_p->Graphics.State.Viewport_p->Settings.Size.height - (Terminal_p->Grid.borderPixel*2) == Terminal_p->Grid.Size.height) {
+    if (!Terminal_p->TTY_p->Config.Titlebar.on && Terminal_p->TTY_p->Config.Topbar.on) {
+        if (Terminal_p->Graphics.State.Viewport_p->Settings.Size.width - (Terminal_p->Grid.borderPixel*2) == Terminal_p->Grid.Size.width
+        &&  Terminal_p->Graphics.State.Viewport_p->Settings.Size.height - (Terminal_p->Grid.borderPixel*1) == Terminal_p->Grid.Size.height) {
+            return TK_TERMINAL_SUCCESS;
+        }
+    }
+    else if (Terminal_p->Graphics.State.Viewport_p->Settings.Size.width - (Terminal_p->Grid.borderPixel*2) == Terminal_p->Grid.Size.width
+         &&  Terminal_p->Graphics.State.Viewport_p->Settings.Size.height - (Terminal_p->Grid.borderPixel*2) == Terminal_p->Grid.Size.height) {
         return TK_TERMINAL_SUCCESS;
     }
 
