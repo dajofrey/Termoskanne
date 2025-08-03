@@ -4,3 +4,4 @@ get name of child program from shell and display that instead of path
 fix backdrop alignment issues
 fix inactive cursor issues
 fix copy/paste
+remove/simplify attribute range bullshit

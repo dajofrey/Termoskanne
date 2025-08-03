@@ -239,16 +239,25 @@ static TK_TERMINAL_RESULT tk_terminal_updateCursorTile(
 
 static TK_TERMINAL_RESULT tk_terminal_updateTileVertices(
     tk_core_Glyph *Glyph_p, tk_terminal_GraphicsState *State_p, tk_terminal_Grid *Grid_p, int col,
-    int row, tk_terminal_Tile *Tile_p, bool foreground, int fontSize)
+    int row, tk_terminal_Tile *Tile_p, int target, int fontSize)
 {
-    if (foreground) {
-        TK_TERMINAL_CHECK(tk_terminal_getForegroundVertices(
-            State_p, Grid_p, Glyph_p, col, row, Tile_p->Foreground.vertices_p, fontSize
-        ))
-    } else {
-        TK_TERMINAL_CHECK(tk_terminal_getBackgroundVertices(
-            State_p, Grid_p, Glyph_p, col, row, Tile_p->Background.vertices_p, fontSize
-        ))
+    switch (target)
+    {
+        case 2 :
+            TK_TERMINAL_CHECK(tk_terminal_getOverlayVertices(
+                State_p, Grid_p, Glyph_p, col, row, Tile_p->Overlay.vertices_p, fontSize
+            ))
+            break;
+        case 1 :
+            TK_TERMINAL_CHECK(tk_terminal_getForegroundVertices(
+                State_p, Grid_p, Glyph_p, col, row, Tile_p->Foreground.vertices_p, fontSize
+            ))
+            break;
+        case 0 :
+            TK_TERMINAL_CHECK(tk_terminal_getBackgroundVertices(
+                State_p, Grid_p, Glyph_p, col, row, Tile_p->Background.vertices_p, fontSize
+            ))
+            break;
     }
 
     return TK_TERMINAL_SUCCESS;
@@ -266,12 +275,14 @@ TK_TERMINAL_RESULT tk_terminal_updateTile(
     tk_terminal_Tile *Tile_p = ((nh_core_List*)Grid_p->Rows.pp[Update_p->row])->pp[Update_p->col];
 
     // Compare codepoint.
-    if (Tile_p->Glyph.codepoint != Update_p->Glyph.codepoint || Tile_p->Glyph.mark != Update_p->Glyph.mark || Tile_p->Glyph.Attributes.bold != Update_p->Glyph.Attributes.bold)
+    if (Tile_p->Glyph.codepoint != Update_p->Glyph.codepoint || Tile_p->Glyph.mark != Update_p->Glyph.mark || Tile_p->Glyph.Attributes.bold != Update_p->Glyph.Attributes.bold || Tile_p->Glyph.overlay != Update_p->Glyph.overlay)
     {
         TK_TERMINAL_CHECK(tk_terminal_updateTileVertices(
-            &Update_p->Glyph, state_p, Grid_p, Update_p->col, Update_p->row, Tile_p, true, fontSize))
+            &Update_p->Glyph, state_p, Grid_p, Update_p->col, Update_p->row, Tile_p, 1, fontSize))
         TK_TERMINAL_CHECK(tk_terminal_updateTileVertices(
-            &Update_p->Glyph, state_p, Grid_p, Update_p->col, Update_p->row, Tile_p, false, fontSize))
+            &Update_p->Glyph, state_p, Grid_p, Update_p->col, Update_p->row, Tile_p, 0, fontSize))
+        TK_TERMINAL_CHECK(tk_terminal_updateTileVertices(
+            &Update_p->Glyph, state_p, Grid_p, Update_p->col, Update_p->row, Tile_p, 2, fontSize))
         Tile_p->dirty = true;
     }
 
@@ -443,9 +454,11 @@ TK_TERMINAL_RESULT tk_terminal_updateGrid(
                 tk_terminal_getTile(Grid_p, row, col);
             TK_TERMINAL_CHECK_NULL(Tile_p)
             TK_TERMINAL_CHECK(tk_terminal_updateTileVertices(
-                &Tile_p->Glyph, state_p, Grid_p, col, row, Tile_p, true, Config_p->fontSize))
+                &Tile_p->Glyph, state_p, Grid_p, col, row, Tile_p, 1, Config_p->fontSize))
             TK_TERMINAL_CHECK(tk_terminal_updateTileVertices(
-                &Tile_p->Glyph, state_p, Grid_p, col, row, Tile_p, false, Config_p->fontSize))
+                &Tile_p->Glyph, state_p, Grid_p, col, row, Tile_p, 0, Config_p->fontSize))
+            TK_TERMINAL_CHECK(tk_terminal_updateTileVertices(
+                &Tile_p->Glyph, state_p, Grid_p, col, row, Tile_p, 2, Config_p->fontSize))
         }
     }
 

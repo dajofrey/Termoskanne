@@ -32,7 +32,7 @@ typedef struct tk_terminal_TileBackground {
 } tk_terminal_TileBackground;
 
 typedef struct tk_terminal_TileOverlay {
-    float vertices_p[12];
+    float vertices_p[24];
 } tk_terminal_TileOverlay;
 
 typedef struct tk_terminal_Tile {

@@ -586,6 +586,18 @@ static TK_TERMINAL_RESULT tk_terminal_getForegroundVerticesForLineGraphics(
             x4 = x2;
             break;
 
+        case 9999 : // -
+            // First rectangle.
+            y1 = y;
+            y2 = y + height;
+            x1 = (x + (width/2)) + w/2;
+            x2 = x + width;
+            // Second rectangle.
+            y3 = y1;
+            y4 = y2;
+            x3 = x1;
+            x4 = x2;
+            break;
     }
 
     if (State_p->Viewport_p->Surface_p->api == NH_GFX_API_OPENGL) {
@@ -628,6 +640,19 @@ static TK_TERMINAL_RESULT tk_terminal_getForegroundVerticesForLineGraphics(
     Vertices_p[7].z = depth;
 
     nh_verticesToArray(Vertices_p, vertices_p, 8, false, 0);
+
+    return TK_TERMINAL_SUCCESS;
+}
+
+TK_TERMINAL_RESULT tk_terminal_getOverlayVertices(
+    tk_terminal_GraphicsState *State_p, tk_terminal_Grid *Grid_p, tk_core_Glyph *Glyph_p, int col,
+    int row, float *vertices_p, int fontSize)
+{
+    float depth = Glyph_p->mark & TK_CORE_MARK_ELEVATED ? 0.1f : 0.2f;
+
+    TK_TERMINAL_CHECK(tk_terminal_getForegroundVerticesForLineGraphics(
+        State_p, Grid_p, Glyph_p->overlay, col, row, depth, vertices_p, fontSize
+    ))
 
     return TK_TERMINAL_SUCCESS;
 }

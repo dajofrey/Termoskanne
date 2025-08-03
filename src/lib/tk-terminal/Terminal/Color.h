@@ -1,6 +1,8 @@
 #ifndef TK_TERMINAL_TERMINAL_COLOR_H
 #define TK_TERMINAL_TERMINAL_COLOR_H
 
+// INCLUDES ========================================================================================
+ 
 #include "Grid.h"
 #include "Graphics.h"
 
@@ -15,9 +17,11 @@
 #include "nh-core/Util/HashMap.h"
 #include "nh-gfx/Base/Viewport.h"
 
+// FUNCTIONS =======================================================================================
+
 tk_core_Color tk_terminal_getGlyphColor(
     tk_terminal_Config *Config_p, tk_terminal_GraphicsState *State_p, tk_core_Glyph *Glyph_p,
-    bool foreground, int col, int row, tk_terminal_Grid *Grid_p
+    unsigned int target, int col, int row, tk_terminal_Grid *Grid_p
 );
 
 tk_core_Color tk_terminal_getGradientColor(

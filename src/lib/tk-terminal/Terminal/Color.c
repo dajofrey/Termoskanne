@@ -173,10 +173,18 @@ static tk_core_Color tk_terminal_getAccentColor(
 }
 
 static inline tk_core_Color tk_terminal_getGlyphColor2(
-    tk_terminal_Config *Config_p, tk_terminal_GraphicsState *State_p, tk_core_Glyph *Glyph_p, bool foreground,
+    tk_terminal_Config *Config_p, tk_terminal_GraphicsState *State_p, tk_core_Glyph *Glyph_p, unsigned int target,
     int col, int row, tk_terminal_Grid *Grid_p)
 {
-    if (foreground) {
+    if (target == 2) {
+        tk_core_Color Color = tk_terminal_getAccentColor(Config_p, col, row, Grid_p->cols, Grid_p->rows, State_p->AccentGradient.Color);
+        Color.r *= 0.6f;
+        Color.g *= 0.6f;
+        Color.b *= 0.6f;
+        return Color;
+    }
+
+    if (target == 1) {
         if (Glyph_p->Attributes.reverse || (Glyph_p->Attributes.blink && State_p->Blink.on)) {
             if (Glyph_p->Background.custom) {
                 return Glyph_p->Background.Color;
@@ -226,9 +234,9 @@ static inline tk_core_Color tk_terminal_getGlyphColor2(
 
 tk_core_Color tk_terminal_getGlyphColor(
     tk_terminal_Config *Config_p, tk_terminal_GraphicsState *State_p, tk_core_Glyph *Glyph_p,
-    bool foreground, int col, int row, tk_terminal_Grid *Grid_p)
+    unsigned int target, int col, int row, tk_terminal_Grid *Grid_p)
 {
-    tk_core_Color Color = tk_terminal_getGlyphColor2(Config_p, State_p, Glyph_p, foreground, col, row, Grid_p);
+    tk_core_Color Color = tk_terminal_getGlyphColor2(Config_p, State_p, Glyph_p, target, col, row, Grid_p);
     Color.a = 1.0f;
 
     if (Glyph_p->Attributes.faint) {

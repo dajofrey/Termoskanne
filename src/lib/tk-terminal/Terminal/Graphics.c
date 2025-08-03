@@ -261,6 +261,9 @@ static int tk_terminal_getCurrentAttributeRangeForLineGraphics(
                 *Current_p = Glyph;
                 return total;
             }
+            if (Glyph.overlay != 0) {
+                ++total;
+            }
             ++total;
         }
         *col_p = 0;
@@ -428,7 +431,7 @@ static TK_TERMINAL_RESULT tk_terminal_updateForegroundData(
                 offset1 += 8;
 
                 // add color data
-                tk_core_Color Color = tk_terminal_getGlyphColor(Config_p, State_p, &Tile_p->Glyph, true, j+shift, i, Grid_p);
+                tk_core_Color Color = tk_terminal_getGlyphColor(Config_p, State_p, &Tile_p->Glyph, 1, j+shift, i, Grid_p);
                 for (int v = 0; v < 8; ++v) {
                     nh_core_appendToArray(&Colors2, &Color.r, 1);
                     nh_core_appendToArray(&Colors2, &Color.g, 1);
@@ -442,12 +445,31 @@ static TK_TERMINAL_RESULT tk_terminal_updateForegroundData(
                 offset2 += 4;
 
                 // add color data
-                tk_core_Color Color = tk_terminal_getGlyphColor(Config_p, State_p, &Tile_p->Glyph, true, j+shift, i, Grid_p);
+                tk_core_Color Color = tk_terminal_getGlyphColor(Config_p, State_p, &Tile_p->Glyph, 1, j+shift, i, Grid_p);
                 for (int v = 0; v < 4; ++v) {
                     nh_core_appendToArray(&Colors, &Color.r, 1);
                     nh_core_appendToArray(&Colors, &Color.g, 1);
                     nh_core_appendToArray(&Colors, &Color.b, 1);
                     nh_core_appendToArray(&Colors, &Color.a, 1);
+                }
+            }
+
+            if (Tile_p->Glyph.overlay != 0) {
+                nh_core_appendToArray(&Vertices2, Tile_p->Overlay.vertices_p, 24);
+                uint32_t indices_p[12] = {
+                    offset1, offset1 + 1, offset1 + 2, offset1, offset1 + 2, offset1 + 3,
+                    offset1 + 4, offset1 + 5, offset1 + 6, offset1 + 4, offset1 + 6, offset1 + 7
+                };
+                nh_core_appendToArray(&Indices2, indices_p, 12);
+                offset1 += 8;
+
+                // add color data
+                tk_core_Color Color = tk_terminal_getGlyphColor(Config_p, State_p, &Tile_p->Glyph, 2, j+shift, i, Grid_p);
+                for (int v = 0; v < 8; ++v) {
+                    nh_core_appendToArray(&Colors2, &Color.r, 1);
+                    nh_core_appendToArray(&Colors2, &Color.g, 1);
+                    nh_core_appendToArray(&Colors2, &Color.b, 1);
+                    nh_core_appendToArray(&Colors2, &Color.a, 1);
                 }
             }
         }
@@ -484,7 +506,7 @@ static TK_TERMINAL_RESULT tk_terminal_updateBackgroundData(
             if (!Tile_p->Glyph.Background.custom && !Tile_p->Glyph.Attributes.reverse && !Tile_p->Glyph.Attributes.blink) {continue;}
             if (Tile_p->Glyph.Attributes.blink && State_p->Blink.on == false) {continue;}
          
-            tk_core_Color Color = tk_terminal_getGlyphColor(Config_p, State_p, &Tile_p->Glyph, false, j+shift, i, Grid_p);
+            tk_core_Color Color = tk_terminal_getGlyphColor(Config_p, State_p, &Tile_p->Glyph, 0, j+shift, i, Grid_p);
             for (int k = 0; k < 4; ++k) {
                 nh_core_appendToArray(&Background_p->Vertices, Tile_p->Background.vertices_p+k*3, 3);
                 if (State_p->Viewport_p->Surface_p->api == NH_GFX_API_VULKAN) {
@@ -531,7 +553,7 @@ static TK_TERMINAL_RESULT tk_terminal_updateBoxesData(
         tk_terminal_Tile *Tile_p = tk_terminal_getTile(Grid_p, Box_p->UpperLeft.y, Box_p->UpperLeft.x);
         Tile_p->Glyph.Attributes.reverse = true;
         Tile_p->Glyph.mark |= TK_CORE_MARK_ACCENT;
-        tk_core_Color Color = tk_terminal_getGlyphColor(Config_p, &Graphics_p->State, &Tile_p->Glyph, false, Box_p->UpperLeft.x+2, Box_p->UpperLeft.y+1, Grid_p);
+        tk_core_Color Color = tk_terminal_getGlyphColor(Config_p, &Graphics_p->State, &Tile_p->Glyph, 0, Box_p->UpperLeft.x+2, Box_p->UpperLeft.y+1, Grid_p);
         Tile_p->Glyph.Attributes.reverse = false;
         Tile_p->Glyph.mark &= TK_CORE_MARK_ACCENT;
         for (int v = 0; v < 12; ++v) {

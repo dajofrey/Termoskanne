@@ -1,8 +1,12 @@
 #ifndef TK_TERMINAL_TERMINAL_VERTICES_H
 #define TK_TERMINAL_TERMINAL_VERTICES_H
 
+// INCLUDES ========================================================================================
+
 #include "Grid.h"
 #include "Graphics.h"
+
+// FUNCTIONS =======================================================================================
 
 TK_TERMINAL_RESULT tk_terminal_getBackgroundVertices(
     tk_terminal_GraphicsState *State_p, tk_terminal_Grid *Grid_p, tk_core_Glyph *Glyph_p, int col,
@@ -20,6 +24,11 @@ TK_TERMINAL_RESULT tk_terminal_getOutlineVertices(
 );
 
 TK_TERMINAL_RESULT tk_terminal_getForegroundVertices(
+    tk_terminal_GraphicsState *State_p, tk_terminal_Grid *Grid_p, tk_core_Glyph *Glyph_p, int col,
+    int row, float *vertices_p, int fontSize
+);
+
+TK_TERMINAL_RESULT tk_terminal_getOverlayVertices(
     tk_terminal_GraphicsState *State_p, tk_terminal_Grid *Grid_p, tk_core_Glyph *Glyph_p, int col,
     int row, float *vertices_p, int fontSize
 );
