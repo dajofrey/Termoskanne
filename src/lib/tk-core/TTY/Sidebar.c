@@ -36,9 +36,11 @@ TK_CORE_RESULT tk_core_drawSidebar(
 {
     tk_core_View *View_p = TTY_p->Views.pp[0];
 
-    View_p->Grid1_p[0].Glyphs_p[0].Attributes.reverse = false;
-    View_p->Grid1_p[0].Glyphs_p[0].Attributes.bold = true;
-    View_p->Grid1_p[0].Glyphs_p[0].codepoint = 0x2261;
+    if (TTY_p->Config.Titlebar.on == false) {
+        View_p->Grid1_p[0].Glyphs_p[0].Attributes.reverse = false;
+        View_p->Grid1_p[0].Glyphs_p[0].Attributes.bold = true;
+        View_p->Grid1_p[0].Glyphs_p[0].codepoint = 0x2261;
+    }
     View_p->Grid1_p[0].Glyphs_p[1].mark |= TK_CORE_MARK_LINE_VERTICAL | TK_CORE_MARK_LINE_GRAPHICS | TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND;
     View_p->Grid1_p[0].Glyphs_p[1].Background.custom = true;
     View_p->Grid1_p[0].Glyphs_p[1].Attributes.reverse = false;

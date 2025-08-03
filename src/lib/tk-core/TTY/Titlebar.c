@@ -92,7 +92,6 @@ TK_CORE_RESULT tk_core_drawTitlebar(
     // Set titlebar color.
     for (int i = 0; i < cols ; ++i) {
         Row_p->Glyphs_p[i].mark |= TK_CORE_MARK_ACCENT;
-        Row_p->Glyphs_p[i].mark |= TK_CORE_MARK_ACCENT;
     }
 
 //    for (int i = 1; tk_core_getConfig().Topbar.on == 1 && i < (Config.windows+1) && i < cols ; ++i) {
@@ -166,6 +165,16 @@ TK_CORE_RESULT tk_core_drawTitlebar(
 
     TTY_p->Titlebar.RAM = NH_SYSTEM.RAM;
     TTY_p->Titlebar.Time = NH_SYSTEM.LocalTime;
+
+    if (TTY_p->Config.Sidebar.on) {
+Row_p->update_p[0] = 1;
+Row_p->update_p[1] = 1;
+        Row_p->Glyphs_p[0].codepoint = 0x2261;
+        Row_p->Glyphs_p[0].Attributes.bold = true;
+        Row_p->Glyphs_p[0].Attributes.reverse = true;
+        Row_p->Glyphs_p[1].codepoint = 'e';
+        Row_p->Glyphs_p[1].mark |= TK_CORE_MARK_ACCENT | TK_CORE_MARK_LINE_GRAPHICS;
+    }
 
     return TK_CORE_SUCCESS;
 }
