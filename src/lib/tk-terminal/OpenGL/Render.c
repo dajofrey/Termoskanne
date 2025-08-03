@@ -188,7 +188,7 @@ static TK_TERMINAL_RESULT tk_terminal_drawOpenGLInactiveCursor(
 
 TK_TERMINAL_RESULT tk_terminal_renderUsingOpenGL(
     tk_terminal_Config *Config_p, tk_terminal_Graphics *Graphics_p, tk_terminal_Grid *Grid_p,
-    tk_terminal_Grid *BackdropGrid_p, unsigned int sidebar)
+    tk_terminal_Grid *BackdropGrid_p, unsigned int sidebar, bool solidSidebar)
 {
     bool blockUntilRender = Graphics_p->MainData.Background.Action.init || Graphics_p->MainData.Foreground.Action.init;
 
@@ -309,20 +309,22 @@ TK_TERMINAL_RESULT tk_terminal_renderUsingOpenGL(
 
         TK_TERMINAL_CHECK(tk_terminal_drawOpenGLBackground(&Graphics_p->State, &Graphics_p->BackdropData))
  
-        if (Config_p->style > 0) {
-            TK_TERMINAL_CHECK(tk_terminal_drawOpenGLDim(Graphics_p, Grid_p))
-        } else {
-            nh_gfx_addOpenGLCommand(
-                Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p, 
-                "glClearColor",
-                nh_gfx_glfloat(NULL, Graphics_p->State.Viewport_p->Settings.ClearColor.r),
-                nh_gfx_glfloat(NULL, Graphics_p->State.Viewport_p->Settings.ClearColor.g),
-                nh_gfx_glfloat(NULL, Graphics_p->State.Viewport_p->Settings.ClearColor.b),
-                nh_gfx_glfloat(NULL, Graphics_p->State.Viewport_p->Settings.ClearColor.a));
-            nh_gfx_addOpenGLCommand(
-                Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p, 
-                "glClear", 
-                nh_gfx_glenum(NULL, GL_COLOR_BUFFER_BIT));
+        if (!solidSidebar) {
+            if (Config_p->style > 0) {
+                TK_TERMINAL_CHECK(tk_terminal_drawOpenGLDim(Graphics_p, Grid_p))
+            } else {
+                nh_gfx_addOpenGLCommand(
+                    Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p, 
+                    "glClearColor",
+                    nh_gfx_glfloat(NULL, Graphics_p->State.Viewport_p->Settings.ClearColor.r),
+                    nh_gfx_glfloat(NULL, Graphics_p->State.Viewport_p->Settings.ClearColor.g),
+                    nh_gfx_glfloat(NULL, Graphics_p->State.Viewport_p->Settings.ClearColor.b),
+                    nh_gfx_glfloat(NULL, Graphics_p->State.Viewport_p->Settings.ClearColor.a));
+                nh_gfx_addOpenGLCommand(
+                    Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p, 
+                    "glClear", 
+                    nh_gfx_glenum(NULL, GL_COLOR_BUFFER_BIT));
+            }
         }
 
         nh_gfx_addOpenGLCommand(

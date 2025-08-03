@@ -87,6 +87,10 @@
         tk_core_Glyph *Glyph_p, bool reverse
     );
 
+    int tk_core_getCurrentWindowIndex(
+        void *TTY_p
+    );
+
 /** @} */
 
 #endif // TK_CORE_TTY_MACRO_H

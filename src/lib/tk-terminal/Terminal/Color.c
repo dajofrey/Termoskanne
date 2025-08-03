@@ -211,6 +211,13 @@ static inline tk_core_Color tk_terminal_getGlyphColor2(
         return Config_p->Foreground;
     }
     if (Glyph_p->Background.custom) {
+        if (Glyph_p->mark & TK_CORE_MARK_ACCENT_BACKGROUND) {
+            tk_core_Color Color = tk_terminal_getAccentColor(Config_p, col, row, Grid_p->cols, Grid_p->rows, State_p->AccentGradient.Color);
+            Color.r *= 0.6f;
+            Color.g *= 0.6f;
+            Color.b *= 0.6f;
+            return Color;
+        }
         return Glyph_p->Background.Color;
     }
 

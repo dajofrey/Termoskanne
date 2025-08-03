@@ -31,9 +31,14 @@ typedef struct tk_terminal_TileBackground {
     float vertices_p[12];
 } tk_terminal_TileBackground;
 
+typedef struct tk_terminal_TileOverlay {
+    float vertices_p[12];
+} tk_terminal_TileOverlay;
+
 typedef struct tk_terminal_Tile {
     tk_terminal_TileForeground Foreground;
     tk_terminal_TileBackground Background;
+    tk_terminal_TileOverlay Overlay;
     tk_core_Glyph Glyph;
     bool dirty;
 } tk_terminal_Tile;

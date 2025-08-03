@@ -226,7 +226,7 @@ TK_CORE_RESULT tk_core_forwardCursor(
 
     tk_terminal_TileUpdate Update;
     Update.row = Config_p->Titlebar.on ? y : y - 1;
-    Update.col = Config_p->sidebar ? x + 1 : x - 1;
+    Update.col = Config_p->Sidebar.on ? x + 1 : x - 1;
     Update.Glyph = Glyph;
     Update.cursor = true;
 
@@ -376,9 +376,9 @@ TK_CORE_RESULT tk_core_forwardBoxes(
 
             tk_terminal_Box *Box_p = (tk_terminal_Box*)nh_core_incrementArray(Boxes_p);
             memset(Box_p, 0, sizeof(tk_terminal_Box));
-            Box_p->UpperLeft.x = Config_p->sidebar ? x : x-2;
+            Box_p->UpperLeft.x = Config_p->Sidebar.on ? x : x-2;
             Box_p->UpperLeft.y = Config_p->Titlebar.on ? y : y-1;
-            Box_p->LowerRight.x = Config_p->sidebar ? x : x-2;
+            Box_p->LowerRight.x = Config_p->Sidebar.on ? x : x-2;
             Box_p->LowerRight.y = Config_p->Titlebar.on ? y : y-1;
             Box_p->accent = true;
         }

@@ -683,6 +683,26 @@ TK_CORE_RESULT tk_core_drawTopbarRow(
         Glyphs_p[i].Attributes.bold = true;
     }
  
+    Glyphs_p[0].codepoint = 0;
+    Glyphs_p[0].Attributes.reverse = false;
+    Glyphs_p[0].mark |= TK_CORE_MARK_ACCENT_BACKGROUND;
+    Glyphs_p[1].codepoint = TK_CORE_MACRO_TILE(Tile_p)->current + '1';
+    Glyphs_p[1].Attributes.reverse = false;
+
+    Glyphs_p[0].Background.custom = true;
+    Glyphs_p[1].Background.custom = true;
+    Glyphs_p[2].Background.custom = true;
+    Glyphs_p[3].Background.custom = true;
+ 
+    Glyphs_p[1].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND;
+    Glyphs_p[2].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND;
+    Glyphs_p[3].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND;
+    Glyphs_p[2].codepoint = 0;
+    Glyphs_p[2].Attributes.reverse = false;
+    Glyphs_p[3].codepoint = 'd';
+    Glyphs_p[3].Attributes.reverse = false;
+    Glyphs_p[3].mark |= TK_CORE_MARK_LINE_GRAPHICS;
+
 //    if (Tile_p && tk_core_getConfig().Topbar.on == false && tk_core_getConfig().Titlebar.on == true) {
 //        for (int i = 1, j = 1; i <= tk_core_getConfig().tabs; ++i, j+=2) {
 //            Glyphs_p[cols-(i+j)].codepoint = 'p';

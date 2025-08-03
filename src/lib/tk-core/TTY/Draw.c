@@ -232,6 +232,11 @@ static TK_CORE_RESULT tk_core_postProcessRow(
                 }
                 else {
                     Glyph_p->codepoint = (Glyph_p+1)->Attributes.reverse ? 'd' : 't';
+                    if (i < View_p->cols-1 && (Glyph_p+1)->mark & TK_CORE_MARK_ACCENT_BACKGROUND) {
+                        Glyph_p->Background.custom = true;
+                        Glyph_p->mark |= TK_CORE_MARK_ACCENT_BACKGROUND;
+                        Glyph_p->codepoint = 'x'; 
+                    }
                 }
             }
             else if (i < View_p->cols-1 && ((Glyph_p-1)->mark & TK_CORE_MARK_LINE_HORIZONTAL)) {
@@ -265,6 +270,12 @@ static TK_CORE_RESULT tk_core_postProcessRow(
                 Glyph_p->Attributes.reverse = true;
                 Glyph_p->mark |= TK_CORE_MARK_ACCENT;
                 Glyph_p->codepoint = 0;
+            }
+        }
+        if (i < View_p->cols-1 && (Glyph_p+1)->mark & TK_CORE_MARK_ACCENT_BACKGROUND) {
+            if (Glyph_p->codepoint == 'e' && (Glyph_p->mark & TK_CORE_MARK_LINE_GRAPHICS)) {
+                Glyph_p->Background.custom = true;
+                Glyph_p->mark |= TK_CORE_MARK_ACCENT_BACKGROUND;
             }
         }
     }
@@ -317,7 +328,7 @@ TK_CORE_RESULT tk_core_refreshGrid1(
 {
     tk_core_View *View_p = TTY_p->Views.pp[0];
 
-    if (TTY_p->Config.sidebar) {
+    if (TTY_p->Config.Sidebar.on) {
         View_p->cols -= 2;
     }
 
@@ -326,7 +337,7 @@ TK_CORE_RESULT tk_core_refreshGrid1(
 
     for (int row = 0; row < View_p->rows; ++row) {
 
-        if (TTY_p->Config.sidebar) {
+        if (TTY_p->Config.Sidebar.on) {
             View_p->Grid1_p[row].Glyphs_p[0].Attributes.bold= true;
             View_p->Grid1_p[row].Glyphs_p[0].mark = TK_CORE_MARK_ACCENT;
             View_p->Grid1_p[row].Glyphs_p[0].codepoint = 0;
@@ -334,20 +345,20 @@ TK_CORE_RESULT tk_core_refreshGrid1(
             View_p->Grid1_p[row].Glyphs_p[1].codepoint = 'x';
         }
 
-        if (TTY_p->Config.sidebar) {
+        if (TTY_p->Config.Sidebar.on) {
             View_p->Grid1_p[row].Glyphs_p = View_p->Grid1_p[row].Glyphs_p+2;
             View_p->Grid1_p[row].update_p = View_p->Grid1_p[row].update_p+2;
         }
 
         TK_CHECK(tk_core_refreshGrid1Row(&TTY_p->Config, &Tiles, View_p, row))
 
-        if (TTY_p->Config.sidebar) {
+        if (TTY_p->Config.Sidebar.on) {
             View_p->Grid1_p[row].Glyphs_p = View_p->Grid1_p[row].Glyphs_p-2;
             View_p->Grid1_p[row].update_p = View_p->Grid1_p[row].update_p-2;
         }
     }
 
-    if (TTY_p->Config.sidebar) {
+    if (TTY_p->Config.Sidebar.on) {
         View_p->cols += 2;
         tk_core_drawSidebar(TTY_p);
     }

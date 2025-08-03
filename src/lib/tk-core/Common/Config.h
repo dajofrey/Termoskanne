@@ -1,8 +1,12 @@
-#ifndef TK_CORE_CONFIG_H
-#define TK_CORE_CONFIG_H
+#ifndef TK_CORE_COMMON_CONFIG_H
+#define TK_CORE_COMMON_CONFIG_H
+
+// INCLUDES ========================================================================================
 
 #include "Includes.h"
 #include <stddef.h>
+
+// STRUCTS =========================================================================================
 
 typedef struct tk_core_MenuConfig {
     bool program;
@@ -28,19 +32,26 @@ typedef struct tk_core_ShellConfig {
     unsigned int maxScroll;
 } tk_core_ShellConfig;
 
+typedef struct tk_core_SidebarConfig {
+    bool on;
+    bool solid;
+} tk_core_SidebarConfig;
+
 typedef struct tk_core_Config {
     char *name_p;
     tk_core_TitlebarConfig Titlebar;
     tk_core_TopbarConfig Topbar;
     tk_core_ShellConfig Shell;
     tk_core_MenuConfig Menu;
+    tk_core_SidebarConfig Sidebar;
     int windows;
     int tabs;
-    bool sidebar;
 } tk_core_Config;
+
+// FUNCTIONS =======================================================================================
 
 tk_core_Config tk_core_updateConfig(
     void *TTY_p
 );
 
-#endif
+#endif // TK_CORE_COMMON_CONFIG_H

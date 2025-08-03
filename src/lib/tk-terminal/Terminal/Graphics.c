@@ -482,7 +482,8 @@ static TK_TERMINAL_RESULT tk_terminal_updateBackgroundData(
         for (int j = 0; j < Row_p->size; ++j) {
             tk_terminal_Tile *Tile_p = Row_p->pp[j];
             if (!Tile_p->Glyph.Background.custom && !Tile_p->Glyph.Attributes.reverse && !Tile_p->Glyph.Attributes.blink) {continue;}
-
+            if (Tile_p->Glyph.Attributes.blink && State_p->Blink.on == false) {continue;}
+         
             tk_core_Color Color = tk_terminal_getGlyphColor(Config_p, State_p, &Tile_p->Glyph, false, j+shift, i, Grid_p);
             for (int k = 0; k < 4; ++k) {
                 nh_core_appendToArray(&Background_p->Vertices, Tile_p->Background.vertices_p+k*3, 3);
@@ -666,10 +667,10 @@ TK_TERMINAL_RESULT tk_terminal_handleViewportChange(
 
 TK_TERMINAL_RESULT tk_terminal_renderGraphics(
     tk_terminal_Config *Config_p, tk_terminal_Graphics *Graphics_p, tk_terminal_Grid *Grid_p,
-    tk_terminal_Grid *ElevatedGrid_p, tk_terminal_Grid *BackdropGrid_p, bool sidebar)
+    tk_terminal_Grid *ElevatedGrid_p, tk_terminal_Grid *BackdropGrid_p, tk_core_Config *CoreConfig_p)
 {
     unsigned int offset = 0;
-    if (sidebar) {
+    if (CoreConfig_p->Sidebar.on) {
         offset = tk_terminal_getSidebarOffset(Grid_p);
     }
 
@@ -683,7 +684,7 @@ TK_TERMINAL_RESULT tk_terminal_renderGraphics(
            return TK_TERMINAL_ERROR_BAD_STATE;
 #endif
        case NH_GFX_API_OPENGL :
-           TK_TERMINAL_CHECK(tk_terminal_renderUsingOpenGL(Config_p, Graphics_p, Grid_p, BackdropGrid_p, offset))
+           TK_TERMINAL_CHECK(tk_terminal_renderUsingOpenGL(Config_p, Graphics_p, Grid_p, BackdropGrid_p, offset, CoreConfig_p->Sidebar.solid))
            break;
        default :
            return TK_TERMINAL_ERROR_BAD_STATE;

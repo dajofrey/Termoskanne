@@ -93,7 +93,11 @@ static TK_CORE_RESULT tk_core_getSetting(
             break;
         case 14 :
             if (Values_p->size != 1) {return TK_CORE_ERROR_BAD_STATE;}
-            Config_p->sidebar = atoi(Values_p->pp[0]);
+            Config_p->Sidebar.on = atoi(Values_p->pp[0]);
+            break;
+        case 15 :
+            if (Values_p->size != 1) {return TK_CORE_ERROR_BAD_STATE;}
+            Config_p->Sidebar.solid = atoi(Values_p->pp[0]);
             break;
     }
 
@@ -121,6 +125,7 @@ static tk_core_Config tk_core_getStaticConfig()
         "tk-core.titlebar.background",
         "tk-core.topbar.on",
         "tk-core.sidebar.on",
+        "tk-core.sidebar.solid",
     };
 
     int options = sizeof(options_pp)/sizeof(options_pp[0]);

@@ -296,11 +296,11 @@ static bool tk_core_isTilingInput(
     return tiling;
 }
 
-static int tk_core_getCurrentWindowIndex(
-    tk_core_TTY *TTY_p)
+int tk_core_getCurrentWindowIndex(
+    void *TTY_p)
 {
     int i = 0;
-    for (; i < TTY_p->Windows.size && TTY_p->Windows.pp[i] != TTY_p->Window_p; ++i);
+    for (; i < ((tk_core_TTY*)TTY_p)->Windows.size && ((tk_core_TTY*)TTY_p)->Windows.pp[i] != ((tk_core_TTY*)TTY_p)->Window_p; ++i);
     return i;
 }
 
@@ -552,7 +552,7 @@ static TK_CORE_RESULT tk_core_handleMouseInput(
         // Forward program hit.
         Event.Window.Position.x = Event.Mouse.Position.x;
         Event.Window.Position.y = Event.Mouse.Position.y;
-        Event.Mouse.Position.x = Config_p->sidebar ? cCol-2 : cCol;
+        Event.Mouse.Position.x = Config_p->Sidebar.on ? cCol-2 : cCol;
         Event.Mouse.Position.y = cRow - 1; // Subtract topbar. 
         TK_CHECK(TK_CORE_MICRO_TILE(MicroTile_p)->Program_p->Prototype_p->Callbacks.handleInput_f(
             TK_CORE_MICRO_TILE(MicroTile_p)->Program_p, Event

@@ -19,6 +19,8 @@
 #include "nh-core/Util/HashMap.h"
 #include "nh-gfx/Base/Viewport.h"
 
+#include "../../tk-core/Common/Config.h"
+
 // STRUCTS =========================================================================================
 
 typedef struct tk_terminal_AttributeRange {
@@ -149,7 +151,7 @@ TK_TERMINAL_RESULT tk_terminal_updateGraphics(
 
 TK_TERMINAL_RESULT tk_terminal_renderGraphics(
     tk_terminal_Config *Config_p, tk_terminal_Graphics *Graphics_p, tk_terminal_Grid *Grid_p,
-    tk_terminal_Grid *ElevatedGrid_p, tk_terminal_Grid *BackdropGrid_p, bool sidebar
+    tk_terminal_Grid *ElevatedGrid_p, tk_terminal_Grid *BackdropGrid_p, tk_core_Config *CoreConfig_p
 );
 
 bool tk_terminal_updateBlinkOrGradient(
