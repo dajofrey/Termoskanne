@@ -221,7 +221,9 @@ TK_TERMINAL_RESULT tk_terminal_renderUsingOpenGL(
     }
 
     TK_TERMINAL_CHECK(tk_terminal_updateOpenGLForeground(Config_p, &Graphics_p->State, &Graphics_p->BackdropData))
-    TK_TERMINAL_CHECK(tk_terminal_drawOpenGLForeground(&Graphics_p->State, &Graphics_p->BackdropData))
+
+// the next line dumps on macos
+//    TK_TERMINAL_CHECK(tk_terminal_drawOpenGLForeground(&Graphics_p->State, &Graphics_p->BackdropData))
 
 // clear except borders
 

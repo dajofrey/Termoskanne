@@ -31,7 +31,7 @@ static TK_TERMINAL_RESULT tk_terminal_initOpenGLDimProgram(
     tk_terminal_OpenGLDim *Dim_p, nh_gfx_OpenGLCommandBuffer *CommandBuffer_p)
 {
     static const char* vsSource_p =
-        "#version 450\n"
+        "#version 410\n"
         "layout(location=0) in vec3 position;\n"
         "layout(location=1) in vec4 in_color;\n"
         "out vec4 color;\n"
@@ -41,7 +41,7 @@ static TK_TERMINAL_RESULT tk_terminal_initOpenGLDimProgram(
         "}\n";
 
     static const char* fsSource_p =
-        "#version 450\n"
+        "#version 410\n"
         "in vec4 color;\n"
         "out vec4 fragColor;\n"
         "void main() {\n"

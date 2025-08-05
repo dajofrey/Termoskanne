@@ -33,7 +33,7 @@ static TK_TERMINAL_RESULT tk_terminal_initOpenGLForegroundPrograms(
     tk_terminal_OpenGLForeground *Foreground_p, nh_gfx_OpenGLCommandBuffer *CommandBuffer_p)
 {
     static const char* vsSource_p =
-        "#version 450\n"
+        "#version 410\n"
         "layout(location=0) in vec3 position;\n"
         "layout(location=1) in vec2 uv;\n"
         "layout(location=2) in vec4 in_color;\n"
@@ -46,12 +46,7 @@ static TK_TERMINAL_RESULT tk_terminal_initOpenGLForegroundPrograms(
         "}\n";
 
     static const char* fsSource_p =
-        "#version 450\n"
-        "#if __VERSION__ < 130\n"
-        "#define TEXTURE2D texture2D\n"
-        "#else\n"
-        "#define TEXTURE2D texture\n"
-        "#endif\n"
+        "#version 410\n"
         "uniform sampler2D u_texture;\n"
         "in vec2 texcoord;\n"
         "in vec4 color;\n"

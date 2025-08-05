@@ -38,7 +38,7 @@ static void handleInput(
             {
                 case NH_API_WINDOW_CONFIGURE :
                     if (Viewport_p) {
-                        nh_api_configureViewport(Viewport_p, Position, Event.Window.Size); 
+                        nh_api_configureViewport(Viewport_p, Position, Event.Window.PixelSize); 
                     }
                     break;
                 case NH_API_WINDOW_FOCUS_OUT :
