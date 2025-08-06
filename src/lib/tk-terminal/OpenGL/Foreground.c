@@ -52,7 +52,7 @@ static TK_TERMINAL_RESULT tk_terminal_initOpenGLForegroundPrograms(
         "in vec4 color;\n"
         "out vec4 fragColor;\n"
         "void main() {\n"
-        "    float dist = TEXTURE2D(u_texture, texcoord.st).r;\n"
+        "    float dist = texture(u_texture, texcoord.st).r;\n"
         "    float width = fwidth(dist);\n"
         "    float alpha = smoothstep(0.5-width, 0.5+width, dist);\n"
         "    fragColor = vec4(color.rgb, alpha*color.a);\n"
