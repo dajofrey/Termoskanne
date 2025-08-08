@@ -23,6 +23,7 @@
 
 TK_CORE_RESULT tk_core_initialize()
 {
-    nh_core_appendConfig(termoskanne_default_conf_inc, termoskanne_default_conf_inc_len, true);
+    // Add default config, but don't overwrite manually passed settings.
+    nh_core_updateConfig(termoskanne_default_conf_inc, termoskanne_default_conf_inc_len, 0);
     return TK_CORE_SUCCESS;
 }

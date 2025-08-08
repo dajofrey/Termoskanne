@@ -46,18 +46,19 @@ TK_CORE_RESULT tk_core_drawSidebar(
     View_p->Grid1_p[0].Glyphs_p[1].Attributes.reverse = false;
     View_p->Grid1_p[0].Glyphs_p[1].codepoint = 'x';
     
-    View_p->Grid1_p[View_p->rows/2-4].Glyphs_p[0].codepoint = 0x25cf;
-    View_p->Grid1_p[View_p->rows/2-3].Glyphs_p[0].codepoint = 0x25cf;
-    View_p->Grid1_p[View_p->rows/2-2].Glyphs_p[0].codepoint = 0x25cf;
-    View_p->Grid1_p[View_p->rows/2-1].Glyphs_p[0].codepoint = 0x25cf;
-    View_p->Grid1_p[View_p->rows/2  ].Glyphs_p[0].codepoint = 0x25cf;
-    View_p->Grid1_p[View_p->rows/2+1].Glyphs_p[0].codepoint = 0x25cf;
-    View_p->Grid1_p[View_p->rows/2+2].Glyphs_p[0].codepoint = 0x25cf;
-    View_p->Grid1_p[View_p->rows/2+3].Glyphs_p[0].codepoint = 0x25cf;
-    View_p->Grid1_p[View_p->rows/2+4].Glyphs_p[0].codepoint = 0x25cf;
-
-    unsigned int focus = View_p->rows/2-4 + tk_core_getCurrentWindowIndex(TTY_p);
-    View_p->Grid1_p[focus].Glyphs_p[0].codepoint = 0x25cb;
+//    View_p->Grid1_p[View_p->rows/2-4].Glyphs_p[0].codepoint = 0x25cf;
+//    View_p->Grid1_p[View_p->rows/2-3].Glyphs_p[0].codepoint = 0x25cf;
+//    View_p->Grid1_p[View_p->rows/2-2].Glyphs_p[0].codepoint = 0x25cf;
+//    View_p->Grid1_p[(View_p->rows+1)/2-1].Glyphs_p[0].codepoint = 0x25b2;
+//    View_p->Grid1_p[(View_p->rows+1)/2  ].Glyphs_p[0].codepoint = '1';
+//
+//    View_p->Grid1_p[View_p->rows/2+1].Glyphs_p[0].codepoint = 0x25bc;
+//    View_p->Grid1_p[View_p->rows/2+2].Glyphs_p[0].codepoint = 0x25cf;
+//    View_p->Grid1_p[View_p->rows/2+3].Glyphs_p[0].codepoint = 0x25cf;
+//    View_p->Grid1_p[View_p->rows/2+4].Glyphs_p[0].codepoint = 0x25cf;
+//
+//    unsigned int focus = tk_core_getCurrentWindowIndex(TTY_p);
+//    View_p->Grid1_p[(View_p->rows+1)/2].Glyphs_p[0].codepoint = focus+ '1';
 
     for (int i = 0; i < View_p->rows; ++i) {
         if (View_p->Grid1_p[i].Glyphs_p[2].Attributes.reverse == true) {
@@ -68,7 +69,7 @@ TK_CORE_RESULT tk_core_drawSidebar(
         if (TTY_p->Config.Sidebar.solid) {
             View_p->Grid1_p[i].Glyphs_p[0].Attributes.reverse = true;
             View_p->Grid1_p[i].Glyphs_p[1].codepoint = 'e';
-            View_p->Grid1_p[i].Glyphs_p[0].Attributes.bold = true;
+//            View_p->Grid1_p[i].Glyphs_p[0].Attributes.bold = true;
             if (View_p->Grid1_p[i].Glyphs_p[2].Background.custom = true && View_p->Grid1_p[i].Glyphs_p[2].mark & TK_CORE_MARK_ACCENT_BACKGROUND) {
                 View_p->Grid1_p[i].Glyphs_p[1].mark |= TK_CORE_MARK_ACCENT_BACKGROUND;
                 View_p->Grid1_p[i].Glyphs_p[1].Background.custom = true;
