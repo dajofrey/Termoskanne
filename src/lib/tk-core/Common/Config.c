@@ -147,6 +147,7 @@ tk_core_Config tk_core_updateConfig(
     if (((tk_core_TTY*)TTY_p)->Views.size > 0 && ((tk_core_TTY*)TTY_p)->Views.pp != NULL && ((tk_core_View*)((tk_core_TTY*)TTY_p)->Views.pp[0])->standardIO) {
         ((tk_core_TTY*)TTY_p)->Config.Titlebar.on = false;
         ((tk_core_TTY*)TTY_p)->Config.Topbar.on = false;
+        ((tk_core_TTY*)TTY_p)->Config.Sidebar.on = false;
     }
     return ((tk_core_TTY*)TTY_p)->Config; 
 } 
