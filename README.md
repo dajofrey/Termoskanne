@@ -24,15 +24,16 @@ Terminal Emulator written in C
 
 | OS | Graphics Driver | Status |
 | --- | --- | --- |
-| Linux*  | OpenGL  | &#x2705; |
-| Linux*  | Vulkan  | &#x274C; |
-| MacOS   | OpenGL  | &#x274C; |
+| Linux  | OpenGL  | &#x2705; |
+| Linux  | Vulkan  | &#x274C; |
+| MacOS   | OpenGL  | &#x2705; |
 | MacOS   | Metal   | &#x274C; |
 | Windows | OpenGL  | &#x274C; |
 | Windows | Vulkan  | &#x274C; |
 | Windows | DirectX | &#x274C; |
 
-\* Linux is currently only supported with X11
+- Linux is currently only supported with X11
+- Tested with MacOS 15.5
 
 ## Dependencies
 

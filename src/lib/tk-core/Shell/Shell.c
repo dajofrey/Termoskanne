@@ -57,16 +57,24 @@ static tk_core_ShellKey KEYS_P[] = {
 	{NH_API_KEY_KP_HOME,       "\033[1;2H",     0,   +1, NH_API_MODIFIER_SHIFT},
 	{NH_API_KEY_KP_HOME,       "\033[H",        0,   -1, -1},
 	{NH_API_KEY_KP_HOME,       "\033[1~",       0,   +1, -1},
+#if defined(__unix__)
 	{NH_API_KEY_KP_UP,         "\033Ox",       +1,    0, -1},
+#endif
 	{NH_API_KEY_KP_UP,         "\033[A",        0,   -1, -1},
 	{NH_API_KEY_KP_UP,         "\033OA",        0,   +1, -1},
+#if defined(__unix__)
 	{NH_API_KEY_KP_DOWN,       "\033Or",       +1,    0, -1},
+#endif
 	{NH_API_KEY_KP_DOWN,       "\033[B",        0,   -1, -1},
 	{NH_API_KEY_KP_DOWN,       "\033OB",        0,   +1, -1},
+#if defined(__unix__)
 	{NH_API_KEY_KP_LEFT,       "\033Ot",       +1,    0, -1},
+#endif
 	{NH_API_KEY_KP_LEFT,       "\033[D",        0,   -1, -1},
 	{NH_API_KEY_KP_LEFT,       "\033OD",        0,   +1, -1},
+#if defined(__unix__)
 	{NH_API_KEY_KP_RIGHT,      "\033Ov",       +1,    0, -1},
+#endif
 	{NH_API_KEY_KP_RIGHT,      "\033[C",        0,   -1, -1},
 	{NH_API_KEY_KP_RIGHT,      "\033OC",        0,   +1, -1},
 	{NH_API_KEY_KP_PRIOR,      "\033[5;2~",     0,    0, NH_API_MODIFIER_SHIFT},
