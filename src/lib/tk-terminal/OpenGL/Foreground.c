@@ -92,7 +92,7 @@ static TK_TERMINAL_RESULT tk_terminal_initOpenGLForegroundPrograms(
             &Foreground_p->Program_p->Result, nh_gfx_glchar(NULL, NULL, 0, &textureName_p)));
 
     static const char* vsSource2_p =
-        "#version 450\n"
+        "#version 410\n"
         "layout(location=0) in vec3 position;\n"
         "layout(location=1) in vec4 in_color;\n"
         "out vec4 color;\n"
@@ -102,7 +102,7 @@ static TK_TERMINAL_RESULT tk_terminal_initOpenGLForegroundPrograms(
         "}\n";
 
     static const char* fsSource2_p =
-        "#version 450\n"
+        "#version 410\n"
         "in vec4 color;\n"
         "out vec4 fragColor;\n"
         "void main() {\n"

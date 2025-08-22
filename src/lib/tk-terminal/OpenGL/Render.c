@@ -162,9 +162,9 @@ static TK_TERMINAL_RESULT tk_terminal_drawOpenGLInactiveCursor(
         nh_gfx_addOpenGLCommand(CommandBuffer_p, "glDrawArrays", 
             nh_gfx_glenum(NULL, GL_TRIANGLES), nh_gfx_glint(NULL, offset), nh_gfx_glsizei(NULL, 6));
         offset += 6;
-        // Render outer box.
-        nh_gfx_addOpenGLCommand(CommandBuffer_p, "glDrawArrays", 
-            nh_gfx_glenum(NULL, GL_TRIANGLES), nh_gfx_glint(NULL, offset), nh_gfx_glsizei(NULL, 6));
+//        // Render outer box.
+//        nh_gfx_addOpenGLCommand(CommandBuffer_p, "glDrawArrays", 
+//            nh_gfx_glenum(NULL, GL_TRIANGLES), nh_gfx_glint(NULL, offset), nh_gfx_glsizei(NULL, 6));
         offset += 6;
         nh_gfx_addOpenGLCommand(
             Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p,

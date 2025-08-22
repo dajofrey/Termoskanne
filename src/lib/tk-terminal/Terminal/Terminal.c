@@ -125,6 +125,9 @@ static TK_TERMINAL_RESULT tk_terminal_updateBoxes(
 static TK_TERMINAL_RESULT tk_terminal_updateSize(
     tk_terminal_Terminal *Terminal_p)
 {
+    // maybe refactor this updateSurface to Netzhaut..?
+    nh_gfx_updateSurface(Terminal_p->Graphics.State.Viewport_p->Surface_p);
+
     nh_gfx_claimFontInstance(
         Terminal_p->Graphics.State.Fonts.pp[0], Terminal_p->Config.fontSize
     );

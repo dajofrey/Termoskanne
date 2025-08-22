@@ -439,7 +439,7 @@ TK_TERMINAL_RESULT tk_terminal_updateGrid(
 
     Grid_p->cols = Grid_p->Size.width / nh_gfx_getTextWidth(Text_p);
     Grid_p->rows = Grid_p->Size.height / Grid_p->TileSize.height;
-
+ 
     // Add gap tiles.
     Grid_p->cols += 1;
     Grid_p->rows += 1;

@@ -548,7 +548,7 @@ static TK_TERMINAL_RESULT tk_terminal_updateBoxesData(
         if (Box_p->UpperLeft.x < 0 || Box_p->UpperLeft.y < 0 || Box_p->LowerRight.x < 0 || Box_p->LowerRight.y < 0) {continue;}
         nh_core_appendToArray(&Graphics_p->Boxes.Vertices, Box_p->innerVertices_p, 18);
         nh_core_appendToArray(&Graphics_p->Boxes.Vertices, Box_p->outerVertices_p, 18);
-        if (Box_p->UpperLeft.x != Box_p->LowerRight.y) {continue;}
+        if (Box_p->UpperLeft.x != Box_p->LowerRight.x) {continue;}
         // add color data for inactive cursor
         tk_terminal_Tile *Tile_p = tk_terminal_getTile(Grid_p, Box_p->UpperLeft.y, Box_p->UpperLeft.x);
         Tile_p->Glyph.Attributes.reverse = true;

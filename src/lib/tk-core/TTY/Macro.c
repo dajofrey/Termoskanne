@@ -353,6 +353,16 @@ static TK_CORE_RESULT tk_core_handleKeyboardInput(
         Window_p->refreshGrid1 = true;
         Window_p->refreshGrid2 = true;
     }
+    if (Event.Keyboard.special == NH_API_KEY_COMMAND_L && Event.Keyboard.trigger == NH_API_TRIGGER_PRESS) {
+        TTY_p->alt = true;
+        Window_p->refreshGrid1 = true;
+        Window_p->refreshGrid2 = true;
+    }
+    if (Event.Keyboard.special == NH_API_KEY_COMMAND_L && Event.Keyboard.trigger == NH_API_TRIGGER_RELEASE) {
+        TTY_p->alt = false;
+        Window_p->refreshGrid1 = true;
+        Window_p->refreshGrid2 = true;
+    }
     if (Event.Keyboard.special == NH_API_KEY_CONTROL_L && Event.Keyboard.trigger == NH_API_TRIGGER_PRESS) {
         TTY_p->ctrl = true;
         Window_p->refreshGrid1 = true;
