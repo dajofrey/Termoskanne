@@ -1,15 +1,8 @@
-<p align="center">
- <img src="./build/icons/gradient128x128.png"/>
-</p>
-
 # Termoskanne
 
-Terminal Emulator written in C
+Terminal Emulator (Framework) written in C
 
 ![Screenshot](./build/termoskanne.png)
-
-&#x2705; Noiseless and uniform UI  
-&#x2705; Versatile tabbing and tiling  
 
 ## README Content
 
@@ -31,6 +24,8 @@ Terminal Emulator written in C
 | Windows | OpenGL  | &#x274C; |
 | Windows | Vulkan  | &#x274C; |
 | Windows | DirectX | &#x274C; |
+
+### Notes
 
 - Linux is currently only supported with X11
 - Tested with MacOS 15.5
@@ -58,7 +53,15 @@ For shell functionality, Termoskanne uses parts of [st](https://st.suckless.org/
 ```bash
 git clone https://github.com/dajofrey/termoskanne
 cd termoskanne && git submodule update --init --recursive    
-make -f build/automation/Makefile all
+make -f build/automation/Makefile
+```
+
+### MacOS
+
+```bash
+git clone https://github.com/dajofrey/termoskanne
+cd termoskanne && git submodule update --init --recursive    
+make -f build/automation/macos
 ```
 
 ## Design
@@ -68,10 +71,8 @@ A big failure point when designing a UI is clutter. Sometimes even terminals hav
 
 Termoskanne's graphics focus on mono-space font drawing, which is primarily used in terminals. Even Termoskanne's UI is made using the same technique. This makes everything look proportional and clean, even after scaling. Also, it simplifies development a lot. 
    
-### Tabing and Tiling
-Termoskanne uses a hybrid approach for tabing and tiling:   
-  
-The user can tab between windows, and split these windows into tiles. This is quite common. However, each tile can be tabbed and tiled individually.
+### Tabing and Tiling  
+It is possible to tab between windows, and split these windows into tiles. This is quite common. However, each tile can be tabbed and tiled individually.
 
 #### Rules
 
@@ -98,19 +99,6 @@ Tiles only have background and foreground colors. The background is one solid co
 
 This makes it impossible to draw a tile with 3 colors in it. But sometimes this is needed, for example for complex UI. An overlay character is used to solve this.
 
-### Rendering
-
-1. Backdrop  
-Render grid of ACCENT color tiles.
-2. Clear (if style == 0)  
-Clear inside borders with BACKGROUND color.
-3. Dim (if style > 0)  
-Render quads for dimming.
-4. TTy Background   
-Render grid of BACKGROUND color tiles.
-5. TTy Foreground  
-Render grid of char tiles with FOREGROUND or ACCENT color.
-TODO
 
 ## Development
 If you want to contribute, please run `./scripts/prepare-git.sh` which installs a prepare-commit-msg hook for versioning.
