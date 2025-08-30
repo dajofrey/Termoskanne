@@ -1,12 +1,3 @@
-UNAME_S := $(shell uname -s)
-
-ifeq ($(UNAME_S),Darwin)
-    OS := macOS
-endif
-ifeq ($(UNAME_S),Linux)
-    OS := Linux
-endif
-
 # Defaults
 NETZHAUT_PATH ?= $(CURDIR)/external/Netzhaut
 
@@ -15,22 +6,13 @@ CC = gcc
 CFLAGS = -fPIC -std=gnu99 -Wl,-rpath,$(CURDIR)/lib,-rpath,$(NETZHAUT_PATH)/lib
 
 # Add debug symbols
-CFLAGS += -gfull -O0
-
-ifeq ($(OS),macOS)
-    CFLAGS += -Wl,-undefined,dynamic_lookup
-    CC = clang
-endif
+CFLAGS += -g -O0
 
 # Define the linker and linker flags
 LD = gcc
 LDFLAGS_TK_CORE = -lutil -Lexternal/st-0.8.5/ -lst
 LDFLAGS_TK_TERMINAL =
 LDFLAGS_TK = -Llib -ltk-api -L$(NETZHAUT_PATH)/lib -lnh-api
-
-ifeq ($(OS),macOS)
-    LDFLAGS_TK += -Wl,-rpath,@loader_path/../external/Netzhaut/lib
-endif
 
 # Define the source file directory for each library
 SRC_DIR_TK_CORE = src/lib/tk-core
@@ -88,15 +70,11 @@ SRC_FILES_TK_TERMINAL = \
     Common/Initialize.c \
     Common/Terminate.c \
     Common/Config.c \
-	
-ifeq ($(OS),Linux)
-    SRC_FILES_TK_TERMINAL += \
-        Vulkan/Pipeline.c \
-        Vulkan/Foreground.c \
-        Vulkan/Background.c \
-        Vulkan/Render.c \
-        Vulkan/Dim.c
-endif
+    Vulkan/Pipeline.c \
+    Vulkan/Foreground.c \
+    Vulkan/Background.c \
+    Vulkan/Render.c \
+    Vulkan/Dim.c
 
 SRC_FILES_TK_API = \
     tk-api.c \
@@ -115,16 +93,9 @@ OBJ_FILES_TK = $(patsubst %.c, %.o, $(addprefix $(SRC_DIR_TK)/, $(SRC_FILES_TK))
 OBJ_FILES_ST = $(patsubst %.c, %.o, $(addprefix $(SRC_DIR_ST)/, $(SRC_FILES_ST)))
 
 # Name of the shared libraries and binaries
-ifeq ($(OS),Linux)
-	LIB_TK_CORE = lib/libtk-core.so
-	LIB_TK_TERMINAL = lib/libtk-terminal.so
-	LIB_TK_API = lib/libtk-api.so
-endif
-ifeq ($(OS),MacOS)
-	LIB_TK_CORE = lib/libtk-core.dylib
-	LIB_TK_TERMINAL = lib/libtk-terminal.dylib
-	LIB_TK_API = lib/libtk-api.dylib
-endif
+LIB_TK_CORE = lib/libtk-core.so
+LIB_TK_TERMINAL = lib/libtk-terminal.so
+LIB_TK_API = lib/libtk-api.so
 LIB_ST = external/st-0.8.5/libst.so
 BIN_TK = bin/termoskanne
 
@@ -144,12 +115,7 @@ create_bin_dir:
 
 # Custom compiler flags
 
-ifeq ($(OS),macOS)
-    $(OBJ_FILES_TK_TERMINAL): CFLAGS += -I$(NETZHAUT_PATH)/external -I$(NETZHAUT_PATH)/src/lib
-else
-    $(OBJ_FILES_TK_TERMINAL): CFLAGS += -I$(NETZHAUT_PATH)/external -I$(NETZHAUT_PATH)/src/lib -I$(NETZHAUT_PATH)/external/Vulkan-Headers/include -DINCLUDE_VOLK -DVK_VERSION_1_2 -DVK_USE_PLATFORM_XLIB_KHR -DVK_KHR_xlib_surface
-endif
-
+$(OBJ_FILES_TK_TERMINAL): CFLAGS += -I$(NETZHAUT_PATH)/external -I$(NETZHAUT_PATH)/src/lib -I$(NETZHAUT_PATH)/external/Vulkan-Headers/include -DINCLUDE_VOLK -DVK_VERSION_1_2 -DVK_USE_PLATFORM_XLIB_KHR -DVK_KHR_xlib_surface
 $(OBJ_FILES_TK_CORE): CFLAGS += -I$(NETZHAUT_PATH)/external -I$(NETZHAUT_PATH)/src/lib
 $(OBJ_FILES_TK_API): CFLAGS += -I$(NETZHAUT_PATH)/external -I$(NETZHAUT_PATH)/src/lib
 $(OBJ_FILES_TK): CFLAGS += -Iexternal -I$(NETZHAUT_PATH)/src/lib -Isrc/lib
@@ -167,22 +133,12 @@ $(OBJ_FILES_TK): CFLAGS += -Iexternal -I$(NETZHAUT_PATH)/src/lib -Isrc/lib
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 # Rule to link object files into the shared libraries
-ifeq ($(OS),Linux)
-	$(LIB_TK_CORE): create_lib_dir $(OBJ_FILES_TK_CORE)
-		$(LD) $(CFLAGS) -Wl,-rpath,':$(CURDIR)/external/st-0.8.5' -shared -o $@ $(OBJ_FILES_TK_CORE) $(LDFLAGS_TK_CORE)
-	$(LIB_TK_TERMINAL): create_lib_dir $(OBJ_FILES_TK_TERMINAL)
-		$(LD) $(CFLAGS) -shared -o $@ $(OBJ_FILES_TK_TERMINAL) $(LDFLAGS_TK_TERMINAL)
-	$(LIB_TK_API): create_lib_dir $(OBJ_FILES_TK_API)
-		$(LD) $(CFLAGS) -shared -o $@ $(OBJ_FILES_TK_API) $(LDFLAGS_TK_API)
-endif
-ifeq ($(OS),macOS)
-	$(LIB_TK_CORE): create_lib_dir $(OBJ_FILES_TK_CORE)
-		$(CC) $(CFLAGS) -Wl,-rpath,':$(CURDIR)/external/st-0.8.5' -dynamiclib -o $@ $(OBJ_FILES_TK_CORE) $(LDFLAGS_TK_CORE)
-	$(LIB_TK_TERMINAL): create_lib_dir $(OBJ_FILES_TK_TERMINAL)
-		$(CC) $(CFLAGS) -dynamiclib -o $@ $(OBJ_FILES_TK_TERMINAL) $(LDFLAGS_TK_TERMINAL)
-	$(LIB_TK_API): create_lib_dir $(OBJ_FILES_TK_API)
-		$(CC) $(CFLAGS) -dynamiclib -o $@ $(OBJ_FILES_TK_API) $(LDFLAGS_TK_API)
-endif
+$(LIB_TK_CORE): create_lib_dir $(OBJ_FILES_TK_CORE)
+	$(LD) $(CFLAGS) -Wl,-rpath,':$(CURDIR)/external/st-0.8.5' -shared -o $@ $(OBJ_FILES_TK_CORE) $(LDFLAGS_TK_CORE)
+$(LIB_TK_TERMINAL): create_lib_dir $(OBJ_FILES_TK_TERMINAL)
+	$(LD) $(CFLAGS) -shared -o $@ $(OBJ_FILES_TK_TERMINAL) $(LDFLAGS_TK_TERMINAL)
+$(LIB_TK_API): create_lib_dir $(OBJ_FILES_TK_API)
+	$(LD) $(CFLAGS) -shared -o $@ $(OBJ_FILES_TK_API) $(LDFLAGS_TK_API)
 
 $(LIB_ST): $(OBJ_FILES_ST)
 	$(LD) $(CFLAGS) -shared -o $@ $(OBJ_FILES_ST) $(LDFLAGS_ST)
