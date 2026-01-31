@@ -153,7 +153,7 @@ install: $(BIN_TK)
 clean-netzhaut:
 	@if [ -d external/Netzhaut ] && [ -n "$$(ls -A external/Netzhaut 2>/dev/null)" ]; then \
 		echo "Cleaning Netzhaut..."; \
-		(cd external/Netzhaut && make -f build/automation/lib.mk clean); \
+		(cd external/Netzhaut && make -f build/automation/lib-macos.mk clean); \
 	else \
 		echo "Skipping Netzhaut cleanup (directory missing or empty)."; \
 	fi

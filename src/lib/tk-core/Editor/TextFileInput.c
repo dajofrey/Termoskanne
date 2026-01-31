@@ -21,7 +21,7 @@
 #include "nh-core/Util/File.h"
 #include "nh-css/Parser/Parser.h"
 #include "nh-html/Parser/Parser.h"
-#include "nh-webidl/Runtime/Parser.h"
+#include "nh-webidl/Utils/Parser.h"
 #include "nh-encoding/Encodings/UTF32.h"
 #include "nh-encoding/Encodings/UTF8.h"
 
