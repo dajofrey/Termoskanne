@@ -1,8 +1,9 @@
 # Termoskanne
 
+![Screenshot](./build/icons/gradient128x128.png)
+
 Terminal Emulator (Framework) written in C
 
-![Screenshot](./build/termoskanne.png)
 
 ## README Content
 
