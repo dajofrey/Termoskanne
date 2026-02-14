@@ -46,6 +46,7 @@ tk_core_Tile *tk_core_createMacroTile(
     for (int i = 0; i < 9; ++i) {
         tk_core_MacroTab *MacroTab_p = (tk_core_MacroTab*)nh_core_allocate(sizeof(tk_core_MacroTab));
         TK_CHECK_MEM_2(NULL, MacroTab_p)
+        MacroTab_p->active = i == 0;
         MacroTab_p->Topbar = tk_core_initTopbar();
         MacroTab_p->MicroWindow = MicroTabs_pp == NULL || Parent_p == NULL ?
             tk_core_initMicroWindow(MicroTabs_pp != NULL ? MicroTabs_pp[i] : NULL) : TK_CORE_MACRO_TAB_2(Parent_p, i)->MicroWindow;
@@ -338,6 +339,9 @@ static TK_CORE_RESULT tk_core_handleKeyboardInput(
             Window_p->refreshGrid1 = true;
             Window_p->Tile_p->refresh = true;
             MacroTile_p->current = Event.Keyboard.codepoint - '1';
+            tk_core_MacroTab *Tab_p = nh_core_getFromList(&MacroTile_p->MacroTabs, MacroTile_p->current);
+            if (!Tab_p) {return TK_CORE_ERROR_BAD_STATE;}
+            Tab_p->active = true;
         }
         return TK_CORE_SUCCESS;
     }

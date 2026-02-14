@@ -28,12 +28,13 @@ typedef enum TK_CORE_PROGRAM_E {
 } TK_CORE_PROGRAM_E;
 
 typedef enum TK_CORE_MARK_E {
-    TK_CORE_MARK_LINE_VERTICAL     = 1 << 0, // Internal use.
-    TK_CORE_MARK_LINE_HORIZONTAL   = 1 << 1, // Internal use.
-    TK_CORE_MARK_LINE_GRAPHICS     = 1 << 2,
-    TK_CORE_MARK_ELEVATED          = 1 << 3,
-    TK_CORE_MARK_ACCENT            = 1 << 4,
-    TK_CORE_MARK_ACCENT_BACKGROUND = 1 << 5,
+    TK_CORE_MARK_LINE_VERTICAL       = 1 << 0, // Internal use.
+    TK_CORE_MARK_LINE_HORIZONTAL     = 1 << 1, // Internal use.
+    TK_CORE_MARK_LINE_GRAPHICS       = 1 << 2,
+    TK_CORE_MARK_ELEVATED            = 1 << 3,
+    TK_CORE_MARK_ACCENT              = 1 << 4,
+    TK_CORE_MARK_ACCENT_BACKGROUND   = 1 << 5,
+    TK_CORE_MARK_ACCENT_BACKGROUND_2 = 1 << 6,
 } TK_CORE_MARK_E;
 
 // TYPEDEFS ========================================================================================

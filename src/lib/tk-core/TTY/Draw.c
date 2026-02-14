@@ -277,6 +277,12 @@ static TK_CORE_RESULT tk_core_postProcessRow(
                 Glyph_p->mark |= TK_CORE_MARK_ACCENT_BACKGROUND;
             }
         }
+        if (i < View_p->cols-1 && (Glyph_p+1)->mark & TK_CORE_MARK_ACCENT_BACKGROUND_2) {
+            if (Glyph_p->codepoint == 'e' && (Glyph_p->mark & TK_CORE_MARK_LINE_GRAPHICS)) {
+                Glyph_p->Background.custom = true;
+                Glyph_p->mark |= TK_CORE_MARK_ACCENT_BACKGROUND_2;
+            }
+        }
     }
 
     return TK_CORE_SUCCESS;

@@ -86,11 +86,13 @@ TK_CORE_RESULT tk_core_drawTitlebar(
 {
     tk_core_View *View_p = TTY_p->Views.pp[0];
     tk_core_Row *Row_p = &(View_p->Grid1_p[View_p->rows]);
+    tk_core_Glyph *Glyphs_p = Row_p->Glyphs_p;
     int cols = View_p->cols;
     if (TTY_p->Config.Titlebar.on == false) {return TK_CORE_SUCCESS;}
 
     // Set titlebar color.
     for (int i = 0; i < cols ; ++i) {
+        memset(&Row_p->Glyphs_p[i], 0, sizeof(tk_core_Glyph));
         Row_p->Glyphs_p[i].mark |= TK_CORE_MARK_ACCENT;
     }
 
@@ -139,36 +141,146 @@ TK_CORE_RESULT tk_core_drawTitlebar(
 //        Row_p->update_p[Config.windows+2+i] = 1;
 //    }
 
-    char month_p[6] = {};
-    switch (NH_SYSTEM.LocalTime.months) {
-        case 1 : sprintf(month_p, "Jan"); break;
-        case 2 : sprintf(month_p, "Feb"); break;
-        case 3 : sprintf(month_p, "Mar"); break;
-        case 4 : sprintf(month_p, "Apr"); break;
-        case 5 : sprintf(month_p, "May"); break;
-        case 6 : sprintf(month_p, "Jun"); break;
-        case 7 : sprintf(month_p, "Jul"); break;
-        case 8 : sprintf(month_p, "Aug"); break;
-        case 9 : sprintf(month_p, "Sep"); break;
-        case 10 : sprintf(month_p, "Oct"); break;
-        case 11 : sprintf(month_p, "Nov"); break;
-        case 12 : sprintf(month_p, "Dec"); break;
-    }
+//    char month_p[6] = {};
+//    switch (NH_SYSTEM.LocalTime.months) {
+//        case 1 : sprintf(month_p, "Jan"); break;
+//        case 2 : sprintf(month_p, "Feb"); break;
+//        case 3 : sprintf(month_p, "Mar"); break;
+//        case 4 : sprintf(month_p, "Apr"); break;
+//        case 5 : sprintf(month_p, "May"); break;
+//        case 6 : sprintf(month_p, "Jun"); break;
+//        case 7 : sprintf(month_p, "Jul"); break;
+//        case 8 : sprintf(month_p, "Aug"); break;
+//        case 9 : sprintf(month_p, "Sep"); break;
+//        case 10 : sprintf(month_p, "Oct"); break;
+//        case 11 : sprintf(month_p, "Nov"); break;
+//        case 12 : sprintf(month_p, "Dec"); break;
+//    }
 
-    char middle_p[255] = {};
-    sprintf(middle_p, "%s.%.2d %.2d:%.2d", month_p, NH_SYSTEM.LocalTime.days, NH_SYSTEM.LocalTime.hours, NH_SYSTEM.LocalTime.minutes);
-    int offset = (cols/2)-(strlen(middle_p)/2);
-    for (int i = 0; i <  strlen(middle_p); ++i) {
-        Row_p->Glyphs_p[offset+i].codepoint = middle_p[i];
-        Row_p->update_p[offset+i] = 1;
-    }
+//    char middle_p[255] = {};
+//    sprintf(middle_p, "%s.%.2d %.2d:%.2d", month_p, NH_SYSTEM.LocalTime.days, NH_SYSTEM.LocalTime.hours, NH_SYSTEM.LocalTime.minutes);
+//    int offset = (cols/2)-(strlen(middle_p)/2);
+//    for (int i = 0; i <  strlen(middle_p); ++i) {
+//        Row_p->Glyphs_p[offset+i].codepoint = middle_p[i];
+//        Row_p->update_p[offset+i] = 1;
+//    }
 
-    TTY_p->Titlebar.RAM = NH_SYSTEM.RAM;
-    TTY_p->Titlebar.Time = NH_SYSTEM.LocalTime;
+//    TTY_p->Titlebar.RAM = NH_SYSTEM.RAM;
+//    TTY_p->Titlebar.Time = NH_SYSTEM.LocalTime;
+
+    Row_p->Glyphs_p[cols - 1].mark = TK_CORE_MARK_ACCENT_BACKGROUND;
+    Row_p->update_p[cols - 1] = true;
+    Row_p->Glyphs_p[cols - 1].Background.custom = true;
+
+    Row_p->Glyphs_p[cols - 2].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND;
+    Row_p->Glyphs_p[cols - 2].Attributes.bold = true;
+    Row_p->Glyphs_p[cols - 2].codepoint = 0x2261;
+    Row_p->update_p[cols - 2] = true;
+    Row_p->Glyphs_p[cols - 2].Background.custom = true;
+
+    Row_p->Glyphs_p[cols - 3].mark = TK_CORE_MARK_ACCENT_BACKGROUND;
+    Row_p->update_p[cols - 3] = true;
+    Row_p->Glyphs_p[cols - 3].Background.custom = true;
+
+    Row_p->Glyphs_p[cols - 4].mark = TK_CORE_MARK_ACCENT_BACKGROUND;
+    Row_p->update_p[cols - 4] = true;
+    Row_p->Glyphs_p[cols - 4].Background.custom = true;
+
+    Row_p->Glyphs_p[cols - 5].codepoint = '-';
+    Row_p->Glyphs_p[cols - 5].Attributes.bold = true;
+    Row_p->Glyphs_p[cols - 5].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND;
+    Row_p->update_p[cols - 5] = true;
+    Row_p->Glyphs_p[cols - 5].Background.custom = true;
+
+    Row_p->Glyphs_p[cols - 6].mark = TK_CORE_MARK_ACCENT_BACKGROUND;
+    Row_p->update_p[cols - 6] = true;
+    Row_p->Glyphs_p[cols - 6].Background.custom = true;
+
+    Row_p->Glyphs_p[cols - 7].mark = TK_CORE_MARK_ACCENT_BACKGROUND;
+    Row_p->update_p[cols - 7] = true;
+    Row_p->Glyphs_p[cols - 7].Background.custom = true;
+
+    Row_p->Glyphs_p[cols - 8].codepoint = '+';
+    Row_p->Glyphs_p[cols - 8].Attributes.bold = true;
+    Row_p->Glyphs_p[cols - 8].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND;
+    Row_p->update_p[cols - 8] = true;
+    Row_p->Glyphs_p[cols - 8].Background.custom = true;
+
+    Row_p->Glyphs_p[cols - 9].mark = TK_CORE_MARK_ACCENT_BACKGROUND;
+    Row_p->update_p[cols - 9] = true;
+    Row_p->Glyphs_p[cols - 9].Background.custom = true;
+
+    for (int i = 0, count = 2; i < TTY_p->Windows.size; ++i) {
+        tk_core_MacroWindow *Window_p = TTY_p->Windows.pp[i];
+        Row_p->Glyphs_p[count].codepoint = i + '1';
+
+        Row_p->update_p[count - 2] = true;
+        Row_p->update_p[count - 1] = true;
+        Row_p->update_p[count] = true;
+        Row_p->update_p[count + 1] = true;
+        Row_p->update_p[count + 2] = true;
+ 
+        if (Window_p == TTY_p->Window_p) {
+
+                 Glyphs_p[count - 2].codepoint = 0;
+                 Glyphs_p[count - 2].Attributes.reverse = false;
+                 Glyphs_p[count - 2].mark |= TK_CORE_MARK_ACCENT_BACKGROUND;
+                 Glyphs_p[count - 2].Background.custom = true;
+ 
+                 Glyphs_p[count - 1].codepoint = 0;
+                 Glyphs_p[count - 1].Attributes.reverse = false;
+                 Glyphs_p[count - 1].mark |= TK_CORE_MARK_ACCENT_BACKGROUND;
+                 Glyphs_p[count - 1].Background.custom = true;
+ 
+                 Glyphs_p[count].Attributes.reverse = false;
+                 Glyphs_p[count].Background.custom = true;
+                 Glyphs_p[count].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND;
+ 
+                 Glyphs_p[count + 1].Background.custom = true;
+                 Glyphs_p[count + 1].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND;
+                 Glyphs_p[count + 1].codepoint = 0;
+                 Glyphs_p[count + 1].Attributes.reverse = false;
+ 
+                 Glyphs_p[count + 2].Background.custom = true;
+                 Glyphs_p[count + 2].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND;
+                 Glyphs_p[count + 2].codepoint = 0;
+                 Glyphs_p[count + 2].Attributes.reverse = false;
+ 
+             } else {
+ 
+                 Glyphs_p[count - 2].codepoint = 0;
+                 Glyphs_p[count - 2].Attributes.reverse = false;
+                 Glyphs_p[count - 2].mark |= TK_CORE_MARK_ACCENT_BACKGROUND_2;
+                 Glyphs_p[count - 2].Background.custom = true;
+ 
+                 Glyphs_p[count - 1].codepoint = 0;
+                 Glyphs_p[count - 1].Attributes.reverse = false;
+                 Glyphs_p[count - 1].mark |= TK_CORE_MARK_ACCENT_BACKGROUND_2;
+                 Glyphs_p[count - 1].Background.custom = true;
+ 
+                 Glyphs_p[count].Attributes.reverse = false;
+                 Glyphs_p[count].Background.custom = true;
+                 Glyphs_p[count].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND_2;
+ 
+                 Glyphs_p[count + 1].Background.custom = true;
+                 Glyphs_p[count + 1].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND_2;
+                 Glyphs_p[count + 1].codepoint = 0;
+                 Glyphs_p[count + 1].Attributes.reverse = false;
+ 
+                 Glyphs_p[count + 2].Background.custom = true;
+                 Glyphs_p[count + 2].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND_2;
+                 Glyphs_p[count + 2].codepoint = 0;
+                 Glyphs_p[count + 2].Attributes.reverse = false;
+ 
+             }
+ 
+             count += 5;
+         }
+
 
     if (TTY_p->Config.Sidebar.on) {
-Row_p->update_p[0] = 1;
-Row_p->update_p[1] = 1;
+        Row_p->update_p[0] = 1;
+        Row_p->update_p[1] = 1;
         Row_p->Glyphs_p[0].codepoint = 0x2261;
         Row_p->Glyphs_p[0].Attributes.bold = true;
         Row_p->Glyphs_p[0].Attributes.reverse = true;

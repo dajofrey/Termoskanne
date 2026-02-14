@@ -27,6 +27,7 @@
  */
 
     typedef struct tk_core_MacroTab {
+        bool active;
         tk_core_Topbar Topbar;
         tk_core_MicroWindow MicroWindow;
     } tk_core_MacroTab;
