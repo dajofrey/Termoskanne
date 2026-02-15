@@ -46,7 +46,11 @@ tk_core_Tile *tk_core_createMacroTile(
     for (int i = 0; i < 9; ++i) {
         tk_core_MacroTab *MacroTab_p = (tk_core_MacroTab*)nh_core_allocate(sizeof(tk_core_MacroTab));
         TK_CHECK_MEM_2(NULL, MacroTab_p)
-        MacroTab_p->active = i == 0;
+        if (MicroTabs_pp && Parent_p) {
+            MacroTab_p->active = TK_CORE_MACRO_TAB_2(Parent_p, i)->active;
+        } else {
+            MacroTab_p->active = i == 0;
+        }
         MacroTab_p->Topbar = tk_core_initTopbar();
         MacroTab_p->MicroWindow = MicroTabs_pp == NULL || Parent_p == NULL ?
             tk_core_initMicroWindow(MicroTabs_pp != NULL ? MicroTabs_pp[i] : NULL) : TK_CORE_MACRO_TAB_2(Parent_p, i)->MicroWindow;
@@ -54,7 +58,11 @@ tk_core_Tile *tk_core_createMacroTile(
     }
 
     Tile_p->MacroTabs = MacroTabs;
-    Tile_p->current = 0;
+    if (Parent_p && MicroTabs_pp) {
+        Tile_p->current = TK_CORE_MACRO_TILE(Parent_p)->current;
+    } else {
+        Tile_p->current = 0;
+    }
 
     return tk_core_createTile(Tile_p, TK_CORE_TILE_TYPE_MACRO, Parent_p, index);
 }
