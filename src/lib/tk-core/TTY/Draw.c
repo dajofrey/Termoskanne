@@ -235,6 +235,14 @@ static TK_CORE_RESULT tk_core_postProcessRow(
                     if (i < View_p->cols-1 && (Glyph_p+1)->mark & TK_CORE_MARK_ACCENT_BACKGROUND) {
                         Glyph_p->codepoint = 'x'; 
                         Glyph_p->overlay = 9999;
+                        Glyph_p->mark &= ~TK_CORE_MARK_ACCENT_BACKGROUND_2; 
+                        Glyph_p->mark |= TK_CORE_MARK_ACCENT_BACKGROUND; 
+                    }
+                    if (i < View_p->cols-1 && (Glyph_p+1)->mark & TK_CORE_MARK_ACCENT_BACKGROUND_2) {
+                        Glyph_p->codepoint = 'x'; 
+                        Glyph_p->overlay = 9999;
+                        Glyph_p->mark &= ~TK_CORE_MARK_ACCENT_BACKGROUND; 
+                        Glyph_p->mark |= TK_CORE_MARK_ACCENT_BACKGROUND_2; 
                     }
                 }
             }

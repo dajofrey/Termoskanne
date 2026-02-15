@@ -177,11 +177,20 @@ static inline tk_core_Color tk_terminal_getGlyphColor2(
     int col, int row, tk_terminal_Grid *Grid_p)
 {
     if (target == 2) {
-        tk_core_Color Color = tk_terminal_getAccentColor(Config_p, col, row, Grid_p->cols, Grid_p->rows, State_p->AccentGradient.Color);
-        Color.r *= 0.6f;
-        Color.g *= 0.6f;
-        Color.b *= 0.6f;
-        return Color;
+        if (Glyph_p->mark & TK_CORE_MARK_ACCENT_BACKGROUND) {
+            tk_core_Color Color = tk_terminal_getAccentColor(Config_p, col, row, Grid_p->cols, Grid_p->rows, State_p->AccentGradient.Color);
+            Color.r *= 0.6f;
+            Color.g *= 0.6f;
+            Color.b *= 0.6f;
+            return Color;
+        }
+        if (Glyph_p->mark & TK_CORE_MARK_ACCENT_BACKGROUND_2) {
+            tk_core_Color Color = tk_terminal_getAccentColor(Config_p, col, row, Grid_p->cols, Grid_p->rows, State_p->AccentGradient.Color);
+            Color.r *= 0.8f;
+            Color.g *= 0.8f;
+            Color.b *= 0.8f;
+            return Color;
+        }
     }
 
     if (target == 1) {
