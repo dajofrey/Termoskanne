@@ -125,7 +125,6 @@ static TK_CORE_RESULT tk_core_drawMicroTile(
     if (!View_p->standardIO) {
         bool topbar = row == 0;
         if (Tile_p->rowPosition == 0) {topbar = false;}
- 
         if (topbar) {
             return tk_core_drawTopbarRow(
                 NULL, View_p->Row.Glyphs_p, cols, row, View_p->standardIO
@@ -141,6 +140,7 @@ static TK_CORE_RESULT tk_core_drawMicroTile(
         ))
     }
 
+    // indicate focused window
     tk_core_TTY *TTY_p = nh_core_getWorkloadArg();
     if (Tile_p != TK_CORE_MICRO_TAB(TK_CORE_MACRO_TAB(TTY_p->Window_p->Tile_p))->Tile_p) {
         for (int col = 0; col < cols; ++col) {

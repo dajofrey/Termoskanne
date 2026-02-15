@@ -679,7 +679,7 @@ TK_CORE_RESULT tk_core_drawTopbarRow(
         }
     }
 
-    for (int i = 0; TTY_p->Window_p->Tile_p == Tile_p && i < cols; ++i) {
+    for (int i = 0; i < cols; ++i) {
         Glyphs_p[i].Attributes.bold = true;
     }
  

@@ -233,6 +233,7 @@ TK_CORE_RESULT tk_core_drawTitlebar(
                  Glyphs_p[count - 1].Background.custom = true;
  
                  Glyphs_p[count].Attributes.reverse = false;
+                 Glyphs_p[count].Attributes.bold = true;
                  Glyphs_p[count].Background.custom = true;
                  Glyphs_p[count].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND;
  
@@ -259,6 +260,7 @@ TK_CORE_RESULT tk_core_drawTitlebar(
                  Glyphs_p[count - 1].Background.custom = true;
  
                  Glyphs_p[count].Attributes.reverse = false;
+                 Glyphs_p[count].Attributes.bold = true;
                  Glyphs_p[count].Background.custom = true;
                  Glyphs_p[count].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND_2;
  
