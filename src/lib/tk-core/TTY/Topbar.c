@@ -683,7 +683,7 @@ TK_CORE_RESULT tk_core_drawTopbarRow(
         Glyphs_p[i].Attributes.bold = true;
     }
  
-    for (int i = 0, count = 2; i < TK_CORE_MACRO_TILE(Tile_p)->MacroTabs.size; ++i) {
+    for (int i = 0, count = 2; Tile_p && i < TK_CORE_MACRO_TILE(Tile_p)->MacroTabs.size; ++i) {
         tk_core_MacroTab *Tab_p = (tk_core_MacroTab*)TK_CORE_MACRO_TILE(Tile_p)->MacroTabs.pp[i];
         if (Tab_p->active) {
             Glyphs_p[count].codepoint = i + '1';
