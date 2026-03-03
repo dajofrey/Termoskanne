@@ -308,6 +308,15 @@ static TK_TERMINAL_RESULT tk_terminal_getForegroundVerticesDefault(
     Vertices_p[3].u = Glyph_p->u1;
     Vertices_p[3].v = Glyph_p->v0;
 
+    if (G_p->mark & TK_CORE_MARK_SIDEBAR) {
+        float offset = (float)((float)(Grid_p->TileSize.width) / (float)Grid_p->Size.width);
+        Vertices_p[0].x += offset; 
+        Vertices_p[1].x += offset;
+        Vertices_p[2].x += offset;
+        Vertices_p[3].x += offset;
+    }
+
+
     nh_verticesToArray(Vertices_p, vertices_p, 4, true, 0);
 
     return TK_TERMINAL_SUCCESS;

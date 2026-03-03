@@ -206,20 +206,6 @@ TK_TERMINAL_RESULT tk_terminal_renderUsingOpenGL(
 
     TK_TERMINAL_CHECK(tk_terminal_updateOpenGLBackground(&Graphics_p->State, &Graphics_p->BackdropData))
     TK_TERMINAL_CHECK(tk_terminal_drawOpenGLBackground(&Graphics_p->State, &Graphics_p->BackdropData))
-
-    if (sidebar>0) {
-        nh_gfx_addOpenGLCommand(
-            Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p,
-            "glViewport",
-            nh_gfx_glint(NULL, sidebar),
-            nh_gfx_glint(NULL, 0),
-            nh_gfx_glsizei(NULL, BackdropGrid_p->Size.width-sidebar),
-            nh_gfx_glsizei(NULL, BackdropGrid_p->Size.height));
-
-        TK_TERMINAL_CHECK(tk_terminal_updateOpenGLBackground(&Graphics_p->State, &Graphics_p->BackdropData))
-        TK_TERMINAL_CHECK(tk_terminal_drawOpenGLBackground(&Graphics_p->State, &Graphics_p->BackdropData))
-    }
-
     TK_TERMINAL_CHECK(tk_terminal_updateOpenGLForeground(Config_p, &Graphics_p->State, &Graphics_p->BackdropData))
 
 // the next line dumps on macos
@@ -263,9 +249,9 @@ TK_TERMINAL_RESULT tk_terminal_renderUsingOpenGL(
     nh_gfx_addOpenGLCommand(
         Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p,
         "glViewport",
-        nh_gfx_glint(NULL, Grid_p->borderPixel+sidebar),
         nh_gfx_glint(NULL, Grid_p->borderPixel),
-        nh_gfx_glsizei(NULL, Grid_p->Size.width-sidebar),
+        nh_gfx_glint(NULL, Grid_p->borderPixel),
+        nh_gfx_glsizei(NULL, Grid_p->Size.width),
         nh_gfx_glsizei(NULL, Grid_p->Size.height));
 
     nh_gfx_addOpenGLCommand(
@@ -287,57 +273,6 @@ TK_TERMINAL_RESULT tk_terminal_renderUsingOpenGL(
     TK_TERMINAL_CHECK(tk_terminal_updateOpenGLBackground(&Graphics_p->State, &Graphics_p->MainData))
     TK_TERMINAL_CHECK(tk_terminal_drawOpenGLBackground(&Graphics_p->State, &Graphics_p->MainData))
 
-    if (sidebar>0) {
-        nh_gfx_addOpenGLCommand(
-            Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p,
-            "glEnable", 
-            nh_gfx_glenum(NULL, GL_SCISSOR_TEST));
-
-        nh_gfx_addOpenGLCommand(
-            Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p,
-            "glScissor",
-            nh_gfx_glint(NULL, Grid_p->borderPixel),
-            nh_gfx_glint(NULL, Grid_p->borderPixel),
-            nh_gfx_glsizei(NULL, Grid_p->borderPixel+20),
-            nh_gfx_glsizei(NULL, Grid_p->Size.height));
-
-        nh_gfx_addOpenGLCommand(
-            Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p,
-            "glViewport",
-            nh_gfx_glint(NULL, Grid_p->borderPixel),
-            nh_gfx_glint(NULL, Grid_p->borderPixel),
-            nh_gfx_glsizei(NULL, Grid_p->Size.width),
-            nh_gfx_glsizei(NULL, Grid_p->Size.height));
-
-        TK_TERMINAL_CHECK(tk_terminal_drawOpenGLBackground(&Graphics_p->State, &Graphics_p->BackdropData))
- 
-        if (!solidSidebar) {
-            if (Config_p->style > 0) {
-                TK_TERMINAL_CHECK(tk_terminal_drawOpenGLDim(Graphics_p, Grid_p))
-            } else {
-                nh_gfx_addOpenGLCommand(
-                    Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p, 
-                    "glClearColor",
-                    nh_gfx_glfloat(NULL, Graphics_p->State.Viewport_p->Settings.ClearColor.r),
-                    nh_gfx_glfloat(NULL, Graphics_p->State.Viewport_p->Settings.ClearColor.g),
-                    nh_gfx_glfloat(NULL, Graphics_p->State.Viewport_p->Settings.ClearColor.b),
-                    nh_gfx_glfloat(NULL, Graphics_p->State.Viewport_p->Settings.ClearColor.a));
-                nh_gfx_addOpenGLCommand(
-                    Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p, 
-                    "glClear", 
-                    nh_gfx_glenum(NULL, GL_COLOR_BUFFER_BIT));
-            }
-        }
-
-        nh_gfx_addOpenGLCommand(
-            Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p,
-            "glScissor",
-            nh_gfx_glint(NULL, 0),
-            nh_gfx_glint(NULL, 0),
-            nh_gfx_glsizei(NULL, Grid_p->Size.width+Grid_p->borderPixel),
-            nh_gfx_glsizei(NULL, Grid_p->Size.height+Grid_p->borderPixel));
-    } 
-
     TK_TERMINAL_CHECK(tk_terminal_updateOpenGLBoxes(&Graphics_p->State, &Graphics_p->Boxes))
     TK_TERMINAL_CHECK(tk_terminal_drawOpenGLInactiveCursor(Graphics_p, Grid_p))
 
@@ -352,9 +287,9 @@ TK_TERMINAL_RESULT tk_terminal_renderUsingOpenGL(
     nh_gfx_addOpenGLCommand(
         Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p,
         "glViewport",
-        nh_gfx_glint(NULL, Grid_p->borderPixel+sidebar),
         nh_gfx_glint(NULL, Grid_p->borderPixel),
-        nh_gfx_glsizei(NULL, Grid_p->Size.width-sidebar),
+        nh_gfx_glint(NULL, Grid_p->borderPixel),
+        nh_gfx_glsizei(NULL, Grid_p->Size.width),
         nh_gfx_glsizei(NULL, Grid_p->Size.height));
  
     TK_TERMINAL_CHECK(tk_terminal_updateOpenGLForeground(Config_p, &Graphics_p->State, &Graphics_p->MainData))

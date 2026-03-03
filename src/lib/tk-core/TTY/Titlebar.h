@@ -14,6 +14,10 @@
  *  @{
  */
 
+    bool tk_core_handleTitlebarMove(
+        tk_core_TTY *TTY_p, int cCol, int cRow
+    );
+
     void tk_core_handleTitlebarHit( 
         nh_api_MouseEvent Event, int cCol
     );

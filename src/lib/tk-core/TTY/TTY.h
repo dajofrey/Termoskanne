@@ -45,7 +45,13 @@
     typedef struct tk_core_Titlebar {
         nh_LocalTime Time;
         nh_RAM RAM;
+        int hover;
+        int count;
     } tk_core_Titlebar;
+
+    typedef struct tk_core_Sidebar {
+        int hover;
+    } tk_core_Sidebar;
 
     typedef struct tk_core_TTY {
         tk_core_Config Config;
@@ -54,6 +60,7 @@
         tk_core_Topbars Topbars;
         tk_core_Preview Preview;
         tk_core_Titlebar Titlebar;
+        tk_core_Sidebar Sidebar;
         tk_core_MacroWindow *Window_p;
         tk_core_Tile *InsertTile_p;
         tk_core_Menu WindowSwitchMenu;

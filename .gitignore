@@ -2,3 +2,4 @@
 /bin/
 /include/
 perf.data*
+.DS_Store

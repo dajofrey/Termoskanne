@@ -112,6 +112,8 @@ static void *tk_core_initTTY(
     TTY_p->hasFocus = true;
     TTY_p->Borders.on = true;
     TTY_p->Topbars.on = true;
+    TTY_p->Sidebar.hover = -999;
+    TTY_p->Titlebar.hover = -1;
 
     TTY_p->Preview.blink = true;
     TTY_p->Preview.LastBlink = nh_core_getSystemTime();

@@ -683,7 +683,8 @@ TK_CORE_RESULT tk_core_drawTopbarRow(
         Glyphs_p[i].Attributes.bold = true;
     }
  
-    for (int i = 0, count = 2; Tile_p && i < TK_CORE_MACRO_TILE(Tile_p)->MacroTabs.size; ++i) {
+    int count = 2;
+    for (int i = 0; Tile_p && i < TK_CORE_MACRO_TILE(Tile_p)->MacroTabs.size; ++i) {
         tk_core_MacroTab *Tab_p = (tk_core_MacroTab*)TK_CORE_MACRO_TILE(Tile_p)->MacroTabs.pp[i];
         if (Tab_p->active) {
             Glyphs_p[count].codepoint = i + '1';
@@ -745,6 +746,79 @@ TK_CORE_RESULT tk_core_drawTopbarRow(
             count += 5;
         }
     }
+
+                Glyphs_p[count - 2].codepoint = 0;
+                Glyphs_p[count - 2].Attributes.reverse = false;
+                Glyphs_p[count - 2].mark |= TK_CORE_MARK_ACCENT_BACKGROUND_2;
+                Glyphs_p[count - 2].Background.custom = true;
+
+                Glyphs_p[count - 1].codepoint = 0;
+                Glyphs_p[count - 1].Attributes.reverse = false;
+                Glyphs_p[count - 1].mark |= TK_CORE_MARK_ACCENT_BACKGROUND_2;
+                Glyphs_p[count - 1].Background.custom = true;
+
+                Glyphs_p[count].Attributes.reverse = false;
+                Glyphs_p[count].Background.custom = true;
+                Glyphs_p[count].codepoint = '+';
+                Glyphs_p[count].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND_2;
+
+                Glyphs_p[count + 1].Background.custom = true;
+                Glyphs_p[count + 1].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND_2;
+                Glyphs_p[count + 1].codepoint = 0;
+                Glyphs_p[count + 1].Attributes.reverse = false;
+
+                Glyphs_p[count + 2].Background.custom = true;
+                Glyphs_p[count + 2].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND_2;
+                Glyphs_p[count + 2].codepoint = 0;
+                Glyphs_p[count + 2].Attributes.reverse = false;
+ 
+
+
+count = cols -2;
+
+
+
+
+                Glyphs_p[count - 1].codepoint = 0;
+                Glyphs_p[count - 1].Attributes.reverse = false;
+                Glyphs_p[count - 1].mark |= TK_CORE_MARK_ACCENT_BACKGROUND_2;
+                Glyphs_p[count - 1].Background.custom = true;
+
+                Glyphs_p[count].Attributes.reverse = false;
+                Glyphs_p[count].Background.custom = true;
+ 
+                Glyphs_p[count].codepoint = 0x00d7;
+                Glyphs_p[count].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND_2;
+
+                Glyphs_p[count + 1].Background.custom = true;
+                Glyphs_p[count + 1].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND_2;
+                Glyphs_p[count + 1].codepoint = 0;
+                Glyphs_p[count + 1].Attributes.reverse = false;
+
+count = cols - 5;
+ 
+                Glyphs_p[count - 1].codepoint = 0;
+                Glyphs_p[count - 1].Attributes.reverse = false;
+                Glyphs_p[count - 1].mark |= TK_CORE_MARK_ACCENT_BACKGROUND_2;
+                Glyphs_p[count - 1].Background.custom = true;
+
+                Glyphs_p[count].Attributes.reverse = false;
+                Glyphs_p[count].Background.custom = true;
+                Glyphs_p[count].Attributes.bold = false;
+ 
+                Glyphs_p[count].codepoint = 0x2237;
+                Glyphs_p[count].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND_2;
+
+                Glyphs_p[count + 1].Background.custom = true;
+                Glyphs_p[count + 1].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND_2;
+                Glyphs_p[count + 1].codepoint = 0;
+                Glyphs_p[count + 1].Attributes.reverse = false;
+
+
+
+
+
+
 
     if (TTY_p->Config.Topbar.on) {
 //        Glyphs_p[0].codepoint = 0;

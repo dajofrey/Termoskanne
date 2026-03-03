@@ -18,6 +18,7 @@
 #include "Program.h"
 #include "TTY.h"
 #include "Titlebar.h"
+#include "Sidebar.h"
 
 #include "../Common/Macros.h"
 
@@ -508,6 +509,13 @@ static TK_CORE_RESULT tk_core_handleMouseInput(
         }
     }
  
+    if (Event.Mouse.type == NH_API_TRIGGER_MOVE) {
+        bool refresh = tk_core_handleSidebarMove(TTY_p, cCol, cRow);
+        if (refresh) {Window_p->refreshGrid1 = true;}
+        refresh = tk_core_handleTitlebarMove(TTY_p, cCol, cRow);
+        if (refresh) {Window_p->refreshGrid1 = true;}
+    }
+
     if (MacroTile_p == NULL || MicroTile_p == NULL) {return TK_CORE_SUCCESS;}
 
     // Handle mouse-menu input.

@@ -4,6 +4,10 @@
 #include "TTY.h"
 #include "../Common/Includes.h"
 
+bool tk_core_handleSidebarMove(
+    tk_core_TTY *TTY_p, int cCol, int cRow
+);
+
 TK_CORE_RESULT tk_core_drawSidebar(
     tk_core_TTY *TTY_p
 );
