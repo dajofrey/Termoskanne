@@ -106,7 +106,7 @@ bin: build_netzhaut $(BIN_TK)
 
 build_netzhaut:
 ifeq ($(NETZHAUT_PATH),$(CURDIR)/external/Netzhaut)
-	(cd external/Netzhaut && git submodule update --init --recursive && make -f build/automation/lib.mk lib-nh-api lib-nh-core lib-nh-encoding lib-nh-wsi lib-nh-gfx lib-nh-monitor)
+	(cd external/Netzhaut && git submodule update --init --recursive && make -f build/automation/lib-linux.mk lib-nh-api lib-nh-core lib-nh-encoding lib-nh-wsi lib-nh-gfx lib-nh-monitor)
 endif
 create_lib_dir:
 	mkdir -p lib
@@ -162,7 +162,7 @@ install: $(BIN_TK)
 clean-netzhaut:
 	@if [ -d external/Netzhaut ] && [ -n "$$(ls -A external/Netzhaut 2>/dev/null)" ]; then \
 		echo "Cleaning Netzhaut..."; \
-		(cd external/Netzhaut && make -f build/automation/lib.mk clean); \
+		(cd external/Netzhaut && make -f build/automation/lib-linux.mk clean); \
 	else \
 		echo "Skipping Netzhaut cleanup (directory missing or empty)."; \
 	fi
