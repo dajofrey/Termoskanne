@@ -516,6 +516,12 @@ static TK_CORE_RESULT tk_core_handleMouseInput(
         if (refresh) {Window_p->refreshGrid1 = true;}
     }
 
+    if (Event.Mouse.type == NH_API_MOUSE_LEFT && Event.Mouse.type == NH_API_TRIGGER_PRESS) {
+        if (TTY_p->Config.Sidebar.on && (cCol == 0 || cCol == 1)) {
+	    tk_core_handleSidebarHit(TTY_p, Event.Mouse, cRow);
+	}
+    }
+
     if (MacroTile_p == NULL || MicroTile_p == NULL) {return TK_CORE_SUCCESS;}
 
     // Handle mouse-menu input.

@@ -92,6 +92,9 @@ TK_CORE_RESULT tk_core_drawTitlebar(
     for (int i = 0; i < cols ; ++i) {
         memset(&Row_p->Glyphs_p[i], 0, sizeof(tk_core_Glyph));
         Row_p->Glyphs_p[i].mark |= TK_CORE_MARK_ACCENT;
+        Row_p->Glyphs_p[i].mark = TK_CORE_MARK_ACCENT_BACKGROUND_2;
+        Row_p->update_p[i] = true;
+        Row_p->Glyphs_p[i].Background.custom = true;
     }
 
     Row_p->Glyphs_p[cols - 1].mark = TK_CORE_MARK_ACCENT_BACKGROUND_2;
@@ -306,5 +309,10 @@ if (TTY_p->Config.Sidebar.on == false) {
         Row_p->Glyphs_p[1].Background.custom = true;
     }
 
+//char *p = "CPU 45% RAM 86% UPTIME 4D12H34M";
+//for (int i = 0; i < strlen(p); ++i) {
+//Glyphs_p[count + 4 + i].codepoint = p[i];
+//Glyphs_p[count + 4 + i].mark = TK_CORE_MARK_ACCENT_2 | TK_CORE_MARK_ACCENT_BACKGROUND_3;
+//}
     return TK_CORE_SUCCESS;
 }

@@ -13,6 +13,7 @@
 #include "TTY.h"
 
 #include "../Common/Macros.h"
+#include "../../tk-terminal/Common/Config.h"
 
 #include <unistd.h>
 #include <stdio.h>
@@ -36,16 +37,13 @@ bool tk_core_handleSidebarMove(
     return prev != TTY_p->Sidebar.hover;
 } 
 
-//void tk_core_handleSidebarHit( 
-//    nh_api_MouseEvent Event, int cCol) 
-//{
-//    if (Event.trigger == NH_API_TRIGGER_PRESS && cCol-1 < 9) { 
-//        tk_core_MacroWindow *Window_p = tk_core_insertAndFocusWindow(nh_core_getWorkloadArg(), cCol-1);
-//        Window_p->refreshGrid2 = true; 
-//        Window_p->refreshTitlebar = true; 
-//        Window_p->Tile_p->refresh = true; 
-//    } 
-//} 
+void tk_core_handleSidebarHit( 
+    tk_core_TTY *TTY_p, nh_api_MouseEvent Event, int cRow) 
+{
+    if (Event.trigger == NH_API_TRIGGER_PRESS && cRow == 2 && TTY_p->TerminalConfig_p) {
+        ((tk_terminal_Config*)TTY_p->TerminalConfig_p)->fontSize++;
+    } 
+} 
 
 TK_CORE_RESULT tk_core_drawSidebar(
     tk_core_TTY *TTY_p)

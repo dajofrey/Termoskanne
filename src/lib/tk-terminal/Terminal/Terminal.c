@@ -428,6 +428,8 @@ tk_terminal_Terminal *tk_terminal_openTerminal(
         tk_terminal_initTerminal, tk_terminal_runTerminal, tk_terminal_freeTerminal,
         tk_terminal_runTerminalCommand, &Args, true);
 
+    TTY_p->TerminalConfig_p = &Terminal_p->Config;
+
     return Terminal_p;
 }
 

@@ -681,6 +681,10 @@ TK_CORE_RESULT tk_core_drawTopbarRow(
 
     for (int i = 0; i < cols; ++i) {
         Glyphs_p[i].Attributes.bold = true;
+        Glyphs_p[i].codepoint = 0;
+        Glyphs_p[i].Attributes.reverse = false;
+        Glyphs_p[i].mark |= TK_CORE_MARK_ACCENT_BACKGROUND_2;
+        Glyphs_p[i].Background.custom = true;
     }
  
     int count = 2;

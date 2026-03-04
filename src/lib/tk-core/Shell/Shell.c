@@ -1110,6 +1110,7 @@ static TK_CORE_RESULT tk_core_drawShellTopbar(
 
     for (int i = 0; i < width; ++i) {
         Glyphs_p[i].codepoint = topbar_p[i];
+	Glyphs_p[i].mark |= TK_CORE_MARK_ACCENT;
     }
 
     if (Shell_p->scroll > 0) {

@@ -20,6 +20,7 @@ typedef struct tk_terminal_Config {
     int accents;
     int backgrounds;
     int style;
+    bool border;
 } tk_terminal_Config;
 
 tk_terminal_Config tk_terminal_updateConfig(

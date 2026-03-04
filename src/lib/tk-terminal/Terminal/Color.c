@@ -155,8 +155,10 @@ static tk_core_Color tk_terminal_getSunsetColor(
 static tk_core_Color tk_terminal_getAccentColor(
     tk_terminal_Config *Config_p, int col, int row, int total_cols, int total_rows, tk_core_Color base)
 {
-//  float time_now = (float)clock() / CLOCKS_PER_SEC;
     float time_now = 0;
+    if (Config_p->animationFreq) {
+        time_now = (float)clock() / CLOCKS_PER_SEC;
+    }
     switch (Config_p->style) {
         case 1 : return tk_terminal_getWaveColor(col, row, time_now, total_cols, total_rows, base);
         case 2 : return tk_terminal_getStrobeColor(col, row, time_now, base);
@@ -188,6 +190,10 @@ static inline tk_core_Color tk_terminal_getGlyphColor2(
             Color.b *= 0.8f;
             return Color;
         }
+        if (Glyph_p->mark & TK_CORE_MARK_ACCENT_BACKGROUND_3) {
+            tk_core_Color Color = tk_terminal_getAccentColor(Config_p, col, row, Grid_p->cols, Grid_p->rows, State_p->AccentGradient.Color);
+            return Color;
+        }
     }
 
     if (target == 1) {
@@ -202,11 +208,26 @@ static inline tk_core_Color tk_terminal_getGlyphColor2(
                 Color.b *= 0.3f;
                 return Color;
             }
+            if (Glyph_p->mark & TK_CORE_MARK_ACCENT_2) {
+                tk_core_Color Color = tk_terminal_getAccentColor(Config_p, col, row, Grid_p->cols, Grid_p->rows, State_p->AccentGradient.Color);
+                Color.r *= 0.6f;
+                Color.g *= 0.6f;
+                Color.b *= 0.6f;
+                return Color;
+            }
             return State_p->BackgroundGradient.Color;
         }
         if (Glyph_p->mark & TK_CORE_MARK_ACCENT) {
             return tk_terminal_getAccentColor(Config_p, col, row, Grid_p->cols, Grid_p->rows, State_p->AccentGradient.Color);
         }
+	if (Glyph_p->mark & TK_CORE_MARK_ACCENT_2) {
+                tk_core_Color Color = tk_terminal_getAccentColor(Config_p, col, row, Grid_p->cols, Grid_p->rows, State_p->AccentGradient.Color);
+                Color.r *= 0.6f;
+                Color.g *= 0.6f;
+                Color.b *= 0.6f;
+                return Color;
+            }
+ 
         if (Glyph_p->Foreground.custom) {
             return Glyph_p->Foreground.Color;
         }
@@ -237,6 +258,10 @@ static inline tk_core_Color tk_terminal_getGlyphColor2(
             Color.r *= 0.8f;
             Color.g *= 0.8f;
             Color.b *= 0.8f;
+            return Color;
+        }
+        if (Glyph_p->mark & TK_CORE_MARK_ACCENT_BACKGROUND_3) {
+            tk_core_Color Color = tk_terminal_getAccentColor(Config_p, col, row, Grid_p->cols, Grid_p->rows, State_p->AccentGradient.Color);
             return Color;
         }
         return Glyph_p->Background.Color;
