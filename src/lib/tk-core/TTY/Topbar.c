@@ -667,6 +667,8 @@ TK_CORE_RESULT tk_core_drawTopbarRow(
         }
     }
 
+    if (!Tile_p) {return TK_CORE_SUCCESS;}
+
     if (Tile_p) {
         TK_CHECK(tk_core_drawTopbarText(&TTY_p->Config, Tile_p, Glyphs_p, cols))
     }
