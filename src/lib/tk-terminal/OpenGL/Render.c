@@ -188,7 +188,7 @@ static TK_TERMINAL_RESULT tk_terminal_drawOpenGLInactiveCursor(
 
 TK_TERMINAL_RESULT tk_terminal_renderUsingOpenGL(
     tk_terminal_Config *Config_p, tk_terminal_Graphics *Graphics_p, tk_terminal_Grid *Grid_p,
-    tk_terminal_Grid *BackdropGrid_p, unsigned int sidebar, bool solidSidebar)
+    tk_terminal_Grid *BackdropGrid_p, unsigned int sidebar)
 {
     bool blockUntilRender = Graphics_p->MainData.Background.Action.init || Graphics_p->MainData.Foreground.Action.init;
 

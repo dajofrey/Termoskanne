@@ -706,7 +706,7 @@ TK_TERMINAL_RESULT tk_terminal_renderGraphics(
            return TK_TERMINAL_ERROR_BAD_STATE;
 #endif
        case NH_GFX_API_OPENGL :
-           TK_TERMINAL_CHECK(tk_terminal_renderUsingOpenGL(Config_p, Graphics_p, Grid_p, BackdropGrid_p, offset, CoreConfig_p->Sidebar.solid))
+           TK_TERMINAL_CHECK(tk_terminal_renderUsingOpenGL(Config_p, Graphics_p, Grid_p, BackdropGrid_p, offset))
            break;
        default :
            return TK_TERMINAL_ERROR_BAD_STATE;

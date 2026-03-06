@@ -820,6 +820,25 @@ count = cols - 5;
 
 
 
+//count = cols - 8;
+// 
+//                Glyphs_p[count - 1].codepoint = 0;
+//                Glyphs_p[count - 1].Attributes.reverse = false;
+//                Glyphs_p[count - 1].mark |= TK_CORE_MARK_ACCENT_BACKGROUND_2;
+//                Glyphs_p[count - 1].Background.custom = true;
+//
+//                Glyphs_p[count].Attributes.reverse = false;
+//                Glyphs_p[count].Background.custom = true;
+//                Glyphs_p[count].Attributes.bold = false;
+// 
+//                Glyphs_p[count].codepoint = 0x1f50d;
+//                Glyphs_p[count].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND_2;
+//
+//                Glyphs_p[count + 1].Background.custom = true;
+//                Glyphs_p[count + 1].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND_2;
+//                Glyphs_p[count + 1].codepoint = 0;
+//                Glyphs_p[count + 1].Attributes.reverse = false;
+
 
 
 

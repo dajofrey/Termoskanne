@@ -28,7 +28,7 @@ bool tk_core_handleSidebarMove(
 
     int prev = TTY_p->Sidebar.hover;
 
-    if ((cCol == 0 || cCol == 1) && cRow < 4) {
+    if ((cCol == 0 || cCol == 1) && cRow < 5) {
         TTY_p->Sidebar.hover = cRow;
     } else {
         TTY_p->Sidebar.hover = -999;
@@ -69,11 +69,11 @@ TK_CORE_RESULT tk_core_drawSidebar(
         View_p->Grid1_p[row].update_p[1] = true;
     }
 
-    View_p->Grid1_p[0].Glyphs_p[0].codepoint = '-';
+    View_p->Grid1_p[0].Glyphs_p[0].codepoint = '+';
     View_p->Grid1_p[0].Glyphs_p[0].mark |= TK_CORE_MARK_ACCENT;
     View_p->Grid1_p[0].Glyphs_p[0].Attributes.bold = true;
 
-    View_p->Grid1_p[1].Glyphs_p[0].codepoint = '+';
+    View_p->Grid1_p[1].Glyphs_p[0].codepoint = '-';
     View_p->Grid1_p[1].Glyphs_p[0].mark |= TK_CORE_MARK_ACCENT;
     View_p->Grid1_p[1].Glyphs_p[0].Attributes.bold = true;
 
@@ -81,13 +81,13 @@ TK_CORE_RESULT tk_core_drawSidebar(
     View_p->Grid1_p[2].Glyphs_p[0].mark |= TK_CORE_MARK_ACCENT;
     View_p->Grid1_p[2].Glyphs_p[0].Attributes.bold = true;
 
-    View_p->Grid1_p[3].Glyphs_p[0].codepoint = 0x03d9;
+    View_p->Grid1_p[3].Glyphs_p[0].codepoint = '?';
     View_p->Grid1_p[3].Glyphs_p[0].mark |= TK_CORE_MARK_ACCENT;
     View_p->Grid1_p[3].Glyphs_p[0].Attributes.bold = true;
 
-//    View_p->Grid1_p[3].Glyphs_p[0].codepoint = 0x2605;
-//    View_p->Grid1_p[3].Glyphs_p[0].mark |= TK_CORE_MARK_ACCENT;
-//    View_p->Grid1_p[3].Glyphs_p[0].Attributes.bold = true;
+    View_p->Grid1_p[4].Glyphs_p[0].codepoint = 0x2195;
+    View_p->Grid1_p[4].Glyphs_p[0].mark |= TK_CORE_MARK_ACCENT;
+    View_p->Grid1_p[4].Glyphs_p[0].Attributes.bold = true;
 
     return TK_CORE_SUCCESS;
 }

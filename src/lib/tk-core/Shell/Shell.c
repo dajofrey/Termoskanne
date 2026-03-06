@@ -374,6 +374,14 @@ static const unsigned int XTERM_COLORS_PP[256][3] = {
     {228,228,228},{238,238,238}
 };
 
+static const unsigned int BLA_COLORS_PP[16][3] = {
+    // 0–15: Standard ANSI colors
+    {46, 52, 64},       {191, 97, 106},     {163, 190, 140},     {235, 203, 139},
+    {129, 161, 193},     {180, 142, 173},   {136, 192, 208},   {216, 222, 233},
+    {128, 128, 128}, {255, 0, 0},     {0, 255, 0},     {255, 255, 0},
+    {0, 0, 255},     {255, 0, 255},   {0, 255, 255},   {255, 255, 255},
+};
+
 /* Terminal colors (16 first used in escape sequence) */
 
 // https://stackoverflow.com/questions/4842424/list-of-ansi-color-escape-sequences
@@ -386,9 +394,9 @@ static void tk_core_getShellColor(
         Color_p->b = ((float)TRUEBLUE(color))/255.0f;
         Color_p->a = (float)1.0f;
     } else {
-        Color_p->r = ((float)XTERM_COLORS_PP[color][0])/255.0f;
-        Color_p->g = ((float)XTERM_COLORS_PP[color][1])/255.0f;
-        Color_p->b = ((float)XTERM_COLORS_PP[color][2])/255.0f;
+        Color_p->r = ((float)BLA_COLORS_PP[color][0])/255.0f;
+        Color_p->g = ((float)BLA_COLORS_PP[color][1])/255.0f;
+        Color_p->b = ((float)BLA_COLORS_PP[color][2])/255.0f;
         Color_p->a = (float)1.0f;
     }
 }

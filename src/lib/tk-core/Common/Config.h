@@ -34,7 +34,6 @@ typedef struct tk_core_ShellConfig {
 
 typedef struct tk_core_SidebarConfig {
     bool on;
-    bool solid;
 } tk_core_SidebarConfig;
 
 typedef struct tk_core_Config {
@@ -46,6 +45,7 @@ typedef struct tk_core_Config {
     tk_core_SidebarConfig Sidebar;
     int windows;
     int tabs;
+    bool clean;
 } tk_core_Config;
 
 // FUNCTIONS =======================================================================================

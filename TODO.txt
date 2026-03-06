@@ -5,3 +5,15 @@ fix backdrop alignment issues
 fix inactive cursor issues
 fix copy/paste
 remove/simplify attribute range bullshit
+
+
+Help
+- Controls
+- About
+- Copyright
+
+Settings
+- Animation [on, off] ()
+- Border [on, off] ()
+- Style [num] + - 
+...
