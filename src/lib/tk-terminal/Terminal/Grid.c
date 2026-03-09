@@ -356,7 +356,8 @@ TK_TERMINAL_RESULT tk_terminal_updateBackdropGrid(
     BackdropGrid_p->TileSize.width = nh_gfx_getTextWidth(Text_p);
     BackdropGrid_p->TileSize.height = Config_p->fontSize+abs(State_p->RegularFontInstance_p->descender);
 
-    BackdropGrid_p->borderPixel = Config_p->border ? BackdropGrid_p->TileSize.width/3 : 0;
+    BackdropGrid_p->separatorPixel = BackdropGrid_p->TileSize.width/3;
+    BackdropGrid_p->borderPixel = Config_p->border ? BackdropGrid_p->separatorPixel : 0;
 
     int borderCols = (BackdropGrid_p->borderPixel+BackdropGrid_p->TileSize.width-1)/BackdropGrid_p->TileSize.width;
     int borderColsPixel = borderCols*BackdropGrid_p->TileSize.width;
@@ -428,7 +429,8 @@ TK_TERMINAL_RESULT tk_terminal_updateGrid(
     Grid_p->TileSize.width = nh_gfx_getTextWidth(Text_p);
     Grid_p->TileSize.height = Config_p->fontSize+abs(State_p->RegularFontInstance_p->descender);
 
-    Grid_p->borderPixel = Config_p->border ? Grid_p->TileSize.width/3 : 0;
+    Grid_p->separatorPixel = Grid_p->TileSize.width/3;
+    Grid_p->borderPixel = Config_p->border ? Grid_p->separatorPixel : 0;
 
     Grid_p->Size.width = State_p->Viewport_p->Settings.Size.width-(Grid_p->borderPixel*2);
     Grid_p->Size.height = State_p->Viewport_p->Settings.Size.height-(Grid_p->borderPixel*2);

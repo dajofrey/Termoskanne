@@ -339,7 +339,7 @@ static TK_TERMINAL_RESULT tk_terminal_getForegroundVerticesForLineGraphics(
     float width  = (float)((float)(Grid_p->TileSize.width) / (float)Grid_p->Size.width) * 2.0f;
     float height = (float)((float)(Grid_p->TileSize.height) / (float)Grid_p->Size.height) * 2.0f;
 
-    float lineWidthInPixel = (float)Grid_p->borderPixel;
+    float lineWidthInPixel = (float)Grid_p->separatorPixel;
     float w = (lineWidthInPixel / (float)Grid_p->Size.width) * 2.0f;
     float h = (lineWidthInPixel / (float)Grid_p->Size.height) * 2.0f;
 
@@ -689,7 +689,7 @@ unsigned int tk_terminal_getSidebarOffset(
     tk_terminal_Grid *Grid_p)
 {
     float width = (float)((float)(Grid_p->TileSize.width) / (float)Grid_p->Size.width) * 2.0f;
-    float lineWidthInPixel = (float)Grid_p->borderPixel;
+    float lineWidthInPixel = (float)Grid_p->separatorPixel;
     float w = (lineWidthInPixel / (float)Grid_p->Size.width) * 2.0f;
  
     float x = -1.0f;
