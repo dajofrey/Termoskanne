@@ -69,6 +69,8 @@ TK_CORE_RESULT tk_core_drawSidebar(
         View_p->Grid1_p[row].update_p[1] = true;
     }
 
+    if (TTY_p->Config.clean) {return TK_CORE_SUCCESS;}
+
     View_p->Grid1_p[0].Glyphs_p[0].codepoint = '+';
     View_p->Grid1_p[0].Glyphs_p[0].mark |= TK_CORE_MARK_ACCENT;
     View_p->Grid1_p[0].Glyphs_p[0].Attributes.bold = true;

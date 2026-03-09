@@ -464,7 +464,7 @@ static TK_TERMINAL_RESULT tk_terminal_updateForegroundData(
                 offset1 += 8;
 
                 // add color data
-                tk_core_Color Color = tk_terminal_getGlyphColor(Config_p, State_p, &Tile_p->Glyph, 2, j+shift, i, Grid_p);
+                tk_core_Color Color = tk_terminal_getOverlayColor(Config_p, State_p, &Tile_p->Glyph, j+shift, i, Grid_p);
                 for (int v = 0; v < 8; ++v) {
                     nh_core_appendToArray(&Colors2, &Color.r, 1);
                     nh_core_appendToArray(&Colors2, &Color.g, 1);

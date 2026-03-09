@@ -86,9 +86,8 @@ typedef struct tk_core_Glyph {
     tk_core_GlyphAttributes Attributes;
     tk_core_GlyphColor Foreground;
     tk_core_GlyphColor Background;
-    tk_core_GlyphColor Overlay;
     NH_API_UTF32 codepoint;
-    NH_API_UTF32 overlay;
+    TK_CORE_MARK_E overlay;
     TK_CORE_MARK_E mark;
 } tk_core_Glyph;
 

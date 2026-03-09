@@ -232,15 +232,21 @@ static TK_CORE_RESULT tk_core_postProcessRow(
                 }
                 else {
                     Glyph_p->codepoint = (Glyph_p+1)->Attributes.reverse ? 'd' : 't';
-                    if (i < View_p->cols-1 && (Glyph_p+1)->mark & TK_CORE_MARK_ACCENT_BACKGROUND) {
-                        Glyph_p->codepoint = 'x'; 
-                        Glyph_p->overlay = 9999;
-                        Glyph_p->mark |= TK_CORE_MARK_ACCENT_BACKGROUND; 
-                    }
                     if (i < View_p->cols-1 && (Glyph_p+1)->mark & TK_CORE_MARK_ACCENT_BACKGROUND_2) {
                         Glyph_p->codepoint = 'x'; 
-                        Glyph_p->overlay = 9999;
+                        Glyph_p->overlay = TK_CORE_MARK_ACCENT_BACKGROUND_2; 
+                    }
+                    if (i < View_p->cols-1 && (Glyph_p+1)->mark & TK_CORE_MARK_ACCENT_BACKGROUND) {
+                        Glyph_p->codepoint = 'x'; 
+                        Glyph_p->overlay = TK_CORE_MARK_ACCENT_BACKGROUND; 
+                    }
+                    if (Glyph_p->overlay && i > 0 && (Glyph_p-1)->mark & TK_CORE_MARK_ACCENT_BACKGROUND) {
+                        Glyph_p->mark |= TK_CORE_MARK_ACCENT_BACKGROUND;
+                        Glyph_p->Background.custom = true;
+                    }
+                    if (Glyph_p->overlay && i > 0 && (Glyph_p-1)->mark & TK_CORE_MARK_ACCENT_BACKGROUND_2) {
                         Glyph_p->mark |= TK_CORE_MARK_ACCENT_BACKGROUND_2; 
+                        Glyph_p->Background.custom = true;
                     }
                 }
             }

@@ -660,7 +660,7 @@ TK_TERMINAL_RESULT tk_terminal_getOverlayVertices(
     float depth = Glyph_p->mark & TK_CORE_MARK_ELEVATED ? 0.1f : 0.2f;
 
     TK_TERMINAL_CHECK(tk_terminal_getForegroundVerticesForLineGraphics(
-        State_p, Grid_p, Glyph_p->overlay, col, row, depth, vertices_p, fontSize
+        State_p, Grid_p, 9999, col, row, depth, vertices_p, fontSize
     ))
 
     return TK_TERMINAL_SUCCESS;
