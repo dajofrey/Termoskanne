@@ -22,6 +22,7 @@
 #include "nh-core/Util/Array.h"
 #include "nh-core/Util/List.h"
 
+#include <time.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
