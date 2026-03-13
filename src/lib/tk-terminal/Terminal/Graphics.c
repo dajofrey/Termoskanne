@@ -599,7 +599,7 @@ TK_TERMINAL_RESULT tk_terminal_updateGraphics(
         Graphics_p->ElevatedData.update = false;
     }
 
-    if (Graphics_p->BackdropData.update) {
+    if (Config_p->animationFreq == 2 || (Config_p->animationFreq <= 1 && Graphics_p->BackdropData.update)) {
         TK_TERMINAL_CHECK(tk_terminal_updateGridGraphics( 
             Config_p, &Graphics_p->State, &Graphics_p->BackdropData, BackdropGrid_p, 0)) 
         Graphics_p->BackdropData.update = false;

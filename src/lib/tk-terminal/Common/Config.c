@@ -95,7 +95,7 @@ static tk_terminal_Config tk_terminal_getStaticConfig()
         "tk-terminal.color.background",
         "tk-terminal.color.accent",
         "tk-terminal.style",
-        "tk-terminal.timer.animation",
+        "tk-terminal.animate",
 	"tk-terminal.border",
     };
 
