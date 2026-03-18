@@ -28,7 +28,7 @@ bool tk_core_handleSidebarMove(
 
     int prev = TTY_p->Sidebar.hover;
 
-    if ((cCol == 0 || cCol == 1) && cRow < 5) {
+    if ((cCol == -2 || cCol == -1) && cRow < 5) {
         TTY_p->Sidebar.hover = cRow;
     } else {
         TTY_p->Sidebar.hover = -999;

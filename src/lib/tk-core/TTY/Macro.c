@@ -458,6 +458,8 @@ static TK_CORE_RESULT tk_core_handleMouseInput(
     tk_core_Tile *MacroTile_p = NULL, *MicroTile_p = NULL;
     nh_core_List MacroTiles = tk_core_getTiles(Window_p->RootTile_p);
 
+    if (Config_p->Sidebar.on) {col -= 2;}
+
     int cCol = col;
     int cCol2 = col;
     int cRow = row;
@@ -522,7 +524,20 @@ static TK_CORE_RESULT tk_core_handleMouseInput(
 	}
     }
 
+    // reset hovers
+    for (int i = 0; i < MacroTiles.size; ++i) {
+        if (((tk_core_Tile*)MacroTiles.pp[i])->Children.count > 0) {continue;}
+        TK_CORE_MACRO_TAB(MacroTiles.pp[i])->Topbar.quitHover = false;
+        TK_CORE_MACRO_TAB(MacroTiles.pp[i])->Topbar.tilingHover = false;
+    }
+
     if (MacroTile_p == NULL || MicroTile_p == NULL) {return TK_CORE_SUCCESS;}
+
+    if (cRow == 0) {
+        // Forward topbar hit.
+        Event.Mouse.Position.x = cCol2;
+        TK_CHECK(tk_core_handleTopbarInput(MacroTile_p, Event))
+    }
 
     // Handle mouse-menu input.
     if (Window_p->MouseMenu_p) {
@@ -580,11 +595,7 @@ static TK_CORE_RESULT tk_core_handleMouseInput(
         Window_p->refreshGrid2 = true;
     }
 
-    if (cRow == 0) {
-        // Forward topbar hit.
-        Event.Mouse.Position.x = cCol2;
-        TK_CHECK(tk_core_handleTopbarInput(MacroTile_p, Event))
-    } else if (MicroTile_p && TK_CORE_MICRO_TILE(MicroTile_p)->Program_p) {
+    if (MicroTile_p && TK_CORE_MICRO_TILE(MicroTile_p)->Program_p) {
         // Forward program hit.
         Event.Window.Position.x = Event.Mouse.Position.x;
         Event.Window.Position.y = Event.Mouse.Position.y;
@@ -593,13 +604,6 @@ static TK_CORE_RESULT tk_core_handleMouseInput(
         TK_CHECK(TK_CORE_MICRO_TILE(MicroTile_p)->Program_p->Prototype_p->Callbacks.handleInput_f(
             TK_CORE_MICRO_TILE(MicroTile_p)->Program_p, Event
         ))
-    }
-
-    if (cRow != 0) {
-        for (int i = 0; i < MacroTiles.size; ++i) {
-            if (((tk_core_Tile*)MacroTiles.pp[i])->Children.count > 0) {continue;}
-            TK_CORE_MACRO_TAB(MacroTiles.pp[i])->Topbar.quitHover = false;
-        }
     }
 
 SKIP:

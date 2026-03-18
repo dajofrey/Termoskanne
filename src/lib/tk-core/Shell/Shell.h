@@ -1,8 +1,6 @@
 #ifndef TK_CORE_SHELL_SHELL_H
 #define TK_CORE_SHELL_SHELL_H
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 /**
  * TTýr - Terminal Emulator
  * Copyright (C) 2022  Dajo Frey
@@ -14,15 +12,7 @@
 #include <stddef.h>
 #include <unistd.h>
 
-#endif
-
-/** @addtogroup lib_nhtty_functions
- *  @{
- */
-
-    tk_core_Interface *tk_core_createShellInterface(
-    );
-    
-/** @} */
+tk_core_Interface *tk_core_createShellInterface(
+);
 
 #endif 

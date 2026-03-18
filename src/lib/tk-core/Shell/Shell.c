@@ -315,9 +315,9 @@ typedef struct tk_core_Shell {
 
 // COLOR HANDLING ==================================================================================
 
-#define TRUERED(x)   (((x) & 0xff0000) >> 8)
-#define TRUEGREEN(x) (((x) & 0xff00))
-#define TRUEBLUE(x)  (((x) & 0xff) << 8)
+#define TRUE_RED(x)   (((x) & 0xff0000) >> 8)
+#define TRUE_GREEN(x) (((x) & 0xff00))
+#define TRUE_BLUE(x)  (((x) & 0xff) << 8)
 
 static const unsigned int XTERM_COLORS_PP[256][3] = {
     // 0–15: Standard ANSI colors
@@ -325,9 +325,18 @@ static const unsigned int XTERM_COLORS_PP[256][3] = {
     {0, 0, 128},     {128, 0, 128},   {0, 128, 128},   {192, 192, 192},
     {128, 128, 128}, {255, 0, 0},     {0, 255, 0},     {255, 255, 0},
     {0, 0, 255},     {255, 0, 255},   {0, 255, 255},   {255, 255, 255},
+};
 
+static const unsigned int DIM_COLORS_PP[16][3] = {
+    // 0–15: Standard ANSI colors
+    {46, 52, 64},       {191, 97, 106},     {163, 190, 140},     {235, 203, 139},
+    {129, 161, 193},     {180, 142, 173},   {136, 192, 208},   {216, 222, 233},
+    {128, 128, 128}, {255, 0, 0},     {0, 255, 0},     {255, 255, 0},
+    {0, 0, 255},     {255, 0, 255},   {0, 255, 255},   {255, 255, 255},
+};
+
+static const unsigned int EXTRA_COLORS_PP[255][3] = {
     // 16–231: 6×6×6 RGB cube
-    #define STEP(n) (n == 0 ? 0 : 55 + n * 40)
     // Precomputed cube:
     {0,0,0},{0,0,95},{0,0,135},{0,0,175},{0,0,215},{0,0,255},
     {0,95,0},{0,95,95},{0,95,135},{0,95,175},{0,95,215},{0,95,255},
@@ -374,29 +383,27 @@ static const unsigned int XTERM_COLORS_PP[256][3] = {
     {228,228,228},{238,238,238}
 };
 
-static const unsigned int BLA_COLORS_PP[16][3] = {
-    // 0–15: Standard ANSI colors
-    {46, 52, 64},       {191, 97, 106},     {163, 190, 140},     {235, 203, 139},
-    {129, 161, 193},     {180, 142, 173},   {136, 192, 208},   {216, 222, 233},
-    {128, 128, 128}, {255, 0, 0},     {0, 255, 0},     {255, 255, 0},
-    {0, 0, 255},     {255, 0, 255},   {0, 255, 255},   {255, 255, 255},
-};
-
 /* Terminal colors (16 first used in escape sequence) */
 
 // https://stackoverflow.com/questions/4842424/list-of-ansi-color-escape-sequences
 static void tk_core_getShellColor(
     uint32_t color, tk_core_Color *Color_p)
 {
+    if (color > 15) {
+        Color_p->r = ((float)EXTRA_COLORS_PP[color-16][0])/255.0f;
+        Color_p->g = ((float)EXTRA_COLORS_PP[color-16][1])/255.0f;
+	Color_p->b = ((float)EXTRA_COLORS_PP[color-16][2])/255.0f;
+        Color_p->a = (float)1.0f;
+    }
     if (IS_TRUECOL(color)) {
-        Color_p->r = ((float)TRUERED(color))/255.0f;
-        Color_p->g = ((float)TRUEGREEN(color))/255.0f;
-        Color_p->b = ((float)TRUEBLUE(color))/255.0f;
+        Color_p->r = ((float)TRUE_RED(color))/255.0f;
+        Color_p->g = ((float)TRUE_GREEN(color))/255.0f;
+        Color_p->b = ((float)TRUE_BLUE(color))/255.0f;
         Color_p->a = (float)1.0f;
     } else {
-        Color_p->r = ((float)BLA_COLORS_PP[color][0])/255.0f;
-        Color_p->g = ((float)BLA_COLORS_PP[color][1])/255.0f;
-        Color_p->b = ((float)BLA_COLORS_PP[color][2])/255.0f;
+        Color_p->r = ((float)DIM_COLORS_PP[color][0])/255.0f;
+        Color_p->g = ((float)DIM_COLORS_PP[color][1])/255.0f;
+        Color_p->b = ((float)DIM_COLORS_PP[color][2])/255.0f;
         Color_p->a = (float)1.0f;
     }
 }
