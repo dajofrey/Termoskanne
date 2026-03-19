@@ -41,6 +41,7 @@ bool tk_core_handleTitlebarMove(
     
     if (cRow == -1) {
         TTY_p->Titlebar.hover = cCol;
+        if (TTY_p->Config.Sidebar.on) {TTY_p->Titlebar.hover += 2;}
     } else {
         TTY_p->Titlebar.hover = -1;
     }
