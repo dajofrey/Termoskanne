@@ -27,6 +27,10 @@ tk_terminal_Config tk_terminal_updateConfig(
     void *Terminal_p
 );
 
+tk_terminal_Config tk_terminal_updateConfigIfMarked(
+    void *Terminal_p
+);
+
 tk_terminal_Config tk_terminal_getConfig(
     void *Terminal_p
 );

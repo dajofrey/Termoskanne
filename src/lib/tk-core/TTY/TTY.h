@@ -54,7 +54,7 @@
     } tk_core_Sidebar;
 
     typedef struct tk_core_TTY {
-	void *TerminalConfig_p;
+	void *Terminal_p;
         tk_core_Config Config;
         tk_core_Clipboard Clipboard;
         tk_core_Borders Borders;

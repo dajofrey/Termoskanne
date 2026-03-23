@@ -96,7 +96,7 @@ int main(int argc, char **argv_pp)
         if (tk_api_setViewport(Terminal_p, Viewport_p) != TK_TERMINAL_SUCCESS) {
             return 1;
         }
-        
+
         nh_api_setWindowEventListener(Window_p, handleInput);
 //    }
 

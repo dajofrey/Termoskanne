@@ -19,7 +19,7 @@
     );
 
     void tk_core_handleTitlebarHit( 
-        nh_api_MouseEvent Event, int cCol
+        tk_core_TTY *TTY_p, nh_api_MouseEvent Event, int cCol
     );
 
     void tk_core_checkTitlebar(

@@ -50,48 +50,40 @@
         tk_core_Tile *Tile_p;
     } tk_core_MacroWindow;
 
-/** @} */
+tk_core_MacroWindow *tk_core_insertAndFocusWindow(
+    void *TTY_p, int index
+);
 
-/** @addtogroup lib_nhtty_functions
- *  @{
- */
+TK_CORE_RESULT tk_core_destroyWindows(
+    void *TTY_p
+);
 
-    tk_core_MacroWindow *tk_core_insertAndFocusWindow(
-        void *TTY_p, int index
-    );
-    
-    TK_CORE_RESULT tk_core_destroyWindows(
-        void *TTY_p
-    );
+TK_CORE_RESULT tk_core_updateMacroWindow(
+    tk_core_MacroWindow *Window_p
+);
 
-    TK_CORE_RESULT tk_core_updateMacroWindow(
-        tk_core_MacroWindow *Window_p
-    );
+TK_CORE_RESULT tk_core_handleMacroWindowInput(
+    tk_core_Config *Config_p, tk_core_MacroWindow *Tab_p, nh_api_WSIEvent Event 
+);
 
-    TK_CORE_RESULT tk_core_handleMacroWindowInput(
-        tk_core_Config *Config_p, tk_core_MacroWindow *Tab_p, nh_api_WSIEvent Event 
-    );
+tk_core_Tile *tk_core_createMacroTile(
+    tk_core_Tile *Parent_p, nh_core_List **MicroTabs_pp, int index
+);
 
-    tk_core_Tile *tk_core_createMacroTile(
-        tk_core_Tile *Parent_p, nh_core_List **MicroTabs_pp, int index
-    );
+void tk_core_destroyMacroTile(
+    tk_core_MacroTile *Tile_p
+);
 
-    void tk_core_destroyMacroTile(
-        tk_core_MacroTile *Tile_p
-    );
+TK_CORE_RESULT tk_core_drawTileRow(
+    tk_core_Tile *Tile_p, tk_core_Row *Row_p, int row
+);
 
-    TK_CORE_RESULT tk_core_drawTileRow(
-        tk_core_Tile *Tile_p, tk_core_Row *Row_p, int row
-    );
+void tk_core_drawEmptyGlyph(
+    tk_core_Glyph *Glyph_p, bool reverse
+);
 
-    void tk_core_drawEmptyGlyph(
-        tk_core_Glyph *Glyph_p, bool reverse
-    );
-
-    int tk_core_getCurrentWindowIndex(
-        void *TTY_p
-    );
-
-/** @} */
+int tk_core_getCurrentWindowIndex(
+    void *TTY_p
+);
 
 #endif // TK_CORE_TTY_MACRO_H

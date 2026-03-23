@@ -25,7 +25,7 @@
 static TK_CORE_RESULT tk_core_getSetting(
     tk_core_Config *Config_p, char *namespace_p, int index, char *setting_p)
 {
-    nh_core_List *Values_p = nh_core_getGlobalConfigSetting(namespace_p, -1, setting_p);
+    nh_core_List *Values_p = nh_core_getGlobalConfigSetting(namespace_p, setting_p);
     TK_CHECK_NULL(Values_p)
 
     switch (index) {

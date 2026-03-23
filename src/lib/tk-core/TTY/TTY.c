@@ -118,7 +118,7 @@ static void *tk_core_initTTY(
     TTY_p->Preview.blink = true;
     TTY_p->Preview.LastBlink = nh_core_getSystemTime();
 
-    TTY_p->TerminalConfig_p = NULL;
+    TTY_p->Terminal_p = NULL;
 
     TK_CHECK_2(NULL, nh_core_initRingBuffer(
         &TTY_p->Events, 128, sizeof(nh_api_WSIEvent), NULL 

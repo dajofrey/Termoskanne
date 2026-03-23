@@ -645,9 +645,9 @@ bool tk_terminal_updateBlinkOrGradient(
     } 
 
     // Clear color needs to be updated.
-    State_p->Viewport_p->Settings.ClearColor.r = State_p->BackgroundGradient.Color.r;
-    State_p->Viewport_p->Settings.ClearColor.g = State_p->BackgroundGradient.Color.g;
-    State_p->Viewport_p->Settings.ClearColor.b = State_p->BackgroundGradient.Color.b;
+    State_p->Viewport_p->Settings.ClearColor.r = Config_p->Backgrounds_p[0].r;
+    State_p->Viewport_p->Settings.ClearColor.g = Config_p->Backgrounds_p[0].g;
+    State_p->Viewport_p->Settings.ClearColor.b = Config_p->Backgrounds_p[0].b;
 
     return update;
 }
@@ -655,7 +655,7 @@ bool tk_terminal_updateBlinkOrGradient(
 // VIEWPORT ========================================================================================
 
 TK_TERMINAL_RESULT tk_terminal_handleViewportChange(
-    tk_terminal_Graphics *Graphics_p, nh_gfx_Viewport *Viewport_p)
+    tk_terminal_Config *Config_p, tk_terminal_Graphics *Graphics_p, nh_gfx_Viewport *Viewport_p)
 {
     // Check if it's the initial call.
     if (!Graphics_p->State.Viewport_p) 
@@ -676,9 +676,9 @@ TK_TERMINAL_RESULT tk_terminal_handleViewportChange(
         }
     }
 
-    Viewport_p->Settings.ClearColor.r = Graphics_p->State.BackgroundGradient.Color.r;
-    Viewport_p->Settings.ClearColor.g = Graphics_p->State.BackgroundGradient.Color.g;
-    Viewport_p->Settings.ClearColor.b = Graphics_p->State.BackgroundGradient.Color.b;
+    Viewport_p->Settings.ClearColor.r = Config_p->Backgrounds_p[0].r;
+    Viewport_p->Settings.ClearColor.g = Config_p->Backgrounds_p[0].g;
+    Viewport_p->Settings.ClearColor.b = Config_p->Backgrounds_p[0].b;
 
     Graphics_p->State.Viewport_p = Viewport_p;
 

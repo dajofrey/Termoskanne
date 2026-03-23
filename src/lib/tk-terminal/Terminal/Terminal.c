@@ -191,6 +191,59 @@ static TK_TERMINAL_RESULT tk_terminal_updateSizeIfRequired(
     return TK_TERMINAL_SUCCESS;
 }
 
+static bool tk_terminal_updateConfigIfRequired(
+    tk_terminal_Terminal *Terminal_p)
+{
+    tk_terminal_Config OldConfig = Terminal_p->Config;
+    tk_terminal_updateConfigIfMarked(Terminal_p);
+
+    if (OldConfig.fontSize != Terminal_p->Config.fontSize) {
+
+        nh_gfx_unclaimFontInstance(nh_gfx_claimFontInstance(
+            Terminal_p->Graphics.State.Fonts.pp[0], Terminal_p->Config.fontSize));
+        nh_gfx_unclaimFontInstance(nh_gfx_claimFontInstance(
+            Terminal_p->Graphics.State.Fonts.pp[1], Terminal_p->Config.fontSize));
+
+        tk_terminal_updateSize(Terminal_p);
+
+        return true;
+    }
+
+    if (OldConfig.style != Terminal_p->Config.style) {
+
+        TK_TERMINAL_CHECK(tk_terminal_updateBackdropGrid(
+            &Terminal_p->Config, &Terminal_p->TTY_p->Config, &Terminal_p->BackdropGrid,
+            &Terminal_p->Graphics.State, &Terminal_p->Text))
+
+        Terminal_p->Graphics.BackdropData.update = true;
+        Terminal_p->Graphics.ElevatedData.update = true;
+    
+        TK_TERMINAL_CHECK(tk_terminal_updateGraphics(
+            &Terminal_p->Config, &Terminal_p->Graphics, &Terminal_p->Grid, &Terminal_p->BackdropGrid, 
+            &Terminal_p->ElevatedGrid, Terminal_p->TTY_p->Config.Titlebar.on))
+ 
+        return true;
+    }
+
+    if (OldConfig.Backgrounds_p[0].r != Terminal_p->Config.Backgrounds_p[0].r
+     || OldConfig.Backgrounds_p[0].g != Terminal_p->Config.Backgrounds_p[0].g
+     || OldConfig.Backgrounds_p[0].b != Terminal_p->Config.Backgrounds_p[0].b) {
+
+        TK_TERMINAL_CHECK(tk_terminal_updateBackdropGrid(
+            &Terminal_p->Config, &Terminal_p->TTY_p->Config, &Terminal_p->BackdropGrid,
+            &Terminal_p->Graphics.State, &Terminal_p->Text))
+
+        TK_TERMINAL_CHECK(tk_terminal_updateGraphics(
+            &Terminal_p->Config, &Terminal_p->Graphics, &Terminal_p->Grid, &Terminal_p->BackdropGrid, 
+            &Terminal_p->ElevatedGrid, Terminal_p->TTY_p->Config.Titlebar.on))
+ 
+        return true;
+    }
+
+
+    return false;
+}
+
 static TK_TERMINAL_RESULT tk_terminal_handleEvent(
     tk_terminal_Terminal *Terminal_p, nh_api_WSIEvent *Event_p)
 {
@@ -204,15 +257,9 @@ static TK_TERMINAL_RESULT tk_terminal_handleEvent(
             }
 
             nh_core_overwriteGlobalConfigSettingInt(
-                Terminal_p->namespace_p, -1, "tk-terminal.font.size", newFontSize);
-            tk_terminal_updateConfig(Terminal_p);
+                Terminal_p->namespace_p, "tk-terminal.font.size", newFontSize);
 
-            nh_gfx_unclaimFontInstance(nh_gfx_claimFontInstance(
-                Terminal_p->Graphics.State.Fonts.pp[0], newFontSize));
-            nh_gfx_unclaimFontInstance(nh_gfx_claimFontInstance(
-                Terminal_p->Graphics.State.Fonts.pp[1], newFontSize));
-
-            TK_TERMINAL_CHECK(tk_terminal_updateSize(Terminal_p))
+            TK_TERMINAL_CHECK(tk_terminal_updateConfigIfRequired(Terminal_p))
         }
         if (Event_p->Mouse.type == NH_API_MOUSE_LEFT && Event_p->Mouse.trigger == NH_API_TRIGGER_PRESS) {
             Terminal_p->leftMouse = true;
@@ -362,7 +409,7 @@ static NH_SIGNAL tk_terminal_runTerminal(
 
     if (!Terminal_p->Graphics.State.Viewport_p) {return NH_SIGNAL_IDLE;}
 
-    bool update = false;
+    bool update = tk_terminal_updateConfigIfRequired(Terminal_p);
 
     TK_TERMINAL_CHECK_2(NH_SIGNAL_ERROR, tk_terminal_updateSizeIfRequired(Terminal_p, &update))
     TK_TERMINAL_CHECK_2(NH_SIGNAL_ERROR, tk_terminal_handleInputIfRequired(Terminal_p, &update))
@@ -407,7 +454,7 @@ static NH_SIGNAL tk_terminal_runTerminalCommand(
             if (nh_gfx_claimViewport(Command_p->p, NH_GFX_VIEWPORT_OWNER_TERMINAL, Terminal_p) != NH_API_SUCCESS) {
                 return NH_SIGNAL_ERROR;
             }
-            tk_terminal_handleViewportChange(&Terminal_p->Graphics, Command_p->p);
+            tk_terminal_handleViewportChange(&Terminal_p->Config, &Terminal_p->Graphics, Command_p->p);
             break;
     }
 
@@ -428,7 +475,7 @@ tk_terminal_Terminal *tk_terminal_openTerminal(
         tk_terminal_initTerminal, tk_terminal_runTerminal, tk_terminal_freeTerminal,
         tk_terminal_runTerminalCommand, &Args, true);
 
-    TTY_p->TerminalConfig_p = &Terminal_p->Config;
+    TTY_p->Terminal_p = Terminal_p;
 
     return Terminal_p;
 }

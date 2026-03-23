@@ -506,7 +506,7 @@ static TK_CORE_RESULT tk_core_handleMouseInput(
     if (row == -1 && Config_p->Titlebar.on == true) {
         // Forward titlebar hit.
         if (Event.Mouse.trigger == NH_API_TRIGGER_PRESS) {
-            tk_core_handleTitlebarHit(Event.Mouse, cCol);
+            tk_core_handleTitlebarHit(TTY_p, Event.Mouse, cCol);
             TTY_p->Window_p->refreshGrid2 = true;
         }
     }
@@ -519,7 +519,7 @@ static TK_CORE_RESULT tk_core_handleMouseInput(
     }
 
     if (Event.Mouse.type == NH_API_MOUSE_LEFT && Event.Mouse.type == NH_API_TRIGGER_PRESS) {
-        if (TTY_p->Config.Sidebar.on && (cCol == 0 || cCol == 1)) {
+        if (TTY_p->Config.Sidebar.on && (cCol == -2 || cCol == -1)) {
 	    tk_core_handleSidebarHit(TTY_p, Event.Mouse, cRow);
 	}
     }

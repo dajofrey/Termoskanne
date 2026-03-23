@@ -141,7 +141,7 @@ TK_TERMINAL_RESULT tk_terminal_freeGraphics(
 );
 
 TK_TERMINAL_RESULT tk_terminal_handleViewportChange(
-    tk_terminal_Graphics *Graphics_p, nh_gfx_Viewport *Viewport_p
+    tk_terminal_Config *Config_p, tk_terminal_Graphics *Graphics_p, nh_gfx_Viewport *Viewport_p
 );
 
 TK_TERMINAL_RESULT tk_terminal_updateGraphics( 

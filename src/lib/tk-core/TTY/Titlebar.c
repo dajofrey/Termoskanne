@@ -17,6 +17,7 @@
 #include "nh-core/System/Memory.h"
 #include "nh-core/System/Thread.h"
 #include "nh-core/System/System.h"
+#include "nh-core/Config/Config.h"
 
 #include "nh-encoding/Encodings/UTF32.h"
 #include "nh-encoding/Encodings/UTF8.h"
@@ -50,7 +51,7 @@ bool tk_core_handleTitlebarMove(
 }
 
 void tk_core_handleTitlebarHit( 
-    nh_api_MouseEvent Event, int cCol) 
+    tk_core_TTY *TTY_p, nh_api_MouseEvent Event, int cCol) 
 {
     if (Event.trigger == NH_API_TRIGGER_PRESS && cCol < 45) {
         tk_core_TTY *TTY_p = nh_core_getWorkloadArg();
@@ -61,6 +62,21 @@ void tk_core_handleTitlebarHit(
             Window_p->Tile_p->refresh = true; 
         }
     } 
+
+    if (TTY_p->Config.Sidebar.on) {cCol += 2;}
+
+    tk_core_View *View_p = TTY_p->Views.pp[0];
+    tk_core_Row *Row_p = &(View_p->Grid1_p[View_p->rows]);
+
+    if (Row_p->Glyphs_p[cCol].codepoint == 0x2261) {
+        nh_core_overwriteGlobalConfigSettingInt(TTY_p->namespace_p, "tk-core.sidebar", !TTY_p->Config.Sidebar.on);
+    } 
+    if (cCol < View_p->cols && Row_p->Glyphs_p[cCol+1].codepoint == 0x2261) {
+        nh_core_overwriteGlobalConfigSettingInt(TTY_p->namespace_p, "tk-core.sidebar", !TTY_p->Config.Sidebar.on);
+    }
+    if (cCol > 0 && Row_p->Glyphs_p[cCol-1].codepoint == 0x2261) {
+        nh_core_overwriteGlobalConfigSettingInt(TTY_p->namespace_p, "tk-core.sidebar", !TTY_p->Config.Sidebar.on);
+    }
 } 
 
 void tk_core_checkTitlebar(
@@ -139,87 +155,21 @@ TK_CORE_RESULT tk_core_drawTitlebar(
     Row_p->update_p[cols - 9] = true;
     Row_p->Glyphs_p[cols - 9].Background.custom = true;
 
-    if (TTY_p->Config.Sidebar.on == false && TTY_p->Config.clean == false) {
+    background = (TTY_p->Titlebar.hover >= cols - 12 && TTY_p->Titlebar.hover <= cols - 10) || TTY_p->Config.Sidebar.on ? TK_CORE_MARK_ACCENT_BACKGROUND : TK_CORE_MARK_ACCENT_BACKGROUND_2;
 
-        Row_p->Glyphs_p[cols - 10].mark = TK_CORE_MARK_ACCENT_BACKGROUND_2;
-        Row_p->update_p[cols - 10] = true;
-        Row_p->Glyphs_p[cols - 10].Background.custom = true;
+    Row_p->Glyphs_p[cols - 10].mark = background;
+    Row_p->update_p[cols - 10] = true;
+    Row_p->Glyphs_p[cols - 10].Background.custom = true;
 
-        Row_p->Glyphs_p[cols - 11].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND_2;
-        Row_p->Glyphs_p[cols - 11].Attributes.bold = false;
-        Row_p->Glyphs_p[cols - 11].codepoint = '|';
-        Row_p->update_p[cols - 11] = true;
-        Row_p->Glyphs_p[cols - 11].Background.custom = true;
+    Row_p->Glyphs_p[cols - 11].mark = TK_CORE_MARK_ACCENT | background;
+    Row_p->Glyphs_p[cols - 11].Attributes.bold = true;
+    Row_p->Glyphs_p[cols - 11].codepoint = 0x2261;
+    Row_p->update_p[cols - 11] = true;
+    Row_p->Glyphs_p[cols - 11].Background.custom = true;
 
-        Row_p->Glyphs_p[cols - 12].mark = TK_CORE_MARK_ACCENT_BACKGROUND_2;
-        Row_p->update_p[cols - 12] = true;
-        Row_p->Glyphs_p[cols - 12].Background.custom = true;
-
-        background = TTY_p->Titlebar.hover >= cols - 15 && TTY_p->Titlebar.hover <= cols - 13 ? TK_CORE_MARK_ACCENT_BACKGROUND : TK_CORE_MARK_ACCENT_BACKGROUND_2;
-
-        Row_p->Glyphs_p[cols - 13].mark = background;
-        Row_p->update_p[cols - 13] = true;
-        Row_p->Glyphs_p[cols - 13].Background.custom = true;
-
-        Row_p->Glyphs_p[cols - 14].codepoint = '-';
-        Row_p->Glyphs_p[cols - 14].mark = TK_CORE_MARK_ACCENT | background;
-        Row_p->update_p[cols - 14] = true;
-        Row_p->Glyphs_p[cols - 14].Background.custom = true;
-        Row_p->Glyphs_p[cols - 14].Attributes.bold = true;
-
-        Row_p->Glyphs_p[cols - 15].mark = background;
-        Row_p->update_p[cols - 15] = true;
-        Row_p->Glyphs_p[cols - 15].Background.custom = true;
-
-        background = TTY_p->Titlebar.hover >= cols - 18 && TTY_p->Titlebar.hover <= cols - 16 ? TK_CORE_MARK_ACCENT_BACKGROUND : TK_CORE_MARK_ACCENT_BACKGROUND_2;
-
-        Row_p->Glyphs_p[cols - 16].mark = background;
-        Row_p->update_p[cols - 16] = true;
-        Row_p->Glyphs_p[cols - 16].Background.custom = true;
-
-        Row_p->Glyphs_p[cols - 17].codepoint = '+';
-        Row_p->Glyphs_p[cols - 17].mark = TK_CORE_MARK_ACCENT | background;
-        Row_p->update_p[cols - 17] = true;
-        Row_p->Glyphs_p[cols - 17].Background.custom = true;
-        Row_p->Glyphs_p[cols - 17].Attributes.bold = true;
-
-        Row_p->Glyphs_p[cols - 18].mark = background;
-        Row_p->update_p[cols - 18] = true;
-        Row_p->Glyphs_p[cols - 18].Background.custom = true;
-
-        background = TTY_p->Titlebar.hover >= cols - 21 && TTY_p->Titlebar.hover <= cols - 19 ? TK_CORE_MARK_ACCENT_BACKGROUND : TK_CORE_MARK_ACCENT_BACKGROUND_2;
-
-        Row_p->Glyphs_p[cols - 19].mark = background;
-        Row_p->update_p[cols - 19] = true;
-        Row_p->Glyphs_p[cols - 19].Background.custom = true;
-
-        Row_p->Glyphs_p[cols - 20].Attributes.bold = false;
-        Row_p->Glyphs_p[cols - 20].codepoint = '?';
-        Row_p->Glyphs_p[cols - 20].mark = TK_CORE_MARK_ACCENT | background;
-        Row_p->update_p[cols - 20] = true;
-        Row_p->Glyphs_p[cols - 20].Background.custom = true;
-
-        Row_p->Glyphs_p[cols - 21].mark = background;
-        Row_p->update_p[cols - 21] = true;
-        Row_p->Glyphs_p[cols - 21].Background.custom = true;
-
-        background = TTY_p->Titlebar.hover >= cols - 24 && TTY_p->Titlebar.hover <= cols - 22 ? TK_CORE_MARK_ACCENT_BACKGROUND : TK_CORE_MARK_ACCENT_BACKGROUND_2;
-
-        Row_p->Glyphs_p[cols - 22].mark = background;
-        Row_p->update_p[cols - 22] = true;
-        Row_p->Glyphs_p[cols - 22].Background.custom = true;
-
-	Row_p->Glyphs_p[cols - 23].codepoint = 0x2261;
-        Row_p->Glyphs_p[cols - 23].mark = TK_CORE_MARK_ACCENT | background;
-        Row_p->update_p[cols - 23] = true;
-        Row_p->Glyphs_p[cols - 23].Background.custom = true;
-        Row_p->Glyphs_p[cols - 23].Attributes.bold = true;
-
-        Row_p->Glyphs_p[cols - 24].mark = background;
-        Row_p->update_p[cols - 24] = true;
-        Row_p->Glyphs_p[cols - 24].Background.custom = true;
-
-    }
+    Row_p->Glyphs_p[cols - 12].mark = background;
+    Row_p->update_p[cols - 12] = true;
+    Row_p->Glyphs_p[cols - 12].Background.custom = true;
 
     int count = TTY_p->Config.Sidebar.on ? 4 : 2;
     for (int i = 0; i < TTY_p->Windows.size; ++i) {
@@ -305,7 +255,7 @@ TK_CORE_RESULT tk_core_drawTitlebar(
     if (TTY_p->Config.Sidebar.on) {
         Row_p->update_p[0] = 1;
         Row_p->update_p[1] = 1;
-        Row_p->Glyphs_p[0].codepoint = 0x2261;
+        Row_p->Glyphs_p[0].codepoint = 0x263c;
         Row_p->Glyphs_p[0].Attributes.bold = true;
         if (TTY_p->Sidebar.hover == -1) {
             Row_p->Glyphs_p[0].mark = TK_CORE_MARK_ACCENT_BACKGROUND | TK_CORE_MARK_ACCENT | TK_CORE_MARK_SIDEBAR;

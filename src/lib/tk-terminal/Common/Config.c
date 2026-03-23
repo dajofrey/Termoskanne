@@ -25,7 +25,7 @@
 static TK_TERMINAL_RESULT tk_terminal_getSetting(
     tk_terminal_Config *Config_p, char *namespace_p, int setting, char *setting_p)
 {
-    nh_core_List *Setting_p = nh_core_getGlobalConfigSetting(namespace_p, -1, setting_p);
+    nh_core_List *Setting_p = nh_core_getGlobalConfigSetting(namespace_p, setting_p);
     TK_TERMINAL_CHECK_NULL(Setting_p)
 
     switch (setting) {
@@ -115,5 +115,15 @@ tk_terminal_Config tk_terminal_updateConfig(
     void *Terminal_p) 
 {
     ((tk_terminal_Terminal*)Terminal_p)->Config = tk_terminal_getStaticConfig(); 
+    return ((tk_terminal_Terminal*)Terminal_p)->Config;
+}
+
+tk_terminal_Config tk_terminal_updateConfigIfMarked(
+    void *Terminal_p) 
+{
+    bool mark = nh_core_popGlobalConfigMark(((tk_terminal_Terminal*)Terminal_p)->namespace_p);
+    if (mark) {
+        return tk_terminal_updateConfig(Terminal_p);
+    }
     return ((tk_terminal_Terminal*)Terminal_p)->Config;
 }

@@ -11,8 +11,8 @@
 #include "nh-core/Util/Time.h"
 
 typedef struct tk_terminal_Terminal {
-    nh_gfx_Text Text;
     tk_core_TTY *TTY_p;
+    nh_gfx_Text Text;
     char namespace_p[255];
     tk_terminal_Config Config;
     tk_terminal_Grid Grid;
