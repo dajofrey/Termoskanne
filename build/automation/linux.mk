@@ -116,7 +116,7 @@ create_bin_dir:
 # Custom compiler flags
 
 $(OBJ_FILES_TK_TERMINAL): CFLAGS += -I$(NETZHAUT_PATH)/external -I$(NETZHAUT_PATH)/src/lib -I$(NETZHAUT_PATH)/external/Vulkan-Headers/include -DINCLUDE_VOLK -DVK_VERSION_1_2 -DVK_USE_PLATFORM_XLIB_KHR -DVK_KHR_xlib_surface
-$(OBJ_FILES_TK_CORE): CFLAGS += -I$(NETZHAUT_PATH)/external -I$(NETZHAUT_PATH)/src/lib
+$(OBJ_FILES_TK_CORE): CFLAGS += -I$(NETZHAUT_PATH)/external -I$(NETZHAUT_PATH)/src/lib -I$(NETZHAUT_PATH)/external/Vulkan-Headers/include -DINCLUDE_VOLK -DVK_VERSION_1_2 -DVK_USE_PLATFORM_XLIB_KHR -DVK_KHR_xlib_surface
 $(OBJ_FILES_TK_API): CFLAGS += -I$(NETZHAUT_PATH)/external -I$(NETZHAUT_PATH)/src/lib
 $(OBJ_FILES_TK): CFLAGS += -Iexternal -I$(NETZHAUT_PATH)/src/lib -Isrc/lib
 
