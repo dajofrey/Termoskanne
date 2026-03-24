@@ -178,6 +178,15 @@ static inline tk_core_Color tk_terminal_getGlyphColor2(
     tk_terminal_Config *Config_p, tk_terminal_GraphicsState *State_p, tk_core_Glyph *Glyph_p, unsigned int target,
     int col, int row, tk_terminal_Grid *Grid_p)
 {
+    if ((Glyph_p->mark & TK_CORE_MARK_BORDER) && Config_p->style == 0 && Config_p->border > 0) {
+        if (Config_p->border == 1) {
+            return Config_p->Accents_p[0];
+        }
+        if (Config_p->border == 2) {
+            return Config_p->Backgrounds_p[0];
+        }
+    }
+ 
     if (target == 2) {
         if (Glyph_p->overlay == TK_CORE_MARK_ACCENT_BACKGROUND) {
             tk_core_Color Color = tk_terminal_getAccentColor(Config_p, col, row, Grid_p->cols, Grid_p->rows);

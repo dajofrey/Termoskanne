@@ -384,7 +384,7 @@ TK_TERMINAL_RESULT tk_terminal_updateBackdropGrid(
         for (int col = 0; col < BackdropGrid_p->cols; ++col) {
             tk_terminal_Tile *Tile_p = tk_terminal_getTile(BackdropGrid_p, row, col);
             TK_TERMINAL_CHECK_NULL(Tile_p)
-            Tile_p->Glyph.mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_LINE_GRAPHICS;
+            Tile_p->Glyph.mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_LINE_GRAPHICS | TK_CORE_MARK_BORDER;
             Tile_p->Glyph.Attributes.reverse = true;
             TK_TERMINAL_CHECK(tk_terminal_getBackgroundVertices(
                 State_p, BackdropGrid_p, &Tile_p->Glyph, col, row, Tile_p->Background.vertices_p, Config_p->fontSize

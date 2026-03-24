@@ -233,6 +233,27 @@ static bool tk_terminal_updateConfigIfRequired(
             &Terminal_p->Config, &Terminal_p->TTY_p->Config, &Terminal_p->BackdropGrid,
             &Terminal_p->Graphics.State, &Terminal_p->Text))
 
+        Terminal_p->Graphics.BackdropData.update = true;
+        Terminal_p->Graphics.ElevatedData.update = true;
+ 
+        TK_TERMINAL_CHECK(tk_terminal_updateGraphics(
+            &Terminal_p->Config, &Terminal_p->Graphics, &Terminal_p->Grid, &Terminal_p->BackdropGrid, 
+            &Terminal_p->ElevatedGrid, Terminal_p->TTY_p->Config.Titlebar.on))
+ 
+        return true;
+    }
+
+    if (OldConfig.border != Terminal_p->Config.border) {
+
+        tk_terminal_updateSize(Terminal_p);
+
+        TK_TERMINAL_CHECK(tk_terminal_updateBackdropGrid(
+            &Terminal_p->Config, &Terminal_p->TTY_p->Config, &Terminal_p->BackdropGrid,
+            &Terminal_p->Graphics.State, &Terminal_p->Text))
+
+        Terminal_p->Graphics.BackdropData.update = true;
+        Terminal_p->Graphics.ElevatedData.update = true;
+    
         TK_TERMINAL_CHECK(tk_terminal_updateGraphics(
             &Terminal_p->Config, &Terminal_p->Graphics, &Terminal_p->Grid, &Terminal_p->BackdropGrid, 
             &Terminal_p->ElevatedGrid, Terminal_p->TTY_p->Config.Titlebar.on))
