@@ -100,7 +100,7 @@ void tk_core_handleSidebarHit(
 
     }
     if (Event.trigger == NH_API_TRIGGER_PRESS && cRow == 7) {
-        nh_core_overwriteGlobalConfigSetting(((tk_terminal_Terminal*)TTY_p->Terminal_p)->namespace_p, "tk-terminal.high_contrast", !((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.highContrast);
+        nh_core_overwriteGlobalConfigSettingInt(((tk_terminal_Terminal*)TTY_p->Terminal_p)->namespace_p, "tk-terminal.high_contrast", !((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.highContrast);
     }
     if (Event.trigger == NH_API_TRIGGER_PRESS && cRow == 8) {
         nh_core_overwriteGlobalConfigSettingInt(TTY_p->namespace_p, "tk-core.titlebar.on", !TTY_p->Config.Titlebar.on);
