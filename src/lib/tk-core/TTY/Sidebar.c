@@ -32,7 +32,7 @@ bool tk_core_handleSidebarMove(
 
     int prev = TTY_p->Sidebar.hover;
 
-    if ((cCol == -2 || cCol == -1) && cRow < 8) {
+    if ((cCol == -2 || cCol == -1) && cRow < 9) {
         TTY_p->Sidebar.hover = cRow;
     } else {
         TTY_p->Sidebar.hover = -999;
@@ -73,19 +73,36 @@ void tk_core_handleSidebarHit(
         int g = (int)(((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.Backgrounds_p[0].g*255.0f);
         int b = (int)(((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.Backgrounds_p[0].b*255.0f);
         int a = (int)(((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.Backgrounds_p[0].a*255.0f);
-        char color_p[255];
-        sprintf(color_p, "%d,%d,%d,%d", r, g, b, a);
-        nh_core_overwriteGlobalConfigSetting(((tk_terminal_Terminal*)TTY_p->Terminal_p)->namespace_p, "tk-terminal.color.foreground", color_p);
+        char background_p[255];
+        sprintf(background_p, "%d,%d,%d,%d", r, g, b, a);
 
+        nh_core_overwriteGlobalConfigSetting(((tk_terminal_Terminal*)TTY_p->Terminal_p)->namespace_p, "tk-terminal.color.foreground", background_p);
+
+        r = (int)(((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.Accents_p[0].r*255.0f);
+        g = (int)(((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.Accents_p[0].g*255.0f);
+        b = (int)(((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.Accents_p[0].b*255.0f);
+        a = (int)(((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.Accents_p[0].a*255.0f);
+        char accent_p[255];
+        sprintf(accent_p, "%d,%d,%d,%d", r, g, b, a);
+ 
         r = (int)(((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.Foreground.r*255.0f);
         g = (int)(((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.Foreground.g*255.0f);
         b = (int)(((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.Foreground.b*255.0f);
         a = (int)(((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.Foreground.a*255.0f);
-        sprintf(color_p, "%d,%d,%d,%d", r, g, b, a);
-        nh_core_overwriteGlobalConfigSetting(((tk_terminal_Terminal*)TTY_p->Terminal_p)->namespace_p, "tk-terminal.color.background", color_p);
+        char foreground_p[255];
+        sprintf(foreground_p, "%d,%d,%d,%d", r, g, b, a);
+
+        if (!strcmp(accent_p, foreground_p)) {
+            nh_core_overwriteGlobalConfigSetting(((tk_terminal_Terminal*)TTY_p->Terminal_p)->namespace_p, "tk-terminal.color.accent", background_p);
+        }
+
+        nh_core_overwriteGlobalConfigSetting(((tk_terminal_Terminal*)TTY_p->Terminal_p)->namespace_p, "tk-terminal.color.background", foreground_p);
 
     }
     if (Event.trigger == NH_API_TRIGGER_PRESS && cRow == 7) {
+        nh_core_overwriteGlobalConfigSetting(((tk_terminal_Terminal*)TTY_p->Terminal_p)->namespace_p, "tk-terminal.high_contrast", !((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.highContrast);
+    }
+    if (Event.trigger == NH_API_TRIGGER_PRESS && cRow == 8) {
         nh_core_overwriteGlobalConfigSettingInt(TTY_p->namespace_p, "tk-core.titlebar.on", !TTY_p->Config.Titlebar.on);
     }
 } 
@@ -99,12 +116,21 @@ TK_CORE_RESULT tk_core_drawSidebar(
         memset(View_p->Grid1_p[row].Glyphs_p, 0, sizeof(tk_core_Glyph));
         memset(View_p->Grid1_p[row].Glyphs_p+1, 0, sizeof(tk_core_Glyph));
 
+        if (((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.highContrast) {
+            View_p->Grid1_p[row].Glyphs_p[0].Attributes.reverse = true;
+            View_p->Grid1_p[row].Glyphs_p[1].Attributes.reverse = true;
+        }
+
         if (TTY_p->Sidebar.hover == row) {
             View_p->Grid1_p[row].Glyphs_p[0].mark = TK_CORE_MARK_ACCENT_BACKGROUND | TK_CORE_MARK_SIDEBAR;
             View_p->Grid1_p[row].Glyphs_p[1].mark = TK_CORE_MARK_ACCENT_BACKGROUND | TK_CORE_MARK_SIDEBAR;
+            if (((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.highContrast) {
+                View_p->Grid1_p[row].Glyphs_p[0].Attributes.reverse = false;
+                View_p->Grid1_p[row].Glyphs_p[1].Attributes.reverse = false;
+            }
         } else {
-            View_p->Grid1_p[row].Glyphs_p[0].mark = TK_CORE_MARK_ACCENT_BACKGROUND_2 | TK_CORE_MARK_SIDEBAR;
-            View_p->Grid1_p[row].Glyphs_p[1].mark = TK_CORE_MARK_ACCENT_BACKGROUND_2 | TK_CORE_MARK_SIDEBAR;
+            View_p->Grid1_p[row].Glyphs_p[0].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND_2 | TK_CORE_MARK_SIDEBAR;
+            View_p->Grid1_p[row].Glyphs_p[1].mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_ACCENT_BACKGROUND_2 | TK_CORE_MARK_SIDEBAR;
         } 
 
         View_p->Grid1_p[row].Glyphs_p[0].Background.custom = 1;
@@ -152,16 +178,34 @@ TK_CORE_RESULT tk_core_drawSidebar(
     View_p->Grid1_p[6].Glyphs_p[0].mark |= TK_CORE_MARK_ACCENT;
     View_p->Grid1_p[6].Glyphs_p[0].Attributes.bold = true;
 
-    if (TTY_p->Config.Titlebar.on == true) {
+    if (((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.highContrast == true) {
         TK_CORE_MARK_E background = TK_CORE_MARK_ACCENT_BACKGROUND;
-        View_p->Grid1_p[7].Glyphs_p[0].codepoint = '=';
+        View_p->Grid1_p[7].Glyphs_p[0].codepoint = 'C';
         View_p->Grid1_p[7].Glyphs_p[0].mark = TK_CORE_MARK_SIDEBAR | TK_CORE_MARK_ACCENT | background;
         View_p->Grid1_p[7].Glyphs_p[1].mark = TK_CORE_MARK_SIDEBAR | TK_CORE_MARK_ACCENT | background;
         View_p->Grid1_p[7].Glyphs_p[0].Attributes.bold = true;
+        View_p->Grid1_p[7].Glyphs_p[0].Attributes.reverse = false;
+        View_p->Grid1_p[7].Glyphs_p[1].Attributes.reverse = false;
     } else {
-        View_p->Grid1_p[7].Glyphs_p[0].codepoint = '=';
+        View_p->Grid1_p[7].Glyphs_p[0].codepoint = 'C';
         View_p->Grid1_p[7].Glyphs_p[0].mark |= TK_CORE_MARK_ACCENT;
         View_p->Grid1_p[7].Glyphs_p[0].Attributes.bold = true;
+    }
+
+    if (TTY_p->Config.Titlebar.on == true) {
+        TK_CORE_MARK_E background = TK_CORE_MARK_ACCENT_BACKGROUND;
+        View_p->Grid1_p[8].Glyphs_p[0].codepoint = '=';
+        View_p->Grid1_p[8].Glyphs_p[0].mark = TK_CORE_MARK_SIDEBAR | TK_CORE_MARK_ACCENT | background;
+        View_p->Grid1_p[8].Glyphs_p[1].mark = TK_CORE_MARK_SIDEBAR | TK_CORE_MARK_ACCENT | background;
+        View_p->Grid1_p[8].Glyphs_p[0].Attributes.bold = true;
+        if (((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.highContrast) {
+            View_p->Grid1_p[8].Glyphs_p[0].Attributes.reverse = false;
+            View_p->Grid1_p[8].Glyphs_p[1].Attributes.reverse = false;
+        }
+    } else {
+        View_p->Grid1_p[8].Glyphs_p[0].codepoint = '=';
+        View_p->Grid1_p[8].Glyphs_p[0].mark |= TK_CORE_MARK_ACCENT;
+        View_p->Grid1_p[8].Glyphs_p[0].Attributes.bold = true;
     }
 
     return TK_CORE_SUCCESS;

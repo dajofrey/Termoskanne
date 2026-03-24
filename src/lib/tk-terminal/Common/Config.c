@@ -78,6 +78,10 @@ static TK_TERMINAL_RESULT tk_terminal_getSetting(
 	    if (Setting_p->size != 1) {return TK_TERMINAL_ERROR_BAD_STATE;}
 	    Config_p->border = atoi(Setting_p->pp[0]);
 	    break;
+	case 8 :
+	    if (Setting_p->size != 1) {return TK_TERMINAL_ERROR_BAD_STATE;}
+	    Config_p->highContrast = atoi(Setting_p->pp[0]);
+	    break;
     }
 
     return TK_TERMINAL_SUCCESS;
@@ -97,6 +101,7 @@ static tk_terminal_Config tk_terminal_getStaticConfig()
         "tk-terminal.style",
         "tk-terminal.animate",
 	"tk-terminal.border",
+	"tk-terminal.high_contrast",
     };
 
     int options = sizeof(options_pp)/sizeof(options_pp[0]);

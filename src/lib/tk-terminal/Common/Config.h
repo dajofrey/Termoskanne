@@ -21,6 +21,7 @@ typedef struct tk_terminal_Config {
     int backgrounds;
     int style;
     bool border;
+    int highContrast;
 } tk_terminal_Config;
 
 tk_terminal_Config tk_terminal_updateConfig(
