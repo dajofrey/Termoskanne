@@ -46,6 +46,7 @@ typedef struct tk_core_Config {
     int windows;
     int tabs;
     bool clean;
+    bool highlight;
 } tk_core_Config;
 
 // FUNCTIONS =======================================================================================

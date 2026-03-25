@@ -198,7 +198,7 @@ static TK_CORE_RESULT tk_core_draw(
 // FUNCTIONS: REFRESH ===============================================================================
 
 static TK_CORE_RESULT tk_core_postProcessRow(
-    tk_core_View *View_p, int row)
+    tk_core_Config *Config_p, tk_core_View *View_p, int row)
 {
     tk_core_Row *Row_p = View_p->Grid1_p+row;
 
@@ -235,10 +235,16 @@ static TK_CORE_RESULT tk_core_postProcessRow(
                     if (i < View_p->cols-1 && (Glyph_p+1)->mark & TK_CORE_MARK_ACCENT_BACKGROUND_2) {
                         Glyph_p->codepoint = 'x'; 
                         Glyph_p->overlay = TK_CORE_MARK_ACCENT_BACKGROUND_2; 
+                        if (Config_p->highlight) {
+                            Glyph_p->overlay = TK_CORE_MARK_HIGHLIGHT; 
+                        }
                     }
                     if (i < View_p->cols-1 && (Glyph_p+1)->mark & TK_CORE_MARK_ACCENT_BACKGROUND) {
                         Glyph_p->codepoint = 'x'; 
                         Glyph_p->overlay = TK_CORE_MARK_ACCENT_BACKGROUND; 
+                        if (Config_p->highlight) {
+                            Glyph_p->overlay = TK_CORE_MARK_HIGHLIGHT; 
+                        }
                     }
                     if (Glyph_p->overlay && i > 0 && (Glyph_p-1)->mark & TK_CORE_MARK_ACCENT_BACKGROUND) {
                         Glyph_p->mark |= TK_CORE_MARK_ACCENT_BACKGROUND;
@@ -335,7 +341,7 @@ TK_CORE_RESULT tk_core_refreshGrid1Row(
         }
     }
 
-    TK_CHECK(tk_core_postProcessRow(View_p, row))
+    TK_CHECK(tk_core_postProcessRow(Config_p, View_p, row))
 
     return TK_CORE_SUCCESS;
 }

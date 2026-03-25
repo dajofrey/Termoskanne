@@ -99,6 +99,10 @@ static TK_CORE_RESULT tk_core_getSetting(
             if (Values_p->size != 1) {return TK_CORE_ERROR_BAD_STATE;}
             Config_p->clean = atoi(Values_p->pp[0]);
             break;
+        case 16 :
+            if (Values_p->size != 1) {return TK_CORE_ERROR_BAD_STATE;}
+            Config_p->highlight = atoi(Values_p->pp[0]);
+            break;
     }
 
     return TK_CORE_SUCCESS;
@@ -126,6 +130,7 @@ static tk_core_Config tk_core_getStaticConfig()
         "tk-core.topbar",
         "tk-core.sidebar",
         "tk-core.clean",
+        "tk-core.highlight",
     };
 
     int options = sizeof(options_pp)/sizeof(options_pp[0]);

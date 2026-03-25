@@ -206,6 +206,9 @@ static inline tk_core_Color tk_terminal_getGlyphColor2(
             tk_core_Color Color = tk_terminal_getAccentColor(Config_p, col, row, Grid_p->cols, Grid_p->rows);
             return Color;
         }
+        if (Glyph_p->overlay == TK_CORE_MARK_HIGHLIGHT) {
+            return Config_p->Highlight;
+        }
     }
 
     if (target == 1) {
