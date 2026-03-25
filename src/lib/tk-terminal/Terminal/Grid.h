@@ -59,6 +59,7 @@ typedef struct tk_terminal_Grid {
     tk_terminal_TileUpdate **Updates_pp;
     bool **updates_pp;
     int borderPixel;
+    int borderPixelLeft;
     int separatorPixel;
 } tk_terminal_Grid;
 

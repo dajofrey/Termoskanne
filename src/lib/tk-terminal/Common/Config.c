@@ -82,6 +82,13 @@ static TK_TERMINAL_RESULT tk_terminal_getSetting(
 	    if (Setting_p->size != 1) {return TK_TERMINAL_ERROR_BAD_STATE;}
 	    Config_p->highContrast = atoi(Setting_p->pp[0]);
 	    break;
+        case 9 :
+            if (Setting_p->size != 4) {return TK_TERMINAL_ERROR_BAD_STATE;}
+            Config_p->Highlight.r = ((float)atoi(Setting_p->pp[0]))/255.0f;
+            Config_p->Highlight.g = ((float)atoi(Setting_p->pp[1]))/255.0f;
+            Config_p->Highlight.b = ((float)atoi(Setting_p->pp[2]))/255.0f;
+            Config_p->Highlight.a = ((float)atoi(Setting_p->pp[3]))/255.0f;
+            break;
     }
 
     return TK_TERMINAL_SUCCESS;
@@ -102,6 +109,7 @@ static tk_terminal_Config tk_terminal_getStaticConfig()
         "tk-terminal.animate",
 	"tk-terminal.border",
 	"tk-terminal.high_contrast",
+        "tk-terminal.color.highlight",
     };
 
     int options = sizeof(options_pp)/sizeof(options_pp[0]);

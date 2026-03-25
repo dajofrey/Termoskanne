@@ -17,6 +17,7 @@ typedef struct tk_terminal_Config {
     tk_core_Color Foreground;
     tk_core_Color Backgrounds_p[8];
     tk_core_Color Accents_p[8];
+    tk_core_Color Highlight;
     int accents;
     int backgrounds;
     int style;

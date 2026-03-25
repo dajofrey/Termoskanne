@@ -219,13 +219,13 @@ TK_TERMINAL_RESULT tk_terminal_renderUsingOpenGL(
             "glViewport",
             nh_gfx_glint(NULL, 0),
             nh_gfx_glint(NULL, 0),
-            nh_gfx_glsizei(NULL, Grid_p->Size.width+Grid_p->borderPixel*2),
-            nh_gfx_glsizei(NULL, Grid_p->Size.height+Grid_p->borderPixel*2));
+            nh_gfx_glsizei(NULL, Grid_p->Size.width+Grid_p->borderPixel+Grid_p->borderPixelLeft),
+            nh_gfx_glsizei(NULL, Grid_p->Size.height+Grid_p->borderPixel+Grid_p->borderPixel));
  
         nh_gfx_addOpenGLCommand(
             Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p,
             "glScissor",
-            nh_gfx_glint(NULL, Grid_p->borderPixel),
+            nh_gfx_glint(NULL, Grid_p->borderPixelLeft),
             nh_gfx_glint(NULL, Grid_p->borderPixel),
             nh_gfx_glsizei(NULL, Grid_p->Size.width),
             nh_gfx_glsizei(NULL, Grid_p->Size.height));
@@ -249,7 +249,7 @@ TK_TERMINAL_RESULT tk_terminal_renderUsingOpenGL(
     nh_gfx_addOpenGLCommand(
         Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p,
         "glViewport",
-        nh_gfx_glint(NULL, Grid_p->borderPixel),
+        nh_gfx_glint(NULL, Grid_p->borderPixelLeft),
         nh_gfx_glint(NULL, Grid_p->borderPixel),
         nh_gfx_glsizei(NULL, Grid_p->Size.width),
         nh_gfx_glsizei(NULL, Grid_p->Size.height));
@@ -281,13 +281,13 @@ TK_TERMINAL_RESULT tk_terminal_renderUsingOpenGL(
         "glScissor",
         nh_gfx_glint(NULL, 0),
         nh_gfx_glint(NULL, 0),
-        nh_gfx_glsizei(NULL, Grid_p->Size.width+Grid_p->borderPixel),
+        nh_gfx_glsizei(NULL, Grid_p->Size.width+Grid_p->borderPixelLeft),
         nh_gfx_glsizei(NULL, Grid_p->Size.height+Grid_p->borderPixel));
  
     nh_gfx_addOpenGLCommand(
         Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p,
         "glViewport",
-        nh_gfx_glint(NULL, Grid_p->borderPixel),
+        nh_gfx_glint(NULL, Grid_p->borderPixelLeft),
         nh_gfx_glint(NULL, Grid_p->borderPixel),
         nh_gfx_glsizei(NULL, Grid_p->Size.width),
         nh_gfx_glsizei(NULL, Grid_p->Size.height));
@@ -310,7 +310,7 @@ TK_TERMINAL_RESULT tk_terminal_renderUsingOpenGL(
     nh_gfx_addOpenGLCommand(
         Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p,
         "glViewport",
-        nh_gfx_glint(NULL, Grid_p->borderPixel),
+        nh_gfx_glint(NULL, Grid_p->borderPixelLeft),
         nh_gfx_glint(NULL, Grid_p->borderPixel),
         nh_gfx_glsizei(NULL, Grid_p->Size.width),
         nh_gfx_glsizei(NULL, Grid_p->Size.height));

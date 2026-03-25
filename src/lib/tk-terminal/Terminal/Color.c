@@ -250,6 +250,9 @@ static inline tk_core_Color tk_terminal_getGlyphColor2(
     }
 
     // Background.
+    if (Glyph_p->mark & TK_CORE_MARK_HIGHLIGHT) {
+        return Config_p->Highlight;
+    }
     if ((Glyph_p->Attributes.reverse && !(Glyph_p->Attributes.blink && State_p->Blink.on)) 
     || (!Glyph_p->Attributes.reverse &&   Glyph_p->Attributes.blink && State_p->Blink.on)) {
         if (Glyph_p->mark & TK_CORE_MARK_ACCENT) {

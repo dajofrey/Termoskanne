@@ -39,6 +39,7 @@ typedef enum TK_CORE_MARK_E {
     TK_CORE_MARK_SIDEBAR             = 1 << 8,
     TK_CORE_MARK_ACCENT_2            = 1 << 9,
     TK_CORE_MARK_BORDER              = 1 << 10,
+    TK_CORE_MARK_HIGHLIGHT           = 1 << 11,
 } TK_CORE_MARK_E;
 
 // TYPEDEFS ========================================================================================
