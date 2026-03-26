@@ -327,10 +327,15 @@ TK_TERMINAL_RESULT tk_terminal_updateTile(
 
     // Update or reset bottom gap tile if necessary.
     if (Update_p->row == Grid_p->rows-2) {
+        // separator line
         if (Update_p->Glyph.mark & TK_CORE_MARK_LINE_VERTICAL) {
             Update_p->row++;
             TK_TERMINAL_CHECK(tk_terminal_updateTile(Grid_p, state_p, Update_p, update_p, fontSize))
+        // sidebar
         } else if (Update_p->col == 0 && (Update_p->Glyph.codepoint == 0 || Update_p->Glyph.codepoint == ' ')) {
+            Update_p->row++;
+            TK_TERMINAL_CHECK(tk_terminal_updateTile(Grid_p, state_p, Update_p, update_p, fontSize))
+        } else if (Update_p->col == 1 && (Update_p->Glyph.codepoint == 0 || Update_p->Glyph.codepoint == ' ')) {
             Update_p->row++;
             TK_TERMINAL_CHECK(tk_terminal_updateTile(Grid_p, state_p, Update_p, update_p, fontSize))
         } else {
