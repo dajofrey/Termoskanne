@@ -332,11 +332,17 @@ TK_TERMINAL_RESULT tk_terminal_updateTile(
             Update_p->row++;
             TK_TERMINAL_CHECK(tk_terminal_updateTile(Grid_p, state_p, Update_p, update_p, fontSize))
         // sidebar
-        } else if (Update_p->col == 0 && (Update_p->Glyph.codepoint == 0 || Update_p->Glyph.codepoint == ' ')) {
+        } else if (Update_p->col == 0) {
             Update_p->row++;
+            Update_p->Glyph.codepoint = 0;
+            Update_p->Glyph.mark &= ~TK_CORE_MARK_HIGHLIGHT;
+            Update_p->Glyph.Attributes.reverse = true;
             TK_TERMINAL_CHECK(tk_terminal_updateTile(Grid_p, state_p, Update_p, update_p, fontSize))
         } else if (Update_p->col == 1 && (Update_p->Glyph.codepoint == 0 || Update_p->Glyph.codepoint == ' ')) {
             Update_p->row++;
+            Update_p->Glyph.codepoint = 0;
+            Update_p->Glyph.mark &= ~TK_CORE_MARK_HIGHLIGHT;
+            Update_p->Glyph.Attributes.reverse = true;
             TK_TERMINAL_CHECK(tk_terminal_updateTile(Grid_p, state_p, Update_p, update_p, fontSize))
         } else {
             Update_p->row++;

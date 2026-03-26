@@ -32,7 +32,7 @@ bool tk_core_handleSidebarMove(
 
     int prev = TTY_p->Sidebar.hover;
 
-    if ((cCol == -2 || cCol == -1) && cRow < 10) {
+    if ((cCol == -2 || cCol == -1)) {
         TTY_p->Sidebar.hover = cRow;
     } else {
         TTY_p->Sidebar.hover = -999;
@@ -131,7 +131,7 @@ TK_CORE_RESULT tk_core_drawSidebar(
             View_p->Grid1_p[row].Glyphs_p[1].Attributes.reverse = true;
         }
 
-        if (TTY_p->Sidebar.hover == row) {
+        if (TTY_p->Sidebar.hover == row && View_p->Grid1_p[row].Glyphs_p[0].codepoint != 0 && View_p->Grid1_p[row].Glyphs_p[0].codepoint != ' ') {
             View_p->Grid1_p[row].Glyphs_p[0].mark = TK_CORE_MARK_ACCENT_BACKGROUND | TK_CORE_MARK_SIDEBAR;
             View_p->Grid1_p[row].Glyphs_p[1].mark = TK_CORE_MARK_ACCENT_BACKGROUND | TK_CORE_MARK_SIDEBAR;
             if (((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.highContrast) {
@@ -180,57 +180,58 @@ TK_CORE_RESULT tk_core_drawSidebar(
     View_p->Grid1_p[4].Glyphs_p[0].mark |= TK_CORE_MARK_ACCENT;
     View_p->Grid1_p[4].Glyphs_p[0].Attributes.bold = true;
 
-    View_p->Grid1_p[5].Glyphs_p[0].codepoint = 0x0405;
-    View_p->Grid1_p[5].Glyphs_p[0].mark |= TK_CORE_MARK_ACCENT;
-    View_p->Grid1_p[5].Glyphs_p[0].Attributes.bold = true;
+    if (TTY_p->Config.Titlebar.on == true) {
+        TK_CORE_MARK_E background = TK_CORE_MARK_ACCENT_BACKGROUND;
+        View_p->Grid1_p[5].Glyphs_p[0].codepoint = '=';
+        View_p->Grid1_p[5].Glyphs_p[0].mark = TK_CORE_MARK_SIDEBAR | TK_CORE_MARK_ACCENT | background | TK_CORE_MARK_HIGHLIGHT;
+        View_p->Grid1_p[5].Glyphs_p[1].mark = TK_CORE_MARK_SIDEBAR | TK_CORE_MARK_ACCENT | background | TK_CORE_MARK_HIGHLIGHT;
+        View_p->Grid1_p[5].Glyphs_p[0].Attributes.bold = true;
+        if (((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.highContrast) {
+            View_p->Grid1_p[5].Glyphs_p[0].Attributes.reverse = false;
+            View_p->Grid1_p[5].Glyphs_p[1].Attributes.reverse = false;
+        }
+    } else {
+        View_p->Grid1_p[5].Glyphs_p[0].codepoint = '=';
+        View_p->Grid1_p[5].Glyphs_p[0].mark |= TK_CORE_MARK_ACCENT;
+        View_p->Grid1_p[5].Glyphs_p[0].Attributes.bold = true;
+    }
 
-    View_p->Grid1_p[6].Glyphs_p[0].codepoint = 0x0399;
-    View_p->Grid1_p[6].Glyphs_p[0].mark |= TK_CORE_MARK_ACCENT;
-    View_p->Grid1_p[6].Glyphs_p[0].Attributes.bold = true;
+    // bottom
+
+    View_p->Grid1_p[View_p->rows-4].Glyphs_p[0].codepoint = 0x0405;
+    View_p->Grid1_p[View_p->rows-4].Glyphs_p[0].mark |= TK_CORE_MARK_ACCENT;
+    View_p->Grid1_p[View_p->rows-4].Glyphs_p[0].Attributes.bold = true;
+
+    View_p->Grid1_p[View_p->rows-3].Glyphs_p[0].codepoint = 0x0399;
+    View_p->Grid1_p[View_p->rows-3].Glyphs_p[0].mark |= TK_CORE_MARK_ACCENT;
+    View_p->Grid1_p[View_p->rows-3].Glyphs_p[0].Attributes.bold = true;
 
     if (((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.highContrast == true) {
         TK_CORE_MARK_E background = TK_CORE_MARK_ACCENT_BACKGROUND;
-        View_p->Grid1_p[7].Glyphs_p[0].codepoint = 'C';
-        View_p->Grid1_p[7].Glyphs_p[0].mark = TK_CORE_MARK_HIGHLIGHT | TK_CORE_MARK_SIDEBAR | TK_CORE_MARK_ACCENT | background;
-        View_p->Grid1_p[7].Glyphs_p[1].mark = TK_CORE_MARK_HIGHLIGHT | TK_CORE_MARK_SIDEBAR | TK_CORE_MARK_ACCENT | background;
-        View_p->Grid1_p[7].Glyphs_p[0].Attributes.bold = true;
-        View_p->Grid1_p[7].Glyphs_p[0].Attributes.reverse = false;
-        View_p->Grid1_p[7].Glyphs_p[1].Attributes.reverse = false;
+        View_p->Grid1_p[View_p->rows-2].Glyphs_p[0].codepoint = 'C';
+        View_p->Grid1_p[View_p->rows-2].Glyphs_p[0].mark = TK_CORE_MARK_HIGHLIGHT | TK_CORE_MARK_SIDEBAR | TK_CORE_MARK_ACCENT | background;
+        View_p->Grid1_p[View_p->rows-2].Glyphs_p[1].mark = TK_CORE_MARK_HIGHLIGHT | TK_CORE_MARK_SIDEBAR | TK_CORE_MARK_ACCENT | background;
+        View_p->Grid1_p[View_p->rows-2].Glyphs_p[0].Attributes.bold = true;
+        View_p->Grid1_p[View_p->rows-2].Glyphs_p[0].Attributes.reverse = false;
+        View_p->Grid1_p[View_p->rows-2].Glyphs_p[1].Attributes.reverse = false;
     } else {
-        View_p->Grid1_p[7].Glyphs_p[0].codepoint = 'C';
-        View_p->Grid1_p[7].Glyphs_p[0].mark |= TK_CORE_MARK_ACCENT;
-        View_p->Grid1_p[7].Glyphs_p[0].Attributes.bold = true;
+        View_p->Grid1_p[View_p->rows-2].Glyphs_p[0].codepoint = 'C';
+        View_p->Grid1_p[View_p->rows-2].Glyphs_p[0].mark |= TK_CORE_MARK_ACCENT;
+        View_p->Grid1_p[View_p->rows-2].Glyphs_p[0].Attributes.bold = true;
     }
 
     if (((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.border > 0) {
         TK_CORE_MARK_E background = TK_CORE_MARK_ACCENT_BACKGROUND;
-        View_p->Grid1_p[8].Glyphs_p[0].codepoint = 'B';
-        View_p->Grid1_p[8].Glyphs_p[0].mark = TK_CORE_MARK_HIGHLIGHT | TK_CORE_MARK_SIDEBAR | TK_CORE_MARK_ACCENT | background;
-        View_p->Grid1_p[8].Glyphs_p[1].mark = TK_CORE_MARK_HIGHLIGHT | TK_CORE_MARK_SIDEBAR | TK_CORE_MARK_ACCENT | background;
-        View_p->Grid1_p[8].Glyphs_p[0].Attributes.bold = true;
-        View_p->Grid1_p[8].Glyphs_p[0].Attributes.reverse = false;
-        View_p->Grid1_p[8].Glyphs_p[1].Attributes.reverse = false;
+        View_p->Grid1_p[View_p->rows-1].Glyphs_p[0].codepoint = 'B';
+        View_p->Grid1_p[View_p->rows-1].Glyphs_p[0].mark = TK_CORE_MARK_HIGHLIGHT | TK_CORE_MARK_SIDEBAR | TK_CORE_MARK_ACCENT | background;
+        View_p->Grid1_p[View_p->rows-1].Glyphs_p[1].mark = TK_CORE_MARK_HIGHLIGHT | TK_CORE_MARK_SIDEBAR | TK_CORE_MARK_ACCENT | background;
+        View_p->Grid1_p[View_p->rows-1].Glyphs_p[0].Attributes.bold = true;
+        View_p->Grid1_p[View_p->rows-1].Glyphs_p[0].Attributes.reverse = false;
+        View_p->Grid1_p[View_p->rows-1].Glyphs_p[1].Attributes.reverse = false;
     } else {
-        View_p->Grid1_p[8].Glyphs_p[0].codepoint = 'B';
-        View_p->Grid1_p[8].Glyphs_p[0].mark |= TK_CORE_MARK_ACCENT;
-        View_p->Grid1_p[8].Glyphs_p[0].Attributes.bold = true;
-    }
-
-
-    if (TTY_p->Config.Titlebar.on == true) {
-        TK_CORE_MARK_E background = TK_CORE_MARK_ACCENT_BACKGROUND;
-        View_p->Grid1_p[9].Glyphs_p[0].codepoint = '=';
-        View_p->Grid1_p[9].Glyphs_p[0].mark = TK_CORE_MARK_SIDEBAR | TK_CORE_MARK_ACCENT | background | TK_CORE_MARK_HIGHLIGHT;
-        View_p->Grid1_p[9].Glyphs_p[1].mark = TK_CORE_MARK_SIDEBAR | TK_CORE_MARK_ACCENT | background | TK_CORE_MARK_HIGHLIGHT;
-        View_p->Grid1_p[9].Glyphs_p[0].Attributes.bold = true;
-        if (((tk_terminal_Terminal*)TTY_p->Terminal_p)->Config.highContrast) {
-            View_p->Grid1_p[9].Glyphs_p[0].Attributes.reverse = false;
-            View_p->Grid1_p[9].Glyphs_p[1].Attributes.reverse = false;
-        }
-    } else {
-        View_p->Grid1_p[9].Glyphs_p[0].codepoint = '=';
-        View_p->Grid1_p[9].Glyphs_p[0].mark |= TK_CORE_MARK_ACCENT;
-        View_p->Grid1_p[9].Glyphs_p[0].Attributes.bold = true;
+        View_p->Grid1_p[View_p->rows-1].Glyphs_p[0].codepoint = 'B';
+        View_p->Grid1_p[View_p->rows-1].Glyphs_p[0].mark |= TK_CORE_MARK_ACCENT;
+        View_p->Grid1_p[View_p->rows-1].Glyphs_p[0].Attributes.bold = true;
     }
 
     return TK_CORE_SUCCESS;
