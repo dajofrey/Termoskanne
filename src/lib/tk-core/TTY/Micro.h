@@ -1,8 +1,6 @@
 #ifndef TK_CORE_MICRO_H
 #define TK_CORE_MICRO_H
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 /**
  * TTýr - Terminal Emulator
  * Copyright (C) 2022  Dajo Frey
@@ -14,8 +12,6 @@
 #include "View.h"
 
 #include "../Common/Includes.h"
-
-#endif
 
 /** @addtogroup lib_nhtty_structs
  *  @{

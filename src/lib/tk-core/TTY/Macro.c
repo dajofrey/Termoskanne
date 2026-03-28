@@ -115,6 +115,8 @@ static tk_core_MacroWindow *tk_core_createMacroWindow(
 
     Window_p->MouseMenu_p = NULL;
 
+    sprintf(Window_p->type_p, "Terminal");
+
     return Window_p;
 }
 
