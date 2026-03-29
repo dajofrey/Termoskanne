@@ -10,7 +10,7 @@
  */
 
 #include "tk-core.h"
-#include "tk-terminal.h"
+#include "tk-gfx.h"
 
 #endif
 
@@ -20,7 +20,7 @@
  *  In this API, TTY stands for TeleType and provides an interface for
  *  writing text based programs. Using these programs, it processes input streams from either
  *  standard input or \ref tk_core_sendInput and sends the result to either standard
- *  output or a \ref tk_terminal_Terminal. Text based programs can be either added
+ *  output or a \ref tk_gfx_Renderer. Text based programs can be either added
  *  by using \ref tk_core_addDefaultProgram or \ref tk_core_addCustomProgram.
  */
 

@@ -11,7 +11,7 @@
 #include "TreeListing.h"
 #include "Editor.h"
 
-#include "../TTY/TTY.h"
+#include "../Core/Session.h"
 #include "../Common/Macros.h"
 
 #include "nh-core/System/Memory.h"
@@ -44,18 +44,18 @@ static int tk_core_isRegularFile(
     return S_ISREG(path_stat.st_mode);
 }
 
-static TK_CORE_RESULT tk_core_getNodeList(
+static TK_API_RESULT tk_core_getNodeList(
     nh_core_List *List_p, tk_core_TreeListingNode *Node_p)
 {
     nh_core_appendToList(List_p, Node_p);
 
-    if (!Node_p->open) {return TK_CORE_SUCCESS;}
+    if (!Node_p->open) {return TK_API_SUCCESS;}
 
     for (int i = 0; i < Node_p->Children.size; ++i) {
         tk_core_getNodeList(List_p, Node_p->Children.pp[i]);
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 static tk_core_TreeListingNode *tk_core_getCurrentNode(
@@ -113,7 +113,7 @@ static tk_core_TreeListingNode *tk_core_createTreeListingNode(
     return Node_p;
 }
 
-static TK_CORE_RESULT tk_core_freeTreeListingNode(
+static TK_API_RESULT tk_core_freeTreeListingNode(
     tk_core_TreeListingNode *Node_p)
 {
     nh_encoding_freeUTF32(&Node_p->Path);
@@ -123,16 +123,16 @@ static TK_CORE_RESULT tk_core_freeTreeListingNode(
     }
     nh_core_freeList(&Node_p->Children, true);
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-static TK_CORE_RESULT tk_core_openNode(
+static TK_API_RESULT tk_core_openNode(
     tk_core_TreeListingNode *Node_p)
 {
     TK_CHECK_NULL(Node_p)
 
     if (Node_p->Path.length <= 0 || Node_p->Children.size > 0 || tk_core_isRegularFile(Node_p)) {
-        return TK_CORE_ERROR_BAD_STATE;
+        return TK_API_ERROR_BAD_STATE;
     }
 
 #ifdef __unix__ 
@@ -141,7 +141,7 @@ static TK_CORE_RESULT tk_core_openNode(
     nh_encoding_UTF8String CurrentPath = nh_encoding_encodeUTF8(Node_p->Path.p, Node_p->Path.length);
 
     int n = scandir(CurrentPath.p, &namelist_pp, 0, alphasort);
-    if (n < 0) {return TK_CORE_ERROR_BAD_STATE;}
+    if (n < 0) {return TK_API_ERROR_BAD_STATE;}
 
     nh_encoding_freeUTF8(&CurrentPath);
 
@@ -166,7 +166,7 @@ static TK_CORE_RESULT tk_core_openNode(
             tk_core_TreeListingNode *New_p = tk_core_createTreeListingNode(Node_p, NewPath, NULL);
             TK_CHECK_MEM(New_p)
 
-            NH_CORE_CHECK_2(TK_CORE_ERROR_BAD_STATE, nh_core_appendToList(&Node_p->Children, New_p))
+            NH_CORE_CHECK_2(TK_API_ERROR_BAD_STATE, nh_core_appendToList(&Node_p->Children, New_p))
         }
 
         free(namelist_pp[i]);
@@ -189,7 +189,7 @@ static TK_CORE_RESULT tk_core_openNode(
 
     Node_p->open = true;
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 tk_core_TreeListingNode *tk_core_insertTreeListingNode(
@@ -238,7 +238,7 @@ tk_core_TreeListingNode *tk_core_insertTreeListingNode(
 
 // INPUT ===========================================================================================
 
-static TK_CORE_RESULT tk_core_removeFile(
+static TK_API_RESULT tk_core_removeFile(
     tk_core_Editor *Editor_p)
 {
     tk_core_TreeListingNode *Node_p = tk_core_getCurrentNode(&Editor_p->TreeListing);
@@ -251,13 +251,13 @@ static TK_CORE_RESULT tk_core_removeFile(
         NULL, TK_CORE_MESSAGE_EDITOR_FILE_REMOVED, Node_p->Path.p, Node_p->Path.length
     ))
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-static TK_CORE_RESULT tk_core_delete(
+static TK_API_RESULT tk_core_delete(
     nh_api_KeyboardEvent Event, bool *continue_p)
 {
-    if (Event.trigger != NH_API_TRIGGER_PRESS) {return TK_CORE_SUCCESS;}
+    if (Event.trigger != NH_API_TRIGGER_PRESS) {return TK_API_SUCCESS;}
 
     NH_API_UTF32 c = Event.codepoint;
 
@@ -267,7 +267,7 @@ static TK_CORE_RESULT tk_core_delete(
             TK_CHECK(tk_core_setDefaultMessage(NULL, TK_CORE_MESSAGE_BINARY_QUERY_DELETE_INTERRUPTED))
         }
         if (c == 'y') {
-//            tk_core_Program *Program_p = tk_core_getCurrentProgram(&tk_core_getTTY()->Tab_p->Tile_p->TopBar);
+//            tk_core_Program *Program_p = tk_core_getCurrentProgram(&tk_core_getSession()->Tab_p->Tile_p->TopBar);
 //            tk_core_removeFile(Program_p->handle_p);
 //            TK_CHECK(tk_core_handleTreeListingInput(
 //                Program_p, ((tk_core_Editor*)Program_p->handle_p)->height, 'w'
@@ -275,10 +275,10 @@ static TK_CORE_RESULT tk_core_delete(
         }
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-static TK_CORE_RESULT tk_core_setCurrentToRoot(
+static TK_API_RESULT tk_core_setCurrentToRoot(
     tk_core_TreeListing *Listing_p)
 {
     tk_core_TreeListingNode *Current_p = tk_core_getCurrentNode(Listing_p);
@@ -294,10 +294,10 @@ static TK_CORE_RESULT tk_core_setCurrentToRoot(
         NULL, TK_CORE_MESSAGE_EDITOR_NEW_ROOT, Listing_p->Root_p->Path.p, Listing_p->Root_p->Path.length
     ))
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-static TK_CORE_RESULT tk_core_setParentToRoot(
+static TK_API_RESULT tk_core_setParentToRoot(
     tk_core_TreeListing *Listing_p)
 {
     if (Listing_p->Root_p->Parent_p != NULL) {
@@ -331,14 +331,14 @@ static TK_CORE_RESULT tk_core_setParentToRoot(
             }
         }
 
-        if (!isChild) {return TK_CORE_ERROR_BAD_STATE;}
+        if (!isChild) {return TK_API_ERROR_BAD_STATE;}
     }
 
     TK_CHECK(tk_core_setCustomSuffixMessage(
         NULL, TK_CORE_MESSAGE_EDITOR_NEW_ROOT, Listing_p->Root_p->Path.p, Listing_p->Root_p->Path.length
     ))
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 static void tk_core_updateTreeListingView(
@@ -363,7 +363,7 @@ static void tk_core_updateTreeListingView(
     }
 }
 
-static TK_CORE_RESULT tk_core_closeFileFromTreeListing(
+static TK_API_RESULT tk_core_closeFileFromTreeListing(
     tk_core_Program *Program_p, tk_core_File *File_p)
 {
     tk_core_Editor *Editor_p = Program_p->handle_p;
@@ -375,7 +375,7 @@ static TK_CORE_RESULT tk_core_closeFileFromTreeListing(
     tk_core_destroyFileViews(&Editor_p->View.FileEditor, File_p);
     TK_CHECK(tk_core_closeFile(&Editor_p->FileEditor, File_p))
  
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 static void tk_core_moveCursorVertically(
@@ -427,7 +427,7 @@ static void tk_core_moveCursorVertically(
     }
 }
 
-TK_CORE_RESULT tk_core_handleTreeListingInput(
+TK_API_RESULT tk_core_handleTreeListingInput(
     tk_core_Program *Program_p, NH_API_UTF32 c)
 {
     tk_core_Editor *Editor_p = Program_p->handle_p;
@@ -479,8 +479,8 @@ TK_CORE_RESULT tk_core_handleTreeListingInput(
                 nh_encoding_UTF32String Question = nh_encoding_initUTF32(128);
                 int deleteLength;
                 NH_API_UTF32 *delete_p = tk_core_getMessage(TK_CORE_MESSAGE_BINARY_QUERY_DELETE, &deleteLength);
-                NH_CORE_CHECK_2(TK_CORE_ERROR_BAD_STATE, nh_encoding_appendUTF32(&Question, delete_p, deleteLength))
-                NH_CORE_CHECK_2(TK_CORE_ERROR_BAD_STATE, nh_encoding_appendUTF32(&Question, Current_p->Path.p, Current_p->Path.length))
+                NH_CORE_CHECK_2(TK_API_ERROR_BAD_STATE, nh_encoding_appendUTF32(&Question, delete_p, deleteLength))
+                NH_CORE_CHECK_2(TK_API_ERROR_BAD_STATE, nh_encoding_appendUTF32(&Question, Current_p->Path.p, Current_p->Path.length))
                 TK_CHECK(tk_core_setBinaryQueryMessage(NULL, Question.p, Question.length, NULL, tk_core_delete))
                 nh_encoding_freeUTF32(&Question);
             }
@@ -518,7 +518,7 @@ TK_CORE_RESULT tk_core_handleTreeListingInput(
  
     Listing_p->dirty = true;
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // RENDER ==========================================================================================
@@ -533,7 +533,7 @@ static tk_core_Glyph tk_core_glyph(
     return Glyph;
 }
 
-static TK_CORE_RESULT tk_core_renderTreeListingNode(
+static TK_API_RESULT tk_core_renderTreeListingNode(
     tk_core_TreeListingNode *Node_p, bool isCurrent, tk_core_Glyph *Row_p, int *length_p,
     bool first, tk_core_TreeListingView *View_p)
 {
@@ -624,10 +624,10 @@ static TK_CORE_RESULT tk_core_renderTreeListingNode(
         *length_p = prefixLength + suffixLength;
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-static TK_CORE_RESULT tk_core_calculateTreeListingWidth(
+static TK_API_RESULT tk_core_calculateTreeListingWidth(
     tk_core_TreeListing *Listing_p, tk_core_TreeListingView *View_p, int editorWidth)
 {
     nh_core_List Nodes = nh_core_initList(64);
@@ -653,10 +653,10 @@ static TK_CORE_RESULT tk_core_calculateTreeListingWidth(
 
     nh_core_freeList(&Nodes, false);
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-static TK_CORE_RESULT tk_core_renderTreeListing(
+static TK_API_RESULT tk_core_renderTreeListing(
     tk_core_TreeListing *Listing_p, tk_core_TreeListingView *View_p, int editorWidth)
 {
     nh_core_List Nodes = nh_core_initList(32);
@@ -692,21 +692,21 @@ static TK_CORE_RESULT tk_core_renderTreeListing(
 
     nh_core_freeList(&Nodes, false);
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-TK_CORE_RESULT tk_core_treeListingNeedsRefresh(
+TK_API_RESULT tk_core_treeListingNeedsRefresh(
     tk_core_TreeListing *Listing_p)
 {
     nh_core_List Nodes = nh_core_initList(32);
     TK_CHECK(tk_core_getNodeList(&Nodes, Listing_p->Root_p))
     nh_core_freeList(&Nodes, false);
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // DRAW ============================================================================================
 
-TK_CORE_RESULT tk_core_drawTreeListingRow(
+TK_API_RESULT tk_core_drawTreeListingRow(
     tk_core_Program *Program_p, tk_core_Glyph *Glyphs_p, int width, int height, int row)
 {
     tk_core_TreeListing *Listing_p = &((tk_core_Editor*)Program_p->handle_p)->TreeListing;
@@ -731,12 +731,12 @@ TK_CORE_RESULT tk_core_drawTreeListingRow(
         }
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // CURSOR ==========================================================================================
 
-TK_CORE_RESULT tk_core_setTreeListingCursor(
+TK_API_RESULT tk_core_setTreeListingCursor(
     tk_core_Program *Program_p, tk_core_File *File_p)
 {
     nh_core_List Nodes = nh_core_initList(16);
@@ -765,7 +765,7 @@ TK_CORE_RESULT tk_core_setTreeListingCursor(
     nh_core_freeList(&Nodes, false);
     Listing_p->dirty = true;
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // INIT/DESTROY ====================================================================================
@@ -786,7 +786,7 @@ tk_core_TreeListing tk_core_initTreeListing()
     return Listing;
 }
 
-TK_CORE_RESULT tk_core_freeTreeListing(
+TK_API_RESULT tk_core_freeTreeListing(
     tk_core_TreeListing *TreeListing_p)
 {
     tk_core_freeTreeListingNode(TreeListing_p->Root_p);
@@ -796,6 +796,6 @@ TK_CORE_RESULT tk_core_freeTreeListing(
     }
     nh_core_freeArray(&TreeListing_p->RenderLines);
  
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 

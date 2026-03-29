@@ -15,7 +15,7 @@
 #include "Editor.h"
 #include "SyntaxHighlights.h"
 
-#include "../TTY/TTY.h"
+#include "../Core/Session.h"
 #include "../Common/Macros.h"
 
 #include "nh-core/System/Process.h"
@@ -46,7 +46,7 @@ tk_core_FileEditor tk_core_initFileEditor()
     return Editor;
 }
 
-TK_CORE_RESULT tk_core_freeFileEditor(
+TK_API_RESULT tk_core_freeFileEditor(
      tk_core_FileEditor *FileEditor_p)
 {
     while (1) {
@@ -57,12 +57,12 @@ TK_CORE_RESULT tk_core_freeFileEditor(
 
     nh_core_destroyLinkedList(&FileEditor_p->Files, true);
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // RENDER ==========================================================================================
 
-static TK_CORE_RESULT tk_core_renderFileEditor(
+static TK_API_RESULT tk_core_renderFileEditor(
     tk_core_FileEditor *FileEditor_p)
 {
     for (int i = 0; i < FileEditor_p->Files.count; ++i) {
@@ -71,7 +71,7 @@ static TK_CORE_RESULT tk_core_renderFileEditor(
         TK_CHECK(tk_core_renderFile(File_p))
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // FILE ============================================================================================
@@ -132,11 +132,11 @@ tk_core_File *tk_core_openFile(
     return File_p;
 }
 
-TK_CORE_RESULT tk_core_closeFile(
+TK_API_RESULT tk_core_closeFile(
     tk_core_FileEditor *Editor_p, tk_core_File *File_p)
 {
     if (File_p == NULL || !tk_core_hasFile(Editor_p, File_p)) {
-        return TK_CORE_ERROR_BAD_STATE;
+        return TK_API_ERROR_BAD_STATE;
     }
 
     switch (File_p->type)
@@ -148,7 +148,7 @@ TK_CORE_RESULT tk_core_closeFile(
 
     nh_core_removeFromLinkedList2(&Editor_p->Files, File_p, true);
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // HELP TEXT =======================================================================================
@@ -212,7 +212,7 @@ static const char *help_pp[] =
 
 // INPUT ===========================================================================================
 
-TK_CORE_RESULT tk_core_cycleThroughFiles(
+TK_API_RESULT tk_core_cycleThroughFiles(
     tk_core_Program *Program_p, NH_API_UTF32 c)
 {
     tk_core_FileEditor *FileEditor_p = &((tk_core_Editor*)Program_p->handle_p)->FileEditor;
@@ -270,10 +270,10 @@ TK_CORE_RESULT tk_core_cycleThroughFiles(
         tk_core_setCustomSuffixMessage(NULL, TK_CORE_MESSAGE_EDITOR_FILE_EDIT, File_p->Node_p->Path.p, File_p->Node_p->Path.length);
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-TK_CORE_RESULT tk_core_handleFileEditorInput(
+TK_API_RESULT tk_core_handleFileEditorInput(
     tk_core_Program *Program_p, NH_API_UTF32 c)
 {
     tk_core_Editor *Editor_p = Program_p->handle_p;
@@ -289,12 +289,12 @@ TK_CORE_RESULT tk_core_handleFileEditorInput(
         }
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // DRAW ============================================================================================
 
-static TK_CORE_RESULT tk_core_drawHelp(
+static TK_API_RESULT tk_core_drawHelp(
     tk_core_Glyph *Glyphs_p, int width, int line, int lines, int scroll)
 {
     line += scroll;
@@ -320,10 +320,10 @@ static TK_CORE_RESULT tk_core_drawHelp(
 //        }
 //    }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-static TK_CORE_RESULT tk_core_updateFileEditorView(
+static TK_API_RESULT tk_core_updateFileEditorView(
     tk_core_FileEditor *FileEditor_p, tk_core_EditorView *View_p, int width)
 {
     View_p->FileEditor.width = width;
@@ -340,10 +340,10 @@ static TK_CORE_RESULT tk_core_updateFileEditorView(
 
     TK_CHECK(tk_core_updateFileViews(View_p))
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-TK_CORE_RESULT tk_core_drawFileEditorRow(
+TK_API_RESULT tk_core_drawFileEditorRow(
     tk_core_Program *Program_p, tk_core_Glyph *Glyphs_p, int width, int height, int row)
 {
     tk_core_Editor *Editor_p = Program_p->handle_p;
@@ -366,6 +366,6 @@ TK_CORE_RESULT tk_core_drawFileEditorRow(
         width2 += FileView_p->width;
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 

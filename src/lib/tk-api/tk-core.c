@@ -36,52 +36,52 @@ static bool tk_api_add() {
     return added;
 }
 
-tk_core_TTY *tk_api_openTTY(
+tk_api_Session *tk_api_openSession(
     char *config_p, tk_core_Interface *Interface_p)
 {
     if (!tk_api_add()) {return NULL;}
-    typedef tk_core_TTY *(*tk_core_openTTY_f)( char *config_p, tk_core_Interface *Interface_p); 
+    typedef tk_api_Session *(*tk_core_openSession_f)( char *config_p, tk_core_Interface *Interface_p); 
     nh_core_Loader *Loader_p = nh_api_getLoader();
-    tk_core_openTTY_f openTTY_f = !Loader_p ? NULL : Loader_p->loadExternalSymbol_f(name_p, "tk_core_openTTY");
-    return openTTY_f ? openTTY_f(config_p, Interface_p) : NULL;
+    tk_core_openSession_f openSession_f = !Loader_p ? NULL : Loader_p->loadExternalSymbol_f(name_p, "tk_core_openSession");
+    return openSession_f ? openSession_f(config_p, Interface_p) : NULL;
 }
 
-TK_CORE_RESULT tk_api_closeTTY(
-    tk_core_TTY *TTY_p)
+TK_API_RESULT tk_api_closeSession(
+    tk_api_Session *Session_p)
 {
-    if (!tk_api_add()) {return TK_CORE_ERROR_BAD_STATE;}
-    typedef TK_CORE_RESULT (*tk_core_closeTTY_f)(tk_core_TTY *TTY_p);
+    if (!tk_api_add()) {return TK_API_ERROR_BAD_STATE;}
+    typedef TK_API_RESULT (*tk_core_closeSession_f)(tk_api_Session *Session_p);
     nh_core_Loader *Loader_p = nh_api_getLoader();
-    tk_core_closeTTY_f closeTTY_f = !Loader_p ? NULL : Loader_p->loadExternalSymbol_f(name_p, "tk_core_closeTTY");
-    return closeTTY_f ? closeTTY_f(TTY_p) : TK_CORE_ERROR_BAD_STATE;
+    tk_core_closeSession_f closeSession_f = !Loader_p ? NULL : Loader_p->loadExternalSymbol_f(name_p, "tk_core_closeSession");
+    return closeSession_f ? closeSession_f(Session_p) : TK_API_ERROR_BAD_STATE;
 }
 
-TK_CORE_RESULT tk_api_claimStandardIO(
-    tk_core_TTY *TTY_p)
+TK_API_RESULT tk_api_claimStandardIO(
+    tk_api_Session *Session_p)
 {
-    if (!tk_api_add()) {return TK_CORE_ERROR_BAD_STATE;}
-    typedef TK_CORE_RESULT (*tk_core_cmd_claimStandardIO_f)(tk_core_TTY *TTY_p);
+    if (!tk_api_add()) {return TK_API_ERROR_BAD_STATE;}
+    typedef TK_API_RESULT (*tk_core_cmd_claimStandardIO_f)(tk_api_Session *Session_p);
     nh_core_Loader *Loader_p = nh_api_getLoader();
     tk_core_cmd_claimStandardIO_f claimStandardIO_f = !Loader_p ? NULL : Loader_p->loadExternalSymbol_f(name_p, "tk_core_cmd_claimStandardIO");
-    return claimStandardIO_f ? claimStandardIO_f(TTY_p) : TK_CORE_ERROR_BAD_STATE;
+    return claimStandardIO_f ? claimStandardIO_f(Session_p) : TK_API_ERROR_BAD_STATE;
 }
 
-TK_CORE_RESULT tk_api_unclaimStandardIO(
-    tk_core_TTY *TTY_p)
+TK_API_RESULT tk_api_unclaimStandardIO(
+    tk_api_Session *Session_p)
 {
-    if (!tk_api_add()) {return TK_CORE_ERROR_BAD_STATE;}
-    typedef TK_CORE_RESULT (*tk_core_cmd_unclaimStandardIO_f)(tk_core_TTY *TTY_p); 
+    if (!tk_api_add()) {return TK_API_ERROR_BAD_STATE;}
+    typedef TK_API_RESULT (*tk_core_cmd_unclaimStandardIO_f)(tk_api_Session *Session_p); 
     nh_core_Loader *Loader_p = nh_api_getLoader();
     tk_core_cmd_unclaimStandardIO_f unclaimStandardIO_f = !Loader_p ? NULL : Loader_p->loadExternalSymbol_f(name_p, "tk_core_cmd_unclaimStandardIO");
-    return unclaimStandardIO_f ? unclaimStandardIO_f(TTY_p) : TK_CORE_ERROR_BAD_STATE;
+    return unclaimStandardIO_f ? unclaimStandardIO_f(Session_p) : TK_API_ERROR_BAD_STATE;
 }
 
-TK_CORE_RESULT tk_api_sendEvent(
-    tk_core_TTY *TTY_p, nh_api_WSIEvent Event)
+TK_API_RESULT tk_api_sendEvent(
+    tk_api_Session *Session_p, nh_api_WSIEvent Event)
 {
-    if (!tk_api_add()) {return TK_CORE_ERROR_BAD_STATE;}
-    typedef TK_CORE_RESULT (*tk_core_cmd_sendEvent_f)(tk_core_TTY *TTY_p, nh_api_WSIEvent Event);
+    if (!tk_api_add()) {return TK_API_ERROR_BAD_STATE;}
+    typedef TK_API_RESULT (*tk_core_cmd_sendEvent_f)(tk_api_Session *Session_p, nh_api_WSIEvent Event);
     nh_core_Loader *Loader_p = nh_api_getLoader();
     tk_core_cmd_sendEvent_f sendEvent_f = !Loader_p ? NULL : Loader_p->loadExternalSymbol_f(name_p, "tk_core_cmd_sendEvent");
-    return sendEvent_f ? sendEvent_f(TTY_p, Event) : TK_CORE_ERROR_BAD_STATE;
+    return sendEvent_f ? sendEvent_f(Session_p, Event) : TK_API_ERROR_BAD_STATE;
 }

@@ -20,7 +20,7 @@
  *  @{
  */
 
-    TK_CORE_RESULT tk_core_handleTextFileInput(
+    TK_API_RESULT tk_core_handleTextFileInput(
         nh_core_List *Views_p, tk_core_File *File_p, NH_API_UTF32 c, bool insertMode,  
         bool *refresh_p
     );

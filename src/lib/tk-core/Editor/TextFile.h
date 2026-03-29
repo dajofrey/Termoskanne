@@ -49,11 +49,11 @@
         tk_core_TextFile *TextFile_p, int index
     );
     
-    TK_CORE_RESULT tk_core_insertIntoTextFileLine(
+    TK_API_RESULT tk_core_insertIntoTextFileLine(
         tk_core_TextFileLine *Line_p, int index, NH_API_UTF32 c
     );
     
-    TK_CORE_RESULT tk_core_removeFromTextFileLine(
+    TK_API_RESULT tk_core_removeFromTextFileLine(
         tk_core_TextFileLine *Line_p, int index, int length
     );
 
@@ -61,27 +61,27 @@
         nh_encoding_UTF32String *Path_p 
     );
 
-    TK_CORE_RESULT tk_core_closeTextFile(
+    TK_API_RESULT tk_core_closeTextFile(
         tk_core_TextFile *File_p
     );
 
-    TK_CORE_RESULT tk_core_clearTextFileSearch(
+    TK_API_RESULT tk_core_clearTextFileSearch(
         tk_core_TextFile *TextFile_p
     );
 
-    TK_CORE_RESULT tk_core_searchTextFile(
+    TK_API_RESULT tk_core_searchTextFile(
         tk_core_TextFile *TextFile_p, NH_API_UTF32 *str_p, int length
     );
 
-    TK_CORE_RESULT tk_core_writeTextFile(
+    TK_API_RESULT tk_core_writeTextFile(
         tk_core_TextFile *File_p, nh_encoding_UTF32String *Path_p
     );
 
-    TK_CORE_RESULT tk_core_renderTextFileLine(
+    TK_API_RESULT tk_core_renderTextFileLine(
         tk_core_TextFile *TextFile_p, int line
     );
 
-    TK_CORE_RESULT tk_core_drawTextFileLine(
+    TK_API_RESULT tk_core_drawTextFileLine(
         tk_core_Program *Program_p, tk_core_TextFile *TextFile_p, tk_core_FileView *FileView_p, 
         tk_core_Glyph *Glyphs_p, int line
     );

@@ -16,7 +16,7 @@
 #include "TextFileInput.h"
 #include "SyntaxHighlights.h"
 
-#include "../TTY/TTY.h"
+#include "../Core/Session.h"
 #include "../Common/Macros.h"
 
 #include "nh-core/System/Process.h"
@@ -53,7 +53,7 @@ tk_core_FileView tk_core_initFileView(
     return View;
 }
 
-TK_CORE_RESULT tk_core_createFileViews(
+TK_API_RESULT tk_core_createFileViews(
     tk_core_FileEditorView *View_p, tk_core_File *File_p)
 {
     tk_core_FileView *FileView_p = (tk_core_FileView*)nh_core_allocate(sizeof(tk_core_FileView));
@@ -61,10 +61,10 @@ TK_CORE_RESULT tk_core_createFileViews(
     *FileView_p = tk_core_initFileView(File_p);
     nh_core_appendToList(&View_p->FileViews, FileView_p);
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-TK_CORE_RESULT tk_core_destroyFileViews(
+TK_API_RESULT tk_core_destroyFileViews(
     tk_core_FileEditorView *View_p, tk_core_File *File_p)
 {
     tk_core_FileView *FileView_p = NULL;
@@ -75,7 +75,7 @@ TK_CORE_RESULT tk_core_destroyFileViews(
     }
     if (FileView_p) {nh_core_removeFromList2(&View_p->FileViews, true, FileView_p);}
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 tk_core_FileView *tk_core_getFileView(
@@ -88,7 +88,7 @@ tk_core_FileView *tk_core_getFileView(
     return NULL;
 }
 
-TK_CORE_RESULT tk_core_updateFileViews(
+TK_API_RESULT tk_core_updateFileViews(
     tk_core_EditorView *View_p)
 {
     int oddLeftOver, fileWidth = View_p->FileEditor.width;
@@ -109,7 +109,7 @@ TK_CORE_RESULT tk_core_updateFileViews(
         FileView_p->height = View_p->height;
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // TYPE ============================================================================================
@@ -131,7 +131,7 @@ TK_CORE_FILE tk_core_getFileType(
 
 // RENDER ==========================================================================================
 
-TK_CORE_RESULT tk_core_renderFile(
+TK_API_RESULT tk_core_renderFile(
     tk_core_File *File_p)
 {
     switch (File_p->type)
@@ -145,12 +145,12 @@ TK_CORE_RESULT tk_core_renderFile(
             break;
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // WRITE ===========================================================================================
 
-TK_CORE_RESULT tk_core_writeFile(
+TK_API_RESULT tk_core_writeFile(
     tk_core_File *File_p)
 {
     switch (File_p->type)
@@ -166,12 +166,12 @@ TK_CORE_RESULT tk_core_writeFile(
         NULL, TK_CORE_MESSAGE_EDITOR_FILE_SAVED, File_p->Node_p->Path.p, File_p->Node_p->Path.length
     ))
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // SEARCH ==========================================================================================
 
-TK_CORE_RESULT tk_core_clearFileSearch(
+TK_API_RESULT tk_core_clearFileSearch(
     tk_core_File *File_p)
 {
     switch (File_p->type)
@@ -181,10 +181,10 @@ TK_CORE_RESULT tk_core_clearFileSearch(
             break;
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-TK_CORE_RESULT tk_core_searchFile(
+TK_API_RESULT tk_core_searchFile(
     tk_core_File *File_p, NH_API_UTF32 *str_p, int length)
 {
     switch (File_p->type)
@@ -194,12 +194,12 @@ TK_CORE_RESULT tk_core_searchFile(
             break;
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // INPUT ===========================================================================================
 
-TK_CORE_RESULT tk_core_handleFileInput(
+TK_API_RESULT tk_core_handleFileInput(
     tk_core_Program *Program_p, tk_core_File *File_p, NH_API_UTF32 c, bool insertMode, 
     bool *refresh_p)
 {
@@ -219,12 +219,12 @@ TK_CORE_RESULT tk_core_handleFileInput(
             break;    
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // DRAW ============================================================================================
 
-TK_CORE_RESULT tk_core_drawFileRow(
+TK_API_RESULT tk_core_drawFileRow(
     tk_core_Program *Program_p, tk_core_File *File_p, tk_core_FileView *View_p, tk_core_Glyph *Glyphs_p, 
     int row)
 {
@@ -237,6 +237,6 @@ TK_CORE_RESULT tk_core_drawFileRow(
             break;
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 

@@ -12,7 +12,7 @@
 #include "TreeListing.h"
 #include "FileEditor.h"
 
-#include "../TTY/Program.h"
+#include "../Core/Program.h"
 #include "../Common/Includes.h"
 
 #include "nh-core/Util/String.h"

@@ -84,7 +84,7 @@ static char *cControlKeywords_pp[] = {
 
 //// INIT ============================================================================================
 //
-//static TK_CORE_RESULT tk_core_insertHighlightWord(
+//static TK_API_RESULT tk_core_insertHighlightWord(
 //    nh_encoding_UTF32String *String_p, nh_encoding_UTF32String Word, char *prefix_p, char *suffix_p)
 //{
 //TK_CORE_BEGIN()
@@ -99,7 +99,7 @@ static char *cControlKeywords_pp[] = {
 //    nh_core_freeArray(&Prefix);
 //    nh_core_freeArray(&Suffix);
 //
-//TK_CORE_END(TK_CORE_SUCCESS)
+//TK_CORE_END(TK_API_SUCCESS)
 //}
 //
 //nh_encoding_UTF32String tk_core_highlightWord(

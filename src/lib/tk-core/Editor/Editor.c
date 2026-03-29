@@ -11,7 +11,7 @@
 #include "Editor.h"
 #include "TextFile.h"
 
-#include "../TTY/TTY.h"
+#include "../Core/Session.h"
 #include "../Common/Macros.h"
 
 #include "nh-core/System/Memory.h"
@@ -62,7 +62,7 @@ static void tk_core_closeTreeListingNode(
 //    nh_core_freeList(&Node_p->Children, true);
 }
 
-static TK_CORE_RESULT tk_core_handleDeletedNodes(
+static TK_API_RESULT tk_core_handleDeletedNodes(
     tk_core_FileEditor *Editor_p, tk_core_TreeListingNode *Node_p)
 {
 //#ifdef __unix__
@@ -71,7 +71,7 @@ static TK_CORE_RESULT tk_core_handleDeletedNodes(
 //    nh_encoding_UTF8String CurrentPath = nh_encoding_encodeUTF8(Node_p->Path.p, Node_p->Path.length);
 //
 //    int n = scandir(CurrentPath.p, &namelist_pp, 0, alphasort);
-//    if (n < 0) {TK_CORE_DIAGNOSTIC_END(TK_CORE_ERROR_BAD_STATE)}
+//    if (n < 0) {TK_CORE_DIAGNOSTIC_END(TK_API_ERROR_BAD_STATE)}
 //
 //    nh_encoding_freeUTF8(&CurrentPath);
 //
@@ -130,21 +130,21 @@ static TK_CORE_RESULT tk_core_handleDeletedNodes(
 //
 //#endif
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-TK_CORE_RESULT tk_core_updateEditor(
+TK_API_RESULT tk_core_updateEditor(
     tk_core_Program *Program_p)
 {
     tk_core_Editor *Editor_p = Program_p->handle_p;
 
     if (!Editor_p->treeListing) {
-        return TK_CORE_SUCCESS;
+        return TK_API_SUCCESS;
     }
 
     nh_core_SystemTime Now = nh_core_getSystemTime();
     if (nh_core_getSystemTimeDiffInSeconds(Editor_p->LastUpdate, Now) < Editor_p->updateIntervalInSeconds) {
-        return TK_CORE_SUCCESS;
+        return TK_API_SUCCESS;
     }
 
     TK_CHECK(tk_core_handleDeletedNodes(&Editor_p->FileEditor, Editor_p->TreeListing.Root_p))
@@ -154,16 +154,16 @@ TK_CORE_RESULT tk_core_updateEditor(
     Program_p->refresh = true;
     Editor_p->LastUpdate = Now;
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // INPUT ===========================================================================================
 
-static TK_CORE_RESULT tk_core_handleEditorInput(
+static TK_API_RESULT tk_core_handleEditorInput(
     tk_core_Program *Program_p, nh_api_WSIEvent Event)
 {
-    if (Event.type != NH_API_WSI_EVENT_KEYBOARD) {return TK_CORE_SUCCESS;}
-    if (Event.Keyboard.trigger != NH_API_TRIGGER_PRESS) {return TK_CORE_SUCCESS;}
+    if (Event.type != NH_API_WSI_EVENT_KEYBOARD) {return TK_API_SUCCESS;}
+    if (Event.Keyboard.trigger != NH_API_TRIGGER_PRESS) {return TK_API_SUCCESS;}
 
     NH_API_UTF32 c = Event.Keyboard.codepoint;
     tk_core_Editor *Editor_p = Program_p->handle_p;
@@ -203,17 +203,17 @@ static TK_CORE_RESULT tk_core_handleEditorInput(
             goto FILE_EDITOR_INPUT;
     }
  
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 
 FILE_EDITOR_INPUT :
 
     TK_CHECK(tk_core_handleFileEditorInput(Program_p, c))
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // DRAW ============================================================================================
 
-static TK_CORE_RESULT tk_core_drawEditor(
+static TK_API_RESULT tk_core_drawEditor(
     tk_core_Program *Program_p, tk_core_Glyph *Glyphs_p, int width, int height, int row)
 {
     tk_core_Editor *Editor_p = Program_p->handle_p;
@@ -236,10 +236,10 @@ static TK_CORE_RESULT tk_core_drawEditor(
         height, row
     ))
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-static TK_CORE_RESULT tk_core_drawEditorTopbar(
+static TK_API_RESULT tk_core_drawEditorTopbar(
     tk_core_Program *Program_p, tk_core_Glyph *Glyphs_p, int width)
 {
     tk_core_Editor *Editor_p = Program_p->handle_p;
@@ -267,12 +267,12 @@ static TK_CORE_RESULT tk_core_drawEditorTopbar(
         Glyphs_p[i].codepoint = topbar_p[i];
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // CURSOR ==========================================================================================
 
-static TK_CORE_RESULT tk_core_getEditorCursor(
+static TK_API_RESULT tk_core_getEditorCursor(
     tk_core_Program *Program_p, int *x_p, int *y_p)
 {
     tk_core_Editor *Editor_p = Program_p->handle_p;
@@ -299,12 +299,12 @@ static TK_CORE_RESULT tk_core_getEditorCursor(
         *y_p = -1;
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // COMMANDS ========================================================================================
 
-static TK_CORE_RESULT tk_core_executeEditorCommand(
+static TK_API_RESULT tk_core_executeEditorCommand(
     tk_core_Program *Program_p)
 {
     tk_core_Editor *Editor_p = Program_p->handle_p;
@@ -315,7 +315,7 @@ static TK_CORE_RESULT tk_core_executeEditorCommand(
 //
 //            Editor_p->TreeListing.preview = !Editor_p->TreeListing.preview; 
 //            TK_CHECK(tk_core_setDefaultMessage(
-//               &tk_core_getTTY()->Tab_p->Tile_p->Status,
+//               &tk_core_getSession()->Tab_p->Tile_p->Status,
 //               Editor_p->TreeListing.preview ? TK_CORE_MESSAGE_EDITOR_PREVIEW_ENABLED : TK_CORE_MESSAGE_EDITOR_PREVIEW_DISABLED
 //            ))
 //            Program_p->refresh = true;
@@ -325,7 +325,7 @@ static TK_CORE_RESULT tk_core_executeEditorCommand(
 //
 //            Editor_p->treeListing = !Editor_p->treeListing; 
 //            TK_CHECK(tk_core_setDefaultMessage(
-//               &tk_core_getTTY()->Tab_p->Tile_p->Status,
+//               &tk_core_getSession()->Tab_p->Tile_p->Status,
 //               Editor_p->treeListing ? TK_CORE_MESSAGE_EDITOR_SHOW_TREE : TK_CORE_MESSAGE_EDITOR_HIDE_TREE 
 //            ))
 //            Program_p->refresh = true;
@@ -333,7 +333,7 @@ static TK_CORE_RESULT tk_core_executeEditorCommand(
 //
 //        case TK_CORE_EDITOR_COMMAND_NEW:
 //        {
-//            if (Arguments_p->size != 1) {TK_CORE_END(TK_CORE_ERROR_INVALID_ARGUMENT)}
+//            if (Arguments_p->size != 1) {TK_CORE_END(TK_API_ERROR_INVALID_ARGUMENT)}
 //            nh_encoding_UTF32String *Argument_p = Arguments_p->pp[0];
 //
 //            tk_core_TreeListingNode *Node_p = 
@@ -344,7 +344,7 @@ static TK_CORE_RESULT tk_core_executeEditorCommand(
 //            TK_CHECK_NULL(File_p)
 //
 //            TK_CHECK(tk_core_setDefaultMessage(
-//                &tk_core_getTTY()->Tab_p->Tile_p->Status, TK_CORE_MESSAGE_EDITOR_NEW_FILE
+//                &tk_core_getSession()->Tab_p->Tile_p->Status, TK_CORE_MESSAGE_EDITOR_NEW_FILE
 //            ))
 //
 //            Program_p->refresh = true;
@@ -384,7 +384,7 @@ static TK_CORE_RESULT tk_core_executeEditorCommand(
 //            nh_encoding_UTF32String TabSpaces = nh_encoding_decodeUTF8(tabSpaces_p, strlen(tabSpaces_p), NULL);
 //
 //            TK_CHECK(tk_core_setCustomMessage(
-//               &tk_core_getTTY()->Tab_p->Tile_p->Status, TK_CORE_MESSAGE_EDITOR_NUMBER_OF_TAB_SPACES,
+//               &tk_core_getSession()->Tab_p->Tile_p->Status, TK_CORE_MESSAGE_EDITOR_NUMBER_OF_TAB_SPACES,
 //               TabSpaces.p, TabSpaces.length
 //            ))
 //
@@ -395,15 +395,15 @@ static TK_CORE_RESULT tk_core_executeEditorCommand(
 //
 //            Editor_p->FileEditor.tabToSpaces = !Editor_p->FileEditor.tabToSpaces;
 //            TK_CHECK(tk_core_setDefaultMessage(
-//               &tk_core_getTTY()->Tab_p->Tile_p->Status, Editor_p->FileEditor.tabToSpaces ? 
+//               &tk_core_getSession()->Tab_p->Tile_p->Status, Editor_p->FileEditor.tabToSpaces ? 
 //               TK_CORE_MESSAGE_EDITOR_TAB_TO_SPACES_ENABLED : TK_CORE_MESSAGE_EDITOR_TAB_TO_SPACES_DISABLED
 //            ))
 //            break;
 //
-//        default : TK_CORE_DIAGNOSTIC_END(TK_CORE_ERROR_UNKNOWN_COMMAND)
+//        default : TK_CORE_DIAGNOSTIC_END(TK_API_ERROR_UNKNOWN_COMMAND)
 //    }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // INIT/DESTROY ====================================================================================

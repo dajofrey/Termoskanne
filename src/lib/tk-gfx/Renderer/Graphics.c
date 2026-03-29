@@ -1,0 +1,716 @@
+// LICENSE NOTICE ==================================================================================
+
+/**
+ * Termoskanne - Terminal Emulator
+ * Copyright (C) 2022  Dajo Frey
+ * Published under GNU LGPL. See LICENSE.LGPL file.
+ */
+
+// INCLUDES ========================================================================================
+
+#include "Graphics.h"
+#include "Color.h"
+#include "Vertices.h"
+
+#if defined(__unix__)
+    #include "../Vulkan/Render.h"
+#endif
+#include "../OpenGL/Render.h"
+
+#include "../Common/Log.h"
+#include "../Common/Macros.h"
+#include "../Common/Config.h"
+
+#include "nh-gfx/Base/Viewport.h"
+#include "nh-gfx/Fonts/HarfBuzz.h"
+
+#include "nh-core/System/Memory.h"
+#include "nh-core/Util/Math.h"
+#include "nh-core/Util/Array.h"
+#include "nh-core/Util/List.h"
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+// HELPER ==========================================================================================
+
+static TK_API_RESULT tk_gfx_getInternalMonospaceFonts(
+    nh_core_List *Fonts_p)
+{
+    *Fonts_p = nh_core_initList(8);
+
+    // regular
+    nh_gfx_FontStyle Style;
+    nh_gfx_parseFontStyle(&Style, "regular");
+
+    nh_gfx_FontFamily Family = nh_gfx_initFontFamily(NULL);
+    Family.generic_p[NH_GFX_GENERIC_FONT_FAMILY_MONOSPACE] = true;
+
+    nh_core_List RegularFonts = nh_gfx_getFonts(Family, Style, true);
+    if (RegularFonts.size <= 0) {return TK_API_ERROR_BAD_STATE;}
+
+    nh_core_appendToList(Fonts_p, RegularFonts.pp[0]);
+    nh_core_freeList(&RegularFonts, false);
+    nh_gfx_freeFontStyle(&Style);
+
+    // bold
+    nh_gfx_parseFontStyle(&Style, "extrabold");
+
+    nh_core_List BoldFonts = nh_gfx_getFonts(Family, Style, true);
+    if (BoldFonts.size <= 0) {return TK_API_ERROR_BAD_STATE;}
+
+    nh_core_appendToList(Fonts_p, BoldFonts.pp[0]);
+    nh_core_freeList(&BoldFonts, false);
+    nh_gfx_freeFontStyle(&Style);
+
+    return TK_API_SUCCESS;
+}
+
+static tk_gfx_GraphicsAction tk_gfx_initGraphicsAction()
+{
+    tk_gfx_GraphicsAction Action;
+    Action.init = true;
+
+    return Action;
+}
+
+// INIT/FREE =======================================================================================
+
+static TK_API_RESULT tk_gfx_createDimData(
+    tk_gfx_Dim *Dim_p)
+{
+    nh_core_freeArray(&Dim_p->Vertices);
+    nh_core_Array Vertices = nh_core_initArray(sizeof(float), 255);
+
+    float z = 0.45f;
+    
+    float vertices[] = {
+        // x, y, z
+        -1.0f, -1.0f, z,
+         1.0f, -1.0f, z,
+         1.0f,  1.0f, z,
+        -1.0f, -1.0f, z,
+         1.0f,  1.0f, z,
+        -1.0f,  1.0f, z
+    };
+
+    float quadColors[24] = {
+        0.0f, 0.0f, 0.0f, 0.7f,
+        0.0f, 0.0f, 0.0f, 0.7f,
+        0.0f, 0.0f, 0.0f, 0.7f,
+    
+        0.0f, 0.0f, 0.0f, 0.7f,
+        0.0f, 0.0f, 0.0f, 0.7f,
+        0.0f, 0.0f, 0.0f, 0.7f
+    };
+
+    for (int i = 0, j = 0; i < 18; i+=3, j+=4) {
+        nh_core_appendToArray(&Vertices, &vertices[i], 1);
+        nh_core_appendToArray(&Vertices, &vertices[i+1], 1);
+        nh_core_appendToArray(&Vertices, &vertices[i+2], 1);
+        nh_core_appendToArray(&Vertices, &quadColors[j], 1);
+        nh_core_appendToArray(&Vertices, &quadColors[j+1], 1);
+        nh_core_appendToArray(&Vertices, &quadColors[j+2], 1);
+        nh_core_appendToArray(&Vertices, &quadColors[j+3], 1);
+    }
+
+    Dim_p->Vertices = Vertices;
+
+    return TK_API_SUCCESS;
+}
+
+static TK_API_RESULT tk_gfx_initGraphicsData(
+    tk_gfx_GraphicsData *Data_p)
+{
+    Data_p->Foreground.Action = tk_gfx_initGraphicsAction();
+    Data_p->Foreground.Vertices = nh_core_initArray(sizeof(float), 1024);
+    Data_p->Foreground.Indices  = nh_core_initArray(sizeof(uint32_t), 1024);
+    Data_p->Foreground.Vertices2 = nh_core_initArray(sizeof(float), 1024);
+    Data_p->Foreground.Indices2  = nh_core_initArray(sizeof(uint32_t), 1024);
+    Data_p->Foreground.Ranges = nh_core_initArray(sizeof(tk_gfx_AttributeRange), 32);
+    Data_p->Foreground.Ranges2 = nh_core_initArray(sizeof(tk_gfx_AttributeRange), 32);
+    Data_p->Foreground.Colors = nh_core_initArray(sizeof(float), 2048);
+    Data_p->Foreground.Colors2 = nh_core_initArray(sizeof(float), 2048);
+
+    tk_gfx_initOpenGLForeground(&Data_p->Foreground.OpenGL);
+
+    Data_p->Background.Action = tk_gfx_initGraphicsAction();
+    Data_p->Background.Vertices = nh_core_initArray(sizeof(float), 1024);
+    Data_p->Background.Colors = nh_core_initArray(sizeof(float), 2048);
+    Data_p->Background.Indices  = nh_core_initArray(sizeof(uint32_t), 1024);
+    Data_p->Background.Ranges = nh_core_initArray(sizeof(tk_gfx_AttributeRange), 32);
+
+    tk_gfx_initOpenGLBackground(&Data_p->Background.OpenGL);
+
+    Data_p->update = false;
+
+    return TK_API_SUCCESS;
+}
+
+static TK_API_RESULT tk_gfx_initGraphicsState(
+    tk_gfx_Config *Config_p, tk_gfx_GraphicsState *State_p)
+{
+    memset(State_p, 0, sizeof(tk_gfx_GraphicsState));
+
+    TK_GFX_CHECK(tk_gfx_getInternalMonospaceFonts(&State_p->Fonts))
+
+    State_p->RegularMap = nh_core_createHashMap();
+    State_p->BoldMap = nh_core_createHashMap();
+    State_p->Glyphs = nh_core_initList(128);
+    State_p->Codepoints = nh_core_initList(128);
+
+    State_p->AccentGradient.Color = tk_gfx_getGradientColor(&State_p->AccentGradient, Config_p->Accents_p, Config_p->accents);
+    State_p->AccentGradient.interval = 0.1;
+    State_p->AccentGradient.LastChange = nh_core_getSystemTime();
+
+    State_p->BackgroundGradient = State_p->AccentGradient;
+    State_p->BackgroundGradient.Color = tk_gfx_getGradientColor(&State_p->BackgroundGradient, Config_p->Backgrounds_p, Config_p->backgrounds);
+
+    State_p->Blink.LastBlink = nh_core_getSystemTime();
+ 
+    return TK_API_SUCCESS;
+}
+
+TK_API_RESULT tk_gfx_initGraphics(
+    tk_gfx_Config *Config_p, tk_gfx_Graphics *Graphics_p)
+{
+    memset(Graphics_p, 0, sizeof(tk_gfx_Graphics));
+
+    TK_GFX_CHECK(tk_gfx_initGraphicsState(Config_p, &Graphics_p->State))
+    TK_GFX_CHECK(tk_gfx_initGraphicsData(&Graphics_p->MainData))
+    TK_GFX_CHECK(tk_gfx_initGraphicsData(&Graphics_p->ElevatedData))
+    TK_GFX_CHECK(tk_gfx_initGraphicsData(&Graphics_p->BackdropData))
+ 
+    Graphics_p->Dim.Action = tk_gfx_initGraphicsAction();
+    Graphics_p->Dim.Vertices = nh_core_initArray(sizeof(float), 255);
+
+    tk_gfx_createDimData(&Graphics_p->Dim);
+    tk_gfx_initOpenGLDim(&Graphics_p->Dim.OpenGL);
+
+    Graphics_p->Boxes.Action = tk_gfx_initGraphicsAction();
+    Graphics_p->Boxes.Data = nh_core_initArray(sizeof(tk_gfx_Box), 16);
+
+    tk_gfx_initOpenGLBoxes(&Graphics_p->Boxes.OpenGL);
+ 
+    return TK_API_SUCCESS;
+}
+
+static TK_API_RESULT tk_gfx_freeGraphicsData(
+    tk_gfx_GraphicsData *Data_p)
+{
+    nh_core_freeArray(&Data_p->Foreground.Vertices);
+    nh_core_freeArray(&Data_p->Foreground.Indices);
+    nh_core_freeArray(&Data_p->Foreground.Ranges);
+    nh_core_freeArray(&Data_p->Foreground.Vertices2);
+    nh_core_freeArray(&Data_p->Foreground.Indices2);
+    nh_core_freeArray(&Data_p->Foreground.Ranges2);
+    nh_core_freeArray(&Data_p->Foreground.Colors);
+    nh_core_freeArray(&Data_p->Foreground.Colors2);
+
+    tk_gfx_freeOpenGLForeground(&Data_p->Foreground.OpenGL);
+
+    nh_core_freeArray(&Data_p->Background.Vertices);
+    nh_core_freeArray(&Data_p->Background.Colors);
+    nh_core_freeArray(&Data_p->Background.Indices);
+    nh_core_freeArray(&Data_p->Background.Ranges);
+ 
+    tk_gfx_freeOpenGLBackground(&Data_p->Background.OpenGL);
+
+    return TK_API_SUCCESS;
+}
+
+TK_API_RESULT tk_gfx_freeGraphics(
+    tk_gfx_Graphics *Graphics_p)
+{
+    TK_GFX_CHECK(tk_gfx_freeGraphicsData(&Graphics_p->MainData))
+    TK_GFX_CHECK(tk_gfx_freeGraphicsData(&Graphics_p->ElevatedData))
+    TK_GFX_CHECK(tk_gfx_freeGraphicsData(&Graphics_p->BackdropData))
+
+    nh_core_freeArray(&Graphics_p->Dim.Vertices);
+    nh_core_freeArray(&Graphics_p->Boxes.Data);
+
+    tk_gfx_freeOpenGLBoxes(&Graphics_p->Boxes.OpenGL);
+
+    nh_core_freeList(&Graphics_p->State.Fonts, false);
+    nh_core_freeList(&Graphics_p->State.Glyphs, true);
+    nh_core_freeList(&Graphics_p->State.Codepoints, true);
+
+    nh_core_freeHashMap(Graphics_p->State.RegularMap);
+    nh_core_freeHashMap(Graphics_p->State.BoldMap);
+
+    return TK_API_SUCCESS;
+}
+
+// RANGES ==========================================================================================
+
+static int tk_gfx_getCurrentAttributeRangeForLineGraphics(
+    tk_gfx_Grid *Grid_p, tk_core_Glyph *Current_p, int *col_p, int *row_p)
+{
+    int total = 0;
+
+    for (int row = *row_p; row < Grid_p->rows; ++row) {
+        for (int col = *col_p; col < Grid_p->cols; ++col) {
+            tk_core_Glyph Glyph = ((tk_gfx_Tile*)((nh_core_List*)Grid_p->Rows.pp[row])->pp[col])->Glyph;
+            if (!(Glyph.mark & TK_CORE_MARK_LINE_GRAPHICS)) {
+                continue;
+            }
+            if (tk_gfx_compareForegroundAttributes(Current_p, &Glyph)) {
+                *col_p = col;
+                *row_p = row;
+                *Current_p = Glyph;
+                return total;
+            }
+            if (Glyph.overlay != 0) {
+                ++total;
+            }
+            ++total;
+        }
+        *col_p = 0;
+    }
+
+    *col_p = Grid_p->cols;
+    *row_p = Grid_p->rows;
+
+    return total;
+}
+
+static int tk_gfx_getCurrentAttributeRange(
+    tk_gfx_GraphicsState *State_p, tk_gfx_Grid *Grid_p, tk_core_Glyph *Current_p, int *col_p, 
+    int *row_p, bool foreground)
+{
+    int total = 0;
+
+    for (int row = *row_p; row < Grid_p->rows; ++row) {
+        for (int col = *col_p; col < Grid_p->cols; ++col) {
+            tk_core_Glyph Glyph = ((tk_gfx_Tile*)((nh_core_List*)Grid_p->Rows.pp[row])->pp[col])->Glyph;
+            if (foreground && (!Glyph.codepoint || Glyph.codepoint == ' ' || Glyph.mark & TK_CORE_MARK_LINE_GRAPHICS)) {
+                continue;
+            }
+            if (!foreground && (!Glyph.Background.custom && !Glyph.Attributes.reverse && !Glyph.Attributes.blink)) {
+                continue;
+            }
+            if (!foreground && Glyph.Attributes.blink && !State_p->Blink.on) {
+                continue;
+            }
+            if ((foreground && tk_gfx_compareForegroundAttributes(Current_p, &Glyph))
+            || (!foreground && tk_gfx_compareBackgroundAttributes(Current_p, &Glyph))) {
+                *col_p = col;
+                *row_p = row;
+                *Current_p = Glyph;
+                return total;
+            }
+            ++total;
+        }
+        *col_p = 0;
+    }
+
+    *col_p = Grid_p->cols;
+    *row_p = Grid_p->rows;
+
+    return total;
+}
+
+static TK_API_RESULT tk_gfx_computeRangeForLineGraphics(
+    tk_gfx_GraphicsData *Data_p, tk_gfx_Grid *Grid_p)
+{
+    nh_core_freeArray(&Data_p->Foreground.Ranges2);
+    Data_p->Foreground.Ranges2 = nh_core_initArray(sizeof(tk_gfx_AttributeRange), 64);
+
+    if (Grid_p->rows <= 0 || Grid_p->Rows.size == 0) {
+        return TK_API_SUCCESS;
+    }
+
+    int total = 0;
+    int row = 0;
+    int col = 0;
+
+    tk_core_Glyph Glyph = ((tk_gfx_Tile*)((nh_core_List*)Grid_p->Rows.pp[0])->pp[0])->Glyph;
+    bool begin = true;
+
+    while (true)
+    {
+        tk_core_Glyph NextGlyph = Glyph;
+        total = tk_gfx_getCurrentAttributeRangeForLineGraphics(Grid_p, &NextGlyph, &col, &row) * 12;
+        if (!total && !begin) {break;}
+        begin = false;
+
+        tk_gfx_AttributeRange *Range_p = 
+            (tk_gfx_AttributeRange*)nh_core_incrementArray(&Data_p->Foreground.Ranges2);
+
+        Range_p->Glyph = Glyph;
+        Range_p->indices = total;
+
+        Glyph = NextGlyph;
+    }
+
+    return TK_API_SUCCESS;
+}
+
+static TK_API_RESULT tk_gfx_computeRange(
+    tk_gfx_GraphicsState *State_p, tk_gfx_GraphicsData *Data_p, tk_gfx_Grid *Grid_p, 
+    bool foreground)
+{
+    if (foreground) {
+        nh_core_freeArray(&Data_p->Foreground.Ranges);
+        Data_p->Foreground.Ranges = nh_core_initArray(sizeof(tk_gfx_AttributeRange), 32);
+    } else {
+        nh_core_freeArray(&Data_p->Background.Ranges);
+        Data_p->Background.Ranges = nh_core_initArray(sizeof(tk_gfx_AttributeRange), 32);
+    }
+
+    if (Grid_p->rows <= 0 || Grid_p->Rows.size == 0) {
+        return TK_API_SUCCESS;
+    }
+
+    int total = 0;
+    int row = 0;
+    int col = 0;
+
+    tk_core_Glyph Glyph = ((tk_gfx_Tile*)((nh_core_List*)Grid_p->Rows.pp[0])->pp[0])->Glyph;
+    bool begin = true;
+
+    // Default Foreground/Background.
+    while (true)
+    {
+        tk_core_Glyph NextGlyph = Glyph;
+ 
+        total = tk_gfx_getCurrentAttributeRange(State_p, Grid_p, &NextGlyph, &col, &row, foreground) * 6;
+        if (!total && !begin) {break;}
+        begin = false;
+
+        tk_gfx_AttributeRange *Range_p = (tk_gfx_AttributeRange*)nh_core_incrementArray(
+            foreground ? &Data_p->Foreground.Ranges : &Data_p->Background.Ranges);
+
+        Range_p->Glyph = Glyph;
+        Range_p->indices = total;
+
+        Glyph = NextGlyph;
+    }
+
+    return TK_API_SUCCESS;
+}
+
+// UPDATE ==========================================================================================
+
+static TK_API_RESULT tk_gfx_updateForegroundData(
+    tk_gfx_Config *Config_p, tk_gfx_GraphicsState *State_p, tk_gfx_Grid *Grid_p,
+    tk_gfx_GraphicsForeground *Foreground_p, int shift)
+{
+    nh_core_freeArray(&Foreground_p->Vertices);
+    nh_core_freeArray(&Foreground_p->Indices);
+    nh_core_freeArray(&Foreground_p->Vertices2);
+    nh_core_freeArray(&Foreground_p->Indices2);
+    nh_core_freeArray(&Foreground_p->Colors);
+    nh_core_freeArray(&Foreground_p->Colors2);
+
+    nh_core_Array Vertices = nh_core_initArray(sizeof(float), 2000);
+    nh_core_Array Indices = nh_core_initArray(sizeof(uint32_t), 1024);
+    nh_core_Array Vertices2 = nh_core_initArray(sizeof(float), 2000);
+    nh_core_Array Indices2 = nh_core_initArray(sizeof(uint32_t), 1024);
+    nh_core_Array Colors = nh_core_initArray(sizeof(float), 2048);
+    nh_core_Array Colors2 = nh_core_initArray(sizeof(float), 2048);
+
+    int offset1 = 0;
+    int offset2 = 0;
+
+    for (int i = 0; i < Grid_p->Rows.size; ++i) {
+        nh_core_List *Row_p = Grid_p->Rows.pp[i];
+
+        for (int j = 0; j < Row_p->size; ++j) {
+            tk_gfx_Tile *Tile_p = Row_p->pp[j];
+            if (!Tile_p || !Tile_p->Glyph.codepoint || Tile_p->Glyph.codepoint == ' ') {continue;}
+
+            if (Tile_p->Glyph.mark & TK_CORE_MARK_LINE_GRAPHICS) {
+                nh_core_appendToArray(&Vertices2, Tile_p->Foreground.vertices_p, 24);
+                uint32_t indices_p[12] = {
+                    offset1, offset1 + 1, offset1 + 2, offset1, offset1 + 2, offset1 + 3,
+                    offset1 + 4, offset1 + 5, offset1 + 6, offset1 + 4, offset1 + 6, offset1 + 7
+                };
+                nh_core_appendToArray(&Indices2, indices_p, 12);
+                offset1 += 8;
+
+                // add color data
+                tk_core_Color Color = tk_gfx_getGlyphColor(Config_p, State_p, &Tile_p->Glyph, 1, j+shift, i, Grid_p);
+                for (int v = 0; v < 8; ++v) {
+                    nh_core_appendToArray(&Colors2, &Color.r, 1);
+                    nh_core_appendToArray(&Colors2, &Color.g, 1);
+                    nh_core_appendToArray(&Colors2, &Color.b, 1);
+                    nh_core_appendToArray(&Colors2, &Color.a, 1);
+                }
+            } else {
+                nh_core_appendToArray(&Vertices, Tile_p->Foreground.vertices_p, 20);
+                uint32_t indices_p[6] = {offset2, offset2 + 1, offset2 + 2, offset2, offset2 + 2, offset2 + 3};
+                nh_core_appendToArray(&Indices, indices_p, 6);
+                offset2 += 4;
+
+                // add color data
+                tk_core_Color Color = tk_gfx_getGlyphColor(Config_p, State_p, &Tile_p->Glyph, 1, j+shift, i, Grid_p);
+                for (int v = 0; v < 4; ++v) {
+                    nh_core_appendToArray(&Colors, &Color.r, 1);
+                    nh_core_appendToArray(&Colors, &Color.g, 1);
+                    nh_core_appendToArray(&Colors, &Color.b, 1);
+                    nh_core_appendToArray(&Colors, &Color.a, 1);
+                }
+            }
+
+            if (Tile_p->Glyph.overlay != 0) {
+                nh_core_appendToArray(&Vertices2, Tile_p->Overlay.vertices_p, 24);
+                uint32_t indices_p[12] = {
+                    offset1, offset1 + 1, offset1 + 2, offset1, offset1 + 2, offset1 + 3,
+                    offset1 + 4, offset1 + 5, offset1 + 6, offset1 + 4, offset1 + 6, offset1 + 7
+                };
+                nh_core_appendToArray(&Indices2, indices_p, 12);
+                offset1 += 8;
+
+                // add color data
+                tk_core_Color Color = tk_gfx_getOverlayColor(Config_p, State_p, &Tile_p->Glyph, j+shift, i, Grid_p);
+                for (int v = 0; v < 8; ++v) {
+                    nh_core_appendToArray(&Colors2, &Color.r, 1);
+                    nh_core_appendToArray(&Colors2, &Color.g, 1);
+                    nh_core_appendToArray(&Colors2, &Color.b, 1);
+                    nh_core_appendToArray(&Colors2, &Color.a, 1);
+                }
+            }
+        }
+    }
+
+    Foreground_p->Vertices = Vertices;
+    Foreground_p->Indices = Indices;
+    Foreground_p->Vertices2 = Vertices2;
+    Foreground_p->Indices2 = Indices2;
+    Foreground_p->Colors = Colors;
+    Foreground_p->Colors2 = Colors2;
+
+    return TK_API_SUCCESS;
+}
+
+static TK_API_RESULT tk_gfx_updateBackgroundData(
+    tk_gfx_Config *Config_p, tk_gfx_GraphicsState *State_p, tk_gfx_Grid *Grid_p,
+    tk_gfx_GraphicsBackground *Background_p, int shift)
+{
+    nh_core_freeArray(&Background_p->Vertices);
+    nh_core_freeArray(&Background_p->Colors);
+    nh_core_freeArray(&Background_p->Indices);
+
+    Background_p->Vertices = nh_core_initArray(sizeof(float), 2048);
+    Background_p->Colors = nh_core_initArray(sizeof(float), 2048);
+    Background_p->Indices = nh_core_initArray(sizeof(uint32_t), 1024);
+
+    int offset = 0;
+
+    for (int i = 0; i < Grid_p->Rows.size; ++i) {
+        nh_core_List *Row_p = Grid_p->Rows.pp[i];
+        for (int j = 0; j < Row_p->size; ++j) {
+            tk_gfx_Tile *Tile_p = Row_p->pp[j];
+            if (!Tile_p->Glyph.Background.custom && !Tile_p->Glyph.Attributes.reverse && !Tile_p->Glyph.Attributes.blink) {continue;}
+            if (Tile_p->Glyph.Attributes.blink && State_p->Blink.on == false) {continue;}
+         
+            tk_core_Color Color = tk_gfx_getGlyphColor(Config_p, State_p, &Tile_p->Glyph, 0, j+shift, i, Grid_p);
+            for (int k = 0; k < 4; ++k) {
+                nh_core_appendToArray(&Background_p->Vertices, Tile_p->Background.vertices_p+k*3, 3);
+                if (State_p->Viewport_p->Surface_p->api == NH_GFX_API_VULKAN) {
+float alpha = 1.0f;
+                    nh_core_appendToArray(&Background_p->Vertices, &Color.r, 1);
+                    nh_core_appendToArray(&Background_p->Vertices, &Color.g, 1);
+                    nh_core_appendToArray(&Background_p->Vertices, &Color.b, 1);
+                    nh_core_appendToArray(&Background_p->Vertices, &alpha, 1);
+                }
+            }
+
+            uint32_t indices_p[6] = {offset, offset + 1, offset + 2, offset, offset + 2, offset + 3};
+            nh_core_appendToArray(&Background_p->Indices, indices_p, 6);
+            offset += 4;
+
+            // add color data
+            for (int v = 0; v < 4; ++v) {
+                    nh_core_appendToArray(&Background_p->Colors, &Color.r, 1);
+                    nh_core_appendToArray(&Background_p->Colors, &Color.g, 1);
+                    nh_core_appendToArray(&Background_p->Colors, &Color.b, 1);
+            }
+        }
+    }
+
+    return TK_API_SUCCESS;
+}
+
+static TK_API_RESULT tk_gfx_updateBoxesData(
+    tk_gfx_Graphics *Graphics_p, tk_gfx_Config *Config_p, tk_gfx_Grid *Grid_p)
+{
+    nh_core_freeArray(&Graphics_p->Boxes.Vertices);
+    nh_core_freeArray(&Graphics_p->Boxes.Colors);
+
+    Graphics_p->Boxes.Vertices = nh_core_initArray(sizeof(float), 64);
+    Graphics_p->Boxes.Colors = nh_core_initArray(sizeof(float), 64);
+ 
+    for (int i = 0; i < Graphics_p->Boxes.Data.length; ++i) {
+        tk_gfx_Box *Box_p = ((tk_gfx_Box*)Graphics_p->Boxes.Data.p)+i;
+        if (Box_p->UpperLeft.x < 0 || Box_p->UpperLeft.y < 0 || Box_p->LowerRight.x < 0 || Box_p->LowerRight.y < 0) {continue;}
+        nh_core_appendToArray(&Graphics_p->Boxes.Vertices, Box_p->innerVertices_p, 18);
+        nh_core_appendToArray(&Graphics_p->Boxes.Vertices, Box_p->outerVertices_p, 18);
+        if (Box_p->UpperLeft.x != Box_p->LowerRight.x) {continue;}
+        // add color data for inactive cursor
+        tk_gfx_Tile *Tile_p = tk_gfx_getTile(Grid_p, Box_p->UpperLeft.y, Box_p->UpperLeft.x);
+        Tile_p->Glyph.Attributes.reverse = true;
+        Tile_p->Glyph.mark |= TK_CORE_MARK_ACCENT;
+        tk_core_Color Color = tk_gfx_getGlyphColor(Config_p, &Graphics_p->State, &Tile_p->Glyph, 0, Box_p->UpperLeft.x+2, Box_p->UpperLeft.y+1, Grid_p);
+        Tile_p->Glyph.Attributes.reverse = false;
+        Tile_p->Glyph.mark &= TK_CORE_MARK_ACCENT;
+        for (int v = 0; v < 12; ++v) {
+            nh_core_appendToArray(&Graphics_p->Boxes.Colors, &Color.r, 1);
+            nh_core_appendToArray(&Graphics_p->Boxes.Colors, &Color.g, 1);
+            nh_core_appendToArray(&Graphics_p->Boxes.Colors, &Color.b, 1);
+        }
+    }
+
+    return TK_API_SUCCESS;
+}
+
+static TK_API_RESULT tk_gfx_updateGridGraphics(
+    tk_gfx_Config *Config_p, tk_gfx_GraphicsState *State_p, tk_gfx_GraphicsData *Data_p,
+    tk_gfx_Grid *Grid_p, int offset)
+{
+    TK_GFX_CHECK(tk_gfx_updateForegroundData(Config_p, State_p, Grid_p, &Data_p->Foreground, offset))
+    TK_GFX_CHECK(tk_gfx_updateBackgroundData(Config_p, State_p, Grid_p, &Data_p->Background, offset))
+
+    TK_GFX_CHECK(tk_gfx_computeRange(State_p, Data_p, Grid_p, true))
+    TK_GFX_CHECK(tk_gfx_computeRange(State_p, Data_p, Grid_p, false))
+    TK_GFX_CHECK(tk_gfx_computeRangeForLineGraphics(Data_p, Grid_p))
+
+    return TK_API_SUCCESS;
+}
+
+TK_API_RESULT tk_gfx_updateGraphics(
+    tk_gfx_Config *Config_p, tk_gfx_Graphics *Graphics_p, tk_gfx_Grid *Grid_p,
+    tk_gfx_Grid *BackdropGrid_p, tk_gfx_Grid *ElevatedGrid_p, bool titlebarOn)
+{
+    int shift = titlebarOn ? 1 : 3;
+
+    if (Config_p->style == 3) {
+        shift = 1;
+    }
+
+    TK_GFX_CHECK(tk_gfx_updateGridGraphics( 
+        Config_p, &Graphics_p->State, &Graphics_p->MainData, Grid_p, shift))
+
+    if (Graphics_p->ElevatedData.update) {
+        TK_GFX_CHECK(tk_gfx_updateGridGraphics( 
+            Config_p, &Graphics_p->State, &Graphics_p->ElevatedData, ElevatedGrid_p, shift))
+        Graphics_p->ElevatedData.update = false;
+    }
+
+    if (Config_p->animationFreq == 2 || (Config_p->animationFreq <= 1 && Graphics_p->BackdropData.update)) {
+        TK_GFX_CHECK(tk_gfx_updateGridGraphics( 
+            Config_p, &Graphics_p->State, &Graphics_p->BackdropData, BackdropGrid_p, 0)) 
+        Graphics_p->BackdropData.update = false;
+    }
+
+    if (Graphics_p->Boxes.Data.length > 0) {
+        TK_GFX_CHECK(tk_gfx_updateBoxesData(Graphics_p, Config_p, Grid_p))
+    }
+
+    return TK_API_SUCCESS;
+}
+ 
+bool tk_gfx_updateBlinkOrGradient(
+    tk_gfx_Config *Config_p, tk_gfx_GraphicsState *State_p)
+{
+    bool update = false;
+    nh_core_SystemTime Time = nh_core_getSystemTime();
+
+    if (nh_core_getSystemTimeDiffInSeconds(State_p->Blink.LastBlink, Time) >= Config_p->blinkFrequency) {
+        update = true;
+        State_p->Blink.LastBlink = Time;
+        State_p->Blink.on = !State_p->Blink.on;
+    }
+
+    if (Config_p->accents > 1 && nh_core_getSystemTimeDiffInSeconds(State_p->AccentGradient.LastChange, Time) >= State_p->AccentGradient.interval) { 
+        update = true; 
+        State_p->AccentGradient.LastChange = Time; 
+        if (State_p->AccentGradient.ratio >= 1.0f) {
+            State_p->AccentGradient.index = State_p->AccentGradient.index == Config_p->accents-1 ? 0 : State_p->AccentGradient.index+1; 
+            State_p->AccentGradient.ratio = 0.0f;
+        }
+        State_p->AccentGradient.Color = tk_gfx_getGradientColor(&State_p->AccentGradient, Config_p->Accents_p, Config_p->accents);
+    } 
+
+    if (Config_p->backgrounds > 1 && nh_core_getSystemTimeDiffInSeconds(State_p->BackgroundGradient.LastChange, Time) >= State_p->BackgroundGradient.interval) {
+        update = true; 
+        State_p->BackgroundGradient.LastChange = Time; 
+        if (State_p->BackgroundGradient.ratio >= 1.0f) {
+            State_p->BackgroundGradient.index = State_p->BackgroundGradient.index == Config_p->backgrounds-1 ? 0 : State_p->BackgroundGradient.index+1; 
+            State_p->BackgroundGradient.ratio = 0.0f;
+        }
+        State_p->BackgroundGradient.Color = tk_gfx_getGradientColor(&State_p->BackgroundGradient, Config_p->Backgrounds_p, Config_p->backgrounds);
+    } 
+
+    // Clear color needs to be updated.
+    State_p->Viewport_p->Settings.ClearColor.r = Config_p->Backgrounds_p[0].r;
+    State_p->Viewport_p->Settings.ClearColor.g = Config_p->Backgrounds_p[0].g;
+    State_p->Viewport_p->Settings.ClearColor.b = Config_p->Backgrounds_p[0].b;
+
+    return update;
+}
+
+// VIEWPORT ========================================================================================
+
+TK_API_RESULT tk_gfx_handleViewportChange(
+    tk_gfx_Config *Config_p, tk_gfx_Graphics *Graphics_p, nh_gfx_Viewport *Viewport_p)
+{
+    // Check if it's the initial call.
+    if (!Graphics_p->State.Viewport_p) 
+    {
+        switch (Viewport_p->Surface_p->api)
+        {
+            case NH_GFX_API_VULKAN :
+#if defined(__unix__)
+                tk_gfx_initVulkanForeground(Viewport_p->Surface_p->Vulkan.GPU_p, &Graphics_p->MainData.Foreground.Vulkan);
+                break;
+#else
+                return TK_API_ERROR_BAD_STATE;
+#endif
+            case NH_GFX_API_OPENGL :
+                break;
+            default :
+                return TK_API_ERROR_BAD_STATE;
+        }
+    }
+
+    Viewport_p->Settings.ClearColor.r = Config_p->Backgrounds_p[0].r;
+    Viewport_p->Settings.ClearColor.g = Config_p->Backgrounds_p[0].g;
+    Viewport_p->Settings.ClearColor.b = Config_p->Backgrounds_p[0].b;
+
+    Graphics_p->State.Viewport_p = Viewport_p;
+
+    return TK_API_SUCCESS;
+}
+
+// RENDER ==========================================================================================
+
+TK_API_RESULT tk_gfx_renderGraphics(
+    tk_gfx_Config *Config_p, tk_gfx_Graphics *Graphics_p, tk_gfx_Grid *Grid_p,
+    tk_gfx_Grid *ElevatedGrid_p, tk_gfx_Grid *BackdropGrid_p, tk_core_Config *CoreConfig_p)
+{
+    unsigned int offset = 0;
+    if (CoreConfig_p->Sidebar.on) {
+        offset = tk_gfx_getSidebarOffset(Grid_p);
+    }
+
+    switch (Graphics_p->State.Viewport_p->Surface_p->api)
+    {
+        case NH_GFX_API_VULKAN :
+#if defined(__unix__)
+           TK_GFX_CHECK(tk_gfx_renderUsingVulkan(Config_p, Graphics_p, Grid_p, BackdropGrid_p))
+           break;
+#else
+           return TK_API_ERROR_BAD_STATE;
+#endif
+       case NH_GFX_API_OPENGL :
+           TK_GFX_CHECK(tk_gfx_renderUsingOpenGL(Config_p, Graphics_p, Grid_p, BackdropGrid_p, offset))
+           break;
+       default :
+           return TK_API_ERROR_BAD_STATE;
+    }
+
+    return TK_API_SUCCESS;
+}

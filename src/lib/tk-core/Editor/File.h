@@ -13,7 +13,7 @@
 #include "nh-core/Util/Array.h"
 #include "nh-encoding/Encodings/UTF32.h"
 
-#include "../TTY/Program.h"
+#include "../Core/Program.h"
 #include "../Common/Includes.h"
 
 typedef struct tk_core_TreeListingNode tk_core_TreeListingNode;
@@ -70,11 +70,11 @@ typedef struct tk_core_FileEditorView tk_core_FileEditorView;
         tk_core_File *File_p
     );
     
-    TK_CORE_RESULT tk_core_createFileViews(
+    TK_API_RESULT tk_core_createFileViews(
         tk_core_FileEditorView *View_p, tk_core_File *File_p
     );
     
-    TK_CORE_RESULT tk_core_destroyFileViews(
+    TK_API_RESULT tk_core_destroyFileViews(
         tk_core_FileEditorView *View_p, tk_core_File *File_p
     );
     
@@ -86,7 +86,7 @@ typedef struct tk_core_FileEditorView tk_core_FileEditorView;
         tk_core_Program *Program_p, tk_core_File *File_p
     );
     
-    TK_CORE_RESULT tk_core_updateFileViews(
+    TK_API_RESULT tk_core_updateFileViews(
         tk_core_EditorView *View_p
     );
     
@@ -94,28 +94,28 @@ typedef struct tk_core_FileEditorView tk_core_FileEditorView;
         nh_encoding_UTF32String *Path_p
     );
 
-    TK_CORE_RESULT tk_core_renderFile(
+    TK_API_RESULT tk_core_renderFile(
         tk_core_File *File_p
     );
     
-    TK_CORE_RESULT tk_core_writeFile(
+    TK_API_RESULT tk_core_writeFile(
         tk_core_File *File_p
     );
     
-    TK_CORE_RESULT tk_core_clearFileSearch(
+    TK_API_RESULT tk_core_clearFileSearch(
         tk_core_File *File_p
     );
     
-    TK_CORE_RESULT tk_core_searchFile(
+    TK_API_RESULT tk_core_searchFile(
         tk_core_File *File_p, NH_API_UTF32 *str_p, int length
     );
     
-    TK_CORE_RESULT tk_core_handleFileInput(
+    TK_API_RESULT tk_core_handleFileInput(
         tk_core_Program *Program_p, tk_core_File *File_p, NH_API_UTF32 c, bool insertMode, 
         bool *refresh_p
     );
 
-    TK_CORE_RESULT tk_core_drawFileRow(
+    TK_API_RESULT tk_core_drawFileRow(
         tk_core_Program *Program_p, tk_core_File *File_p, tk_core_FileView *View_p, tk_core_Glyph *Glyphs_p,
         int row
     );

@@ -12,8 +12,8 @@
 
 #include "../Common/Macros.h"
 
-#include "../TTY/Program.h"
-#include "../TTY/TTY.h"
+#include "../Core/Program.h"
+#include "../Core/Session.h"
 
 #include "nh-core/System/Memory.h"
 #include "nh-core/System/Thread.h"
@@ -43,7 +43,7 @@ static void tk_core_setUDSFilePath(
 }
 
 // https://openbook.rheinwerk-verlag.de/linux_unix_programmierung/Kap11-017.htm
-TK_CORE_RESULT tk_core_createShellSocket(
+TK_API_RESULT tk_core_createShellSocket(
     tk_core_ShellSocket *Socket_p, int pid)
 {
     char path_p[255] = {0};
@@ -51,11 +51,11 @@ TK_CORE_RESULT tk_core_createShellSocket(
 
 #if defined(__unix__)
     if ((Socket_p->fd = socket(AF_LOCAL, SOCK_STREAM | SOCK_NONBLOCK, 0)) <= 0) {
-        return TK_CORE_ERROR_BAD_STATE;
+        return TK_API_ERROR_BAD_STATE;
     }
 #else defined(__APPLE__)
     if ((Socket_p->fd = socket(AF_LOCAL, SOCK_STREAM, 0)) <= 0) {
-        return TK_CORE_ERROR_BAD_STATE;
+        return TK_API_ERROR_BAD_STATE;
     }
     if (Socket_p->fd >= 0) {
         int flags = fcntl(Socket_p->fd, F_GETFL, 0);
@@ -72,12 +72,12 @@ TK_CORE_RESULT tk_core_createShellSocket(
     strcpy(Socket_p->address.sun_path, path_p);
 
     if (bind(Socket_p->fd, (struct sockaddr *) &Socket_p->address, sizeof(Socket_p->address)) != 0) {
-        return TK_CORE_ERROR_BAD_STATE;
+        return TK_API_ERROR_BAD_STATE;
     }
 
     listen(Socket_p->fd, 5);
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 void tk_core_closeShellSocket(
@@ -90,14 +90,14 @@ void tk_core_closeShellSocket(
     unlink(path_p);
 }
 
-TK_CORE_RESULT tk_core_handleShellSocket(
+TK_API_RESULT tk_core_handleShellSocket(
     tk_core_ShellSocket *Socket_p)
 {
     socklen_t addrlen = sizeof(struct sockaddr_in);
     int new_socket = accept(Socket_p->fd, (struct sockaddr *)&Socket_p->address, &addrlen);
    
     if (new_socket <= 0) {
-        return TK_CORE_SUCCESS; // Nothing to do.
+        return TK_API_SUCCESS; // Nothing to do.
     }
 
     int buffer = 255;
@@ -111,20 +111,20 @@ TK_CORE_RESULT tk_core_handleShellSocket(
 
     close(new_socket);
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-TK_CORE_RESULT tk_core_sendCommandToShell(
+TK_API_RESULT tk_core_sendCommandToShell(
     int pid, TK_CORE_PROGRAM_E type)
 {
     char path_p[255] = {0};
     tk_core_setUDSFilePath(path_p, pid);
 
-    if (!nh_fileExistsOnMachine(path_p, NULL)) {return TK_CORE_ERROR_BAD_STATE;}
+    if (!nh_fileExistsOnMachine(path_p, NULL)) {return TK_API_ERROR_BAD_STATE;}
  
     int fd;
     if ((fd=socket(PF_LOCAL, SOCK_STREAM, 0)) <= 0) {
-        return TK_CORE_ERROR_BAD_STATE;
+        return TK_API_ERROR_BAD_STATE;
     }
 
     struct sockaddr_un address;
@@ -132,7 +132,7 @@ TK_CORE_RESULT tk_core_sendCommandToShell(
     strcpy(address.sun_path, path_p);
 
     if (connect(fd, (struct sockaddr *)&address, sizeof(address)) != 0) {
-        return TK_CORE_ERROR_BAD_STATE;
+        return TK_API_ERROR_BAD_STATE;
     }
 
     char type_p[255] = {0};
@@ -141,6 +141,6 @@ TK_CORE_RESULT tk_core_sendCommandToShell(
     send(fd, type_p, strlen(type_p), 0);
     close(fd);
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 

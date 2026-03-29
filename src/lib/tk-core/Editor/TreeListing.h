@@ -12,7 +12,7 @@
 #include "FileEditor.h"
 
 #include "../Common/Includes.h"
-#include "../TTY/Program.h"
+#include "../Core/Program.h"
 
 #include "nh-core/Util/Time.h"
 #include "nh-core/Util/List.h"
@@ -65,19 +65,19 @@
     tk_core_TreeListing tk_core_initTreeListing(
     );
 
-    TK_CORE_RESULT tk_core_freeTreeListing(
+    TK_API_RESULT tk_core_freeTreeListing(
         tk_core_TreeListing *TreeListing_p
     );
 
-    TK_CORE_RESULT tk_core_handleTreeListingInput(
+    TK_API_RESULT tk_core_handleTreeListingInput(
         tk_core_Program *Program_p, NH_API_UTF32 c
     );
 
-    TK_CORE_RESULT tk_core_drawTreeListingRow(
+    TK_API_RESULT tk_core_drawTreeListingRow(
         tk_core_Program *Program_p, tk_core_Glyph *Glyph_p, int width, int height, int row
     );
 
-    TK_CORE_RESULT tk_core_setTreeListingCursor(
+    TK_API_RESULT tk_core_setTreeListingCursor(
         tk_core_Program *Program_p, tk_core_File *File_p 
     );
 

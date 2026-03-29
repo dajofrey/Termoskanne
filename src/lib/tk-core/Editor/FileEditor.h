@@ -11,7 +11,7 @@
 
 #include "File.h"
 
-#include "../TTY/Program.h"
+#include "../Core/Program.h"
 #include "../Common/Includes.h"
 
 #endif
@@ -47,7 +47,7 @@
     tk_core_FileEditor tk_core_initFileEditor(
     );
 
-    TK_CORE_RESULT tk_core_freeFileEditor(
+    TK_API_RESULT tk_core_freeFileEditor(
         tk_core_FileEditor *FileEditor_p
     );
 
@@ -55,19 +55,19 @@
         tk_core_Program *Program_p, tk_core_TreeListingNode *Node_p, bool readOnly
     );
 
-    TK_CORE_RESULT tk_core_closeFile(
+    TK_API_RESULT tk_core_closeFile(
         tk_core_FileEditor *Editor_p, tk_core_File *File_p
     );
 
-    TK_CORE_RESULT tk_core_cycleThroughFiles(
+    TK_API_RESULT tk_core_cycleThroughFiles(
         tk_core_Program *Program_p, NH_API_UTF32 c
     );
 
-    TK_CORE_RESULT tk_core_handleFileEditorInput(
+    TK_API_RESULT tk_core_handleFileEditorInput(
         tk_core_Program *Program_p, NH_API_UTF32 c
     );
 
-    TK_CORE_RESULT tk_core_drawFileEditorRow(
+    TK_API_RESULT tk_core_drawFileEditorRow(
         tk_core_Program *Program_p, tk_core_Glyph *Glyphs_p, int width, int height, int row
     );
 

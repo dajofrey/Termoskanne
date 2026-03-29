@@ -14,7 +14,7 @@
 #include "TreeListing.h"
 #include "SyntaxHighlights.h"
 
-#include "../TTY/TTY.h"
+#include "../Core/Session.h"
 
 #include "../Common/Macros.h"
 
@@ -55,10 +55,10 @@ tk_core_TextFileLine *tk_core_newTextFileLine(
     return New_p;
 }
 
-static TK_CORE_RESULT tk_core_appendToTextFileLine(
+static TK_API_RESULT tk_core_appendToTextFileLine(
     tk_core_TextFileLine *Line_p, NH_API_UTF32 *codepoints_p, int length)
 {
-    NH_CORE_CHECK_2(TK_CORE_ERROR_BAD_STATE, nh_encoding_appendUTF32(&Line_p->Codepoints, codepoints_p, length))
+    NH_CORE_CHECK_2(TK_API_ERROR_BAD_STATE, nh_encoding_appendUTF32(&Line_p->Codepoints, codepoints_p, length))
     bool b = false;
     for (int i = 0; i < length; ++i) {
         nh_core_appendToArray(&Line_p->Copy, &b, 1);
@@ -66,29 +66,29 @@ static TK_CORE_RESULT tk_core_appendToTextFileLine(
         nh_core_appendToArray(&Line_p->Search, &b, 1);
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-TK_CORE_RESULT tk_core_insertIntoTextFileLine(
+TK_API_RESULT tk_core_insertIntoTextFileLine(
     tk_core_TextFileLine *Line_p, int index, NH_API_UTF32 c)
 {
-    NH_CORE_CHECK_2(TK_CORE_ERROR_BAD_STATE, nh_encoding_insertUTF32(&Line_p->Codepoints, index, &c, 1))
+    NH_CORE_CHECK_2(TK_API_ERROR_BAD_STATE, nh_encoding_insertUTF32(&Line_p->Codepoints, index, &c, 1))
     bool b = false;
     nh_core_insertIntoArray(&Line_p->Copy, index, &b, 1);
     nh_core_insertIntoArray(&Line_p->Search, index, &b, 1);
     b = true;
     nh_core_insertIntoArray(&Line_p->Unsaved, index, &b, 1);
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-TK_CORE_RESULT tk_core_removeFromTextFileLine(
+TK_API_RESULT tk_core_removeFromTextFileLine(
     tk_core_TextFileLine *Line_p, int index, int length)
 {
-    NH_CORE_CHECK_2(TK_CORE_ERROR_BAD_STATE, nh_encoding_removeUTF32(&Line_p->Codepoints, index, length))
+    NH_CORE_CHECK_2(TK_API_ERROR_BAD_STATE, nh_encoding_removeUTF32(&Line_p->Codepoints, index, length))
     nh_core_removeFromArray(&Line_p->Copy, index, length);
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // OPEN ============================================================================================
@@ -182,7 +182,7 @@ tk_core_TextFile *tk_core_openTextFile(
 
 // CLOSE ===========================================================================================
 
-TK_CORE_RESULT tk_core_closeTextFile(
+TK_API_RESULT tk_core_closeTextFile(
     tk_core_TextFile *TextFile_p)
 {
     for (int i = 0; i < TextFile_p->Lines.size; ++i) {
@@ -197,12 +197,12 @@ TK_CORE_RESULT tk_core_closeTextFile(
     nh_core_freeList(&TextFile_p->Lines, true);
     nh_core_free(TextFile_p);
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // SEARCH ==========================================================================================
 
-TK_CORE_RESULT tk_core_clearTextFileSearch(
+TK_API_RESULT tk_core_clearTextFileSearch(
     tk_core_TextFile *TextFile_p)
 {
     for (int i = 0; i < TextFile_p->Lines.size; ++i) {
@@ -215,10 +215,10 @@ TK_CORE_RESULT tk_core_clearTextFileSearch(
         TK_CHECK(tk_core_renderTextFileLine(TextFile_p, i))
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-TK_CORE_RESULT tk_core_searchTextFile(
+TK_API_RESULT tk_core_searchTextFile(
     tk_core_TextFile *TextFile_p, NH_API_UTF32 *str_p, int length)
 {
     for (int i = 0; i < TextFile_p->Lines.size; ++i) {
@@ -241,12 +241,12 @@ TK_CORE_RESULT tk_core_searchTextFile(
         }
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // WRITE ===========================================================================================
 
-TK_CORE_RESULT tk_core_writeTextFile(
+TK_API_RESULT tk_core_writeTextFile(
     tk_core_TextFile *File_p, nh_encoding_UTF32String *Path_p)
 {
     nh_encoding_UTF8String Result = nh_core_initString(1024);
@@ -278,12 +278,12 @@ TK_CORE_RESULT tk_core_writeTextFile(
     nh_encoding_freeUTF8(&Result);
     nh_encoding_freeUTF8(&Path);
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // RENDER ==========================================================================================
 
-TK_CORE_RESULT tk_core_renderTextFileLine(
+TK_API_RESULT tk_core_renderTextFileLine(
     tk_core_TextFile *TextFile_p, int line)
 {
     tk_core_TextFileLine *Line_p = TextFile_p->Lines.pp[line];
@@ -322,7 +322,7 @@ TK_CORE_RESULT tk_core_renderTextFileLine(
         }
 
         if (Line_p->Codepoints.p[i] == 9) {
-            tk_core_Editor *Editor_p = tk_core_getCurrentProgram(&TK_CORE_MACRO_TAB(((tk_core_TTY*)nh_core_getWorkloadArg())->Window_p->Tile_p)->MicroWindow)->handle_p;
+            tk_core_Editor *Editor_p = tk_core_getCurrentProgram(&TK_CORE_MACRO_TAB(((tk_core_Session*)nh_core_getWorkloadArg())->Window_p->Tile_p)->MicroWindow)->handle_p;
             for (int j = 0; j < Editor_p->FileEditor.tabSpaces; ++j) {
                 nh_encoding_appendUTF32Codepoint(&Line_p->RenderCodepoints, 32);
             }
@@ -334,7 +334,7 @@ TK_CORE_RESULT tk_core_renderTextFileLine(
         }
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // DRAW ============================================================================================
@@ -436,7 +436,7 @@ static int tk_core_computeRenderSegment(
     return length;
 }
 
-TK_CORE_RESULT tk_core_drawTextFileLine(
+TK_API_RESULT tk_core_drawTextFileLine(
     tk_core_Program *Program_p, tk_core_TextFile *TextFile_p, tk_core_FileView *FileView_p, 
     tk_core_Glyph *Glyphs_p, int line)
 {
@@ -468,6 +468,6 @@ TK_CORE_RESULT tk_core_drawTextFileLine(
         Glyph_p->codepoint = '~';
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 

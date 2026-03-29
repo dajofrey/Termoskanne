@@ -8,17 +8,17 @@
 
 // ENUMS ===========================================================================================
 
-typedef enum TK_CORE_RESULT {
-    TK_CORE_SUCCESS,
-    TK_CORE_ERROR_NULL_POINTER,         
-    TK_CORE_ERROR_BAD_STATE, 
-    TK_CORE_ERROR_MEMORY_ALLOCATION,
-    TK_CORE_ERROR_TERMINFO_DATA_CANNOT_BE_FOUND,
-    TK_CORE_ERROR_UNKNOWN_TERMINAL_TYPE,
-    TK_CORE_ERROR_TERMINAL_IS_HARDCOPY,
-    TK_CORE_ERROR_UNKNOWN_COMMAND,
-    TK_CORE_ERROR_INVALID_ARGUMENT,
-} TK_CORE_RESULT;
+typedef enum TK_API_RESULT {
+    TK_API_SUCCESS,
+    TK_API_ERROR_NULL_POINTER,         
+    TK_API_ERROR_BAD_STATE, 
+    TK_API_ERROR_MEMORY_ALLOCATION,
+    TK_API_ERROR_TERMINFO_DATA_CANNOT_BE_FOUND,
+    TK_API_ERROR_UNKNOWN_TERMINAL_TYPE,
+    TK_API_ERROR_TERMINAL_IS_HARDCOPY,
+    TK_API_ERROR_UNKNOWN_COMMAND,
+    TK_API_ERROR_INVALID_ARGUMENT,
+} TK_API_RESULT;
 
 typedef enum TK_CORE_PROGRAM_E {
     TK_CORE_PROGRAM_SHELL,
@@ -44,19 +44,19 @@ typedef enum TK_CORE_MARK_E {
 
 // TYPEDEFS ========================================================================================
 
-typedef struct tk_core_TTY tk_core_TTY;
+typedef struct tk_api_Session tk_api_Session;
 typedef struct tk_core_Program tk_core_Program;
 typedef struct tk_core_Interface tk_core_Interface;
 typedef struct tk_core_Glyph tk_core_Glyph;
 
 typedef void *(*tk_core_init_f)(void *arg_p);
-typedef TK_CORE_RESULT (*tk_core_draw_f)(tk_core_Program *Program_p, tk_core_Glyph *Glyphs_p, int width, int height, int row);
-typedef TK_CORE_RESULT (*tk_core_drawTopbar_f)(tk_core_Program *Program_p, tk_core_Glyph *Glyphs_p, int width);
-typedef TK_CORE_RESULT (*tk_core_getTitle_f)(tk_core_Program *Program_p, NH_API_UTF32 *title_p, int length);
-typedef TK_CORE_RESULT (*tk_core_getCursorPosition_f)(tk_core_Program *Program_p, int *x_p, int *y_p);
-typedef TK_CORE_RESULT (*tk_core_handleInput_f)(tk_core_Program *Program_p, nh_api_WSIEvent Event);
-typedef TK_CORE_RESULT (*tk_core_update_f)(tk_core_Program *Program_p);
-typedef TK_CORE_RESULT (*tk_core_handleCommand_f)(tk_core_Program *Program_p);
+typedef TK_API_RESULT (*tk_core_draw_f)(tk_core_Program *Program_p, tk_core_Glyph *Glyphs_p, int width, int height, int row);
+typedef TK_API_RESULT (*tk_core_drawTopbar_f)(tk_core_Program *Program_p, tk_core_Glyph *Glyphs_p, int width);
+typedef TK_API_RESULT (*tk_core_getTitle_f)(tk_core_Program *Program_p, NH_API_UTF32 *title_p, int length);
+typedef TK_API_RESULT (*tk_core_getCursorPosition_f)(tk_core_Program *Program_p, int *x_p, int *y_p);
+typedef TK_API_RESULT (*tk_core_handleInput_f)(tk_core_Program *Program_p, nh_api_WSIEvent Event);
+typedef TK_API_RESULT (*tk_core_update_f)(tk_core_Program *Program_p);
+typedef TK_API_RESULT (*tk_core_handleCommand_f)(tk_core_Program *Program_p);
 typedef void (*tk_core_destroy_f)(void *p);
 typedef void (*tk_core_destroyPrototype_f)(tk_core_Interface *Prototype_p);
 
@@ -130,24 +130,24 @@ typedef struct tk_core_Program {
 
 // FUNCTIONS =======================================================================================
 
-tk_core_TTY *tk_api_openTTY(
+tk_api_Session *tk_api_openSession(
     char *config_p, tk_core_Interface *Interface_p
 );
 
-TK_CORE_RESULT tk_api_closeTTY(
-    tk_core_TTY *TTY_p
+TK_API_RESULT tk_api_closeSession(
+    tk_api_Session *Session_p
 );
 
-TK_CORE_RESULT tk_api_claimStandardIO(
-    tk_core_TTY *TTY_p
+TK_API_RESULT tk_api_claimStandardIO(
+    tk_api_Session *Session_p
 );
 
-TK_CORE_RESULT tk_api_unclaimStandardIO(
-    tk_core_TTY *TTY_p
+TK_API_RESULT tk_api_unclaimStandardIO(
+    tk_api_Session *Session_p
 );
 
-TK_CORE_RESULT tk_api_sendEvent(
-    tk_core_TTY *TTY_p, nh_api_WSIEvent Event
+TK_API_RESULT tk_api_sendEvent(
+    tk_api_Session *Session_p, nh_api_WSIEvent Event
 );
 
 #endif // TK_API_TK_CORE_H

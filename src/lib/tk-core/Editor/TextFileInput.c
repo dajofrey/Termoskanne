@@ -13,7 +13,7 @@
 #include "Editor.h"
 #include "TreeListing.h"
 
-#include "../TTY/TTY.h"
+#include "../Core/Session.h"
 #include "../Common/Macros.h"
 
 #include "nh-core/System/Process.h"
@@ -37,7 +37,7 @@
 
 // CLIPBOARD =======================================================================================
 
-static TK_CORE_RESULT tk_core_setClipboard(
+static TK_API_RESULT tk_core_setClipboard(
     tk_core_TextFile *TextFile_p, bool append, bool *refresh_p)
 {
     if (!append) {tk_core_resetClipboard();}
@@ -73,10 +73,10 @@ static TK_CORE_RESULT tk_core_setClipboard(
         }
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-static TK_CORE_RESULT tk_core_insertClipboard(
+static TK_API_RESULT tk_core_insertClipboard(
     nh_core_List *Views_p, tk_core_File *File_p, bool *refresh_p)
 {
     tk_core_TextFile *TextFile_p = File_p->handle_p;
@@ -112,12 +112,12 @@ static TK_CORE_RESULT tk_core_insertClipboard(
 
     *refresh_p = true;
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // INPUT ===========================================================================================
 
-static TK_CORE_RESULT tk_core_handleFileCursorXTarget(
+static TK_API_RESULT tk_core_handleFileCursorXTarget(
     nh_core_List *Views_p, tk_core_File *File_p, bool *refresh_p)
 {
     tk_core_TextFile *TextFile_p = File_p->handle_p;
@@ -157,13 +157,13 @@ static TK_CORE_RESULT tk_core_handleFileCursorXTarget(
 
     nh_core_free(colOffsets_p);
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-static TK_CORE_RESULT tk_core_handleCopySelection(
+static TK_API_RESULT tk_core_handleCopySelection(
     tk_core_TextFile *TextFile_p, tk_core_TextFileLine *Line_p, NH_API_UTF32 c, bool *refresh_p)
 {
-    if (TextFile_p->select < 0) {return TK_CORE_SUCCESS;}
+    if (TextFile_p->select < 0) {return TK_API_SUCCESS;}
 
     switch (c)
     {
@@ -196,12 +196,12 @@ static TK_CORE_RESULT tk_core_handleCopySelection(
 
     *refresh_p = true;
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // READ ============================================================================================
 
-static TK_CORE_RESULT tk_core_handleTextFileViews(
+static TK_API_RESULT tk_core_handleTextFileViews(
     nh_core_List *Views_p, tk_core_TextFile *TextFile_p, NH_API_UTF32 c, bool *refresh_p)
 {
     switch (c)
@@ -252,10 +252,10 @@ static TK_CORE_RESULT tk_core_handleTextFileViews(
             break;
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-TK_CORE_RESULT tk_core_handleReadOperation(
+TK_API_RESULT tk_core_handleReadOperation(
     nh_core_List *Views_p, tk_core_File *File_p, NH_API_UTF32 c, bool insertMode, bool *refresh_p,
     bool *read_p)
 {
@@ -269,7 +269,7 @@ TK_CORE_RESULT tk_core_handleReadOperation(
             case 'k' :
             case 'l' :
             case 'h' :
-            case 'c' : return TK_CORE_SUCCESS;
+            case 'c' : return TK_API_SUCCESS;
         }
     }
 
@@ -364,16 +364,16 @@ TK_CORE_RESULT tk_core_handleReadOperation(
              break;
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // WRITE ===========================================================================================
 
-TK_CORE_RESULT tk_core_handleWriteOperation(
+TK_API_RESULT tk_core_handleWriteOperation(
     nh_core_List *Views_p, tk_core_File *File_p, NH_API_UTF32 c, bool insertMode, bool *refresh_p, 
     bool *write_p)
 {
-    tk_core_Editor *Editor_p = tk_core_getCurrentProgram(&TK_CORE_MACRO_TAB(((tk_core_TTY*)nh_core_getWorkloadArg())->Window_p->Tile_p)->MicroWindow)->handle_p;
+    tk_core_Editor *Editor_p = tk_core_getCurrentProgram(&TK_CORE_MACRO_TAB(((tk_core_Session*)nh_core_getWorkloadArg())->Window_p->Tile_p)->MicroWindow)->handle_p;
     tk_core_TextFile *TextFile_p = File_p->handle_p;
     tk_core_TextFileLine *Line_p = nh_core_getFromList(&TextFile_p->Lines, TextFile_p->fileCursorY);
     TK_CHECK_NULL(Line_p)
@@ -412,10 +412,10 @@ TK_CORE_RESULT tk_core_handleWriteOperation(
 
             if (TextFile_p->fileCursorY >= TextFile_p->Lines.size - 1) {
                 TK_CHECK(tk_core_handleTextFileInput(Views_p, File_p, CTRL_KEY('k'), false, refresh_p))
-                NH_CORE_CHECK_2(TK_CORE_ERROR_BAD_STATE, nh_core_removeFromList(&TextFile_p->Lines, true, TextFile_p->fileCursorY + 1))
+                NH_CORE_CHECK_2(TK_API_ERROR_BAD_STATE, nh_core_removeFromList(&TextFile_p->Lines, true, TextFile_p->fileCursorY + 1))
             }
             else {
-                NH_CORE_CHECK_2(TK_CORE_ERROR_BAD_STATE, nh_core_removeFromList(&TextFile_p->Lines, true, TextFile_p->fileCursorY))
+                NH_CORE_CHECK_2(TK_API_ERROR_BAD_STATE, nh_core_removeFromList(&TextFile_p->Lines, true, TextFile_p->fileCursorY))
             }
             break;
 
@@ -498,21 +498,21 @@ TK_CORE_RESULT tk_core_handleWriteOperation(
         }
     }
  
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // HANDLE INPUT ====================================================================================
 
-TK_CORE_RESULT tk_core_handleTextFileInput(
+TK_API_RESULT tk_core_handleTextFileInput(
     nh_core_List *Views_p, tk_core_File *File_p, NH_API_UTF32 c, bool insertMode, bool *refresh_p)
 {
     bool read = false;
     TK_CHECK(tk_core_handleReadOperation(Views_p, File_p, c, insertMode, refresh_p, &read))
-    if (read || File_p->readOnly) {return TK_CORE_SUCCESS;}
+    if (read || File_p->readOnly) {return TK_API_SUCCESS;}
 
     bool write = false;
     TK_CHECK(tk_core_handleWriteOperation(Views_p, File_p, c, insertMode, refresh_p, &write))
-    if (write) {return TK_CORE_SUCCESS;}
+    if (write) {return TK_API_SUCCESS;}
 
     if (insertMode) {
         tk_core_TextFile *TextFile_p = File_p->handle_p;
@@ -528,6 +528,6 @@ TK_CORE_RESULT tk_core_handleTextFileInput(
         *refresh_p = true;
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 

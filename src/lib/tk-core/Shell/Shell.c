@@ -13,7 +13,7 @@
 
 #include "../Common/Macros.h"
 #include "../Common/Config.h"
-#include "../TTY/Program.h"
+#include "../Core/Program.h"
 
 #include "nh-core/Util/List.h"
 #include "nh-core/Util/String.h"
@@ -478,12 +478,12 @@ static void tk_core_drawShell(
     ST_p->ocy = ST_p->c.y;
 }
 
-static TK_CORE_RESULT tk_core_handleFastScroll(
+static TK_API_RESULT tk_core_handleFastScroll(
     tk_core_Shell *Shell_p)
 {
     nh_core_SystemTime Now = nh_core_getSystemTime();
     if (nh_core_getSystemTimeDiffInSeconds(Shell_p->Scroll.LastScroll, Now) > 0.05f) {
-        return TK_CORE_SUCCESS;
+        return TK_API_SUCCESS;
     }
 
     int diff = Shell_p->Scroll.Current.y - Shell_p->Scroll.Position.y;
@@ -504,14 +504,14 @@ static TK_CORE_RESULT tk_core_handleFastScroll(
     Shell_p->Scroll.LastScroll = Now;
     Shell_p->drawing = 1;
  
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-static TK_CORE_RESULT tk_core_updateShell(
+static TK_API_RESULT tk_core_updateShell(
     tk_core_Program *Program_p)
 {
     tk_core_Shell *Shell_p = Program_p->handle_p;
-    if (!Shell_p->ST_p) {return TK_CORE_SUCCESS;}
+    if (!Shell_p->ST_p) {return TK_API_SUCCESS;}
  
     TK_CHECK(tk_core_handleShellSocket(&Shell_p->Socket))
 
@@ -529,7 +529,7 @@ static TK_CORE_RESULT tk_core_updateShell(
 
     if (select(Shell_p->ttyfd+1, &Shell_p->rfd, NULL, NULL, &timeout) < 0) {
             if (errno == EINTR) {
-                return TK_CORE_SUCCESS;
+                return TK_API_SUCCESS;
             }
             die("select failed: %s\n", strerror(errno));
     }
@@ -540,7 +540,7 @@ static TK_CORE_RESULT tk_core_updateShell(
     }
     if (Shell_p->ST_p->close) {
         Program_p->close = true;
-        return TK_CORE_SUCCESS;
+        return TK_API_SUCCESS;
     }
 
     /*
@@ -562,7 +562,7 @@ static TK_CORE_RESULT tk_core_updateShell(
         Shell_p->timeout = (maxlatency - TIMEDIFF(Shell_p->now, Shell_p->trigger)) \
             / maxlatency * minlatency;
         if (Shell_p->timeout > 0) {
-            return TK_CORE_SUCCESS;
+            return TK_API_SUCCESS;
         }
     }
 
@@ -573,7 +573,7 @@ static TK_CORE_RESULT tk_core_updateShell(
 
     Shell_p->drawing = 0;
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // COPY/PASTE ======================================================================================
@@ -591,13 +591,13 @@ static void tk_core_resetShellSelectionBuffer(
     Shell_p->Selection.lines = 0;
 }
 
-static TK_CORE_RESULT tk_core_copyFromShell(
+static TK_API_RESULT tk_core_copyFromShell(
     tk_core_Shell *Shell_p)
 {
     nh_encoding_UTF8String Clipboard = nh_encoding_initUTF8(32);
 
     if (Shell_p->Selection.lines == 0) {
-        return TK_CORE_SUCCESS;
+        return TK_API_SUCCESS;
     }
 
     for (int i = 0; i < Shell_p->Selection.lines; ++i) {
@@ -649,17 +649,17 @@ static TK_CORE_RESULT tk_core_copyFromShell(
 
     nh_encoding_freeUTF8(&Clipboard);
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-static TK_CORE_RESULT tk_core_pasteIntoShell(
+static TK_API_RESULT tk_core_pasteIntoShell(
     tk_core_Shell *Shell_p)
 {
     nh_wsi_getClipboard_f getClipboard_f = nh_core_loadExistingSymbol(NH_MODULE_WSI, 0, "nh_wsi_getClipboard");
-    if (!getClipboard_f) {return TK_CORE_SUCCESS;}
+    if (!getClipboard_f) {return TK_API_SUCCESS;}
 
     char *clipboard_p = getClipboard_f();
-    if (!clipboard_p) {return TK_CORE_SUCCESS;}
+    if (!clipboard_p) {return TK_API_SUCCESS;}
 
     // In bracketed paste mode, text pasted into the terminal will be surrounded by ESC [200~ and ESC [201~; 
     // programs running in the terminal should not treat characters bracketed by those sequences as commands 
@@ -673,14 +673,14 @@ static TK_CORE_RESULT tk_core_pasteIntoShell(
         ttywrite(Shell_p->ST_p, "\033[201~", 6, 0);
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // INPUT ===========================================================================================
 
 #define IS_STOP(u) (u == ' ' || u == ';' || u == '(' || u == ')' || u == '{' || u == '}' || u == '<' || u == '>')
 
-static TK_CORE_RESULT tk_core_handleShellSelection(
+static TK_API_RESULT tk_core_handleShellSelection(
     tk_core_Shell *Shell_p)
 {
     tk_core_resetShellSelectionBuffer(Shell_p);
@@ -790,7 +790,7 @@ static TK_CORE_RESULT tk_core_handleShellSelection(
         }
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 static char *tk_core_getShellKey(
@@ -817,7 +817,7 @@ static char *tk_core_getShellKey(
     return NULL;
 }
 
-static TK_CORE_RESULT tk_core_sendMouseEvent(
+static TK_API_RESULT tk_core_sendMouseEvent(
     tk_core_Shell *Shell_p, nh_api_MouseEvent Event)
 {
     if (Shell_p->ST_p->windowMode & MODE_MOUSESGR) {
@@ -857,14 +857,14 @@ static TK_CORE_RESULT tk_core_sendMouseEvent(
         ttywrite(Shell_p->ST_p, buf_p, len, 0);
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-static TK_CORE_RESULT tk_core_handleShellInput(
+static TK_API_RESULT tk_core_handleShellInput(
     tk_core_Program *Program_p, nh_api_WSIEvent Event)
 {
     tk_core_Shell *Shell_p = Program_p->handle_p;
-    if (!Shell_p->ST_p) {return TK_CORE_SUCCESS;}
+    if (!Shell_p->ST_p) {return TK_API_SUCCESS;}
 
     if (Event.type == NH_API_WSI_EVENT_KEYBOARD) {
         Shell_p->LastEvent = Event.Keyboard;
@@ -977,15 +977,15 @@ static TK_CORE_RESULT tk_core_handleShellInput(
 
     Program_p->refresh = true;
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // CURSOR ==========================================================================================
 
-static TK_CORE_RESULT tk_core_getShellCursor(
+static TK_API_RESULT tk_core_getShellCursor(
     tk_core_Program *Program_p, int *x_p, int *y_p)
 {
-    if (((tk_core_Shell*)Program_p->handle_p)->scroll != 0) {return TK_CORE_SUCCESS;}
+    if (((tk_core_Shell*)Program_p->handle_p)->scroll != 0) {return TK_API_SUCCESS;}
 
     // MODE_HIDE is activated by for example: echo -e "\e[?25l"
     if (((tk_core_Shell*)Program_p->handle_p)->ST_p->windowMode & MODE_HIDE) {
@@ -999,16 +999,16 @@ static TK_CORE_RESULT tk_core_getShellCursor(
         *y_p = ((tk_core_Shell*)Program_p->handle_p)->ST_p->ocy;
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // DRAW ============================================================================================
 
-static TK_CORE_RESULT tk_core_resizeShellIfRequired(
+static TK_API_RESULT tk_core_resizeShellIfRequired(
     tk_core_Shell *Shell_p, int width, int height)
 {
     if (Shell_p->width == width && Shell_p->height == height) {
-        return TK_CORE_SUCCESS;
+        return TK_API_SUCCESS;
     }
 
     if (Shell_p->Rows_p) {
@@ -1033,14 +1033,14 @@ static TK_CORE_RESULT tk_core_resizeShellIfRequired(
     Shell_p->width = width;
     Shell_p->height = height;
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-static TK_CORE_RESULT tk_core_startShellIfRequired(
+static TK_API_RESULT tk_core_startShellIfRequired(
     tk_core_Shell *Shell_p)
 {
     if (Shell_p->ST_p) {
-        return TK_CORE_SUCCESS;
+        return TK_API_SUCCESS;
     }
 
     Shell_p->ST_p = tnew(Shell_p->width, Shell_p->height);
@@ -1052,7 +1052,7 @@ static TK_CORE_RESULT tk_core_startShellIfRequired(
 
     TK_CHECK(tk_core_createShellSocket(&Shell_p->Socket, Shell_p->ST_p->pid))
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 static void tk_core_drawSelectionIfRequired(
@@ -1087,7 +1087,7 @@ static void tk_core_drawSelectionIfRequired(
     }
 }
 
-static TK_CORE_RESULT tk_core_drawShellRow(
+static TK_API_RESULT tk_core_drawShellRow(
     tk_core_Program *Program_p, tk_core_Glyph *Glyphs_p, int width, int height, int row)
 {
     tk_core_Shell *Shell_p = Program_p->handle_p;
@@ -1099,10 +1099,10 @@ static TK_CORE_RESULT tk_core_drawShellRow(
 
     tk_core_drawSelectionIfRequired(Shell_p, Glyphs_p, width, row);
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-static TK_CORE_RESULT tk_core_drawShellTopbar(
+static TK_API_RESULT tk_core_drawShellTopbar(
     tk_core_Program *Program_p, tk_core_Glyph *Glyphs_p, int width)
 {
     tk_core_Shell *Shell_p = Program_p->handle_p;
@@ -1136,10 +1136,10 @@ static TK_CORE_RESULT tk_core_drawShellTopbar(
         }
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
-static TK_CORE_RESULT tk_core_getShellTitle(
+static TK_API_RESULT tk_core_getShellTitle(
     tk_core_Program *Program_p, NH_API_UTF32 *title_p, int length)
 {
     tk_core_Shell *Shell_p = Program_p->handle_p;
@@ -1159,7 +1159,7 @@ static TK_CORE_RESULT tk_core_getShellTitle(
         }
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // COMMANDS ========================================================================================
@@ -1170,7 +1170,7 @@ typedef enum TK_CORE_SHELL_COMMAND_E {
     TK_CORE_SHELL_COMMAND_E_COUNT,
 } TK_CORE_SHELL_COMMAND_E;
 
-static TK_CORE_RESULT tk_core_handleShellCommand(
+static TK_API_RESULT tk_core_handleShellCommand(
     tk_core_Program *Program_p)
 {
     tk_core_Shell *Shell_p = Program_p->handle_p;
@@ -1185,7 +1185,7 @@ static TK_CORE_RESULT tk_core_handleShellCommand(
             break;
     }
 
-    return TK_CORE_SUCCESS;
+    return TK_API_SUCCESS;
 }
 
 // INIT/DESTROY ====================================================================================

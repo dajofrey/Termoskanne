@@ -20,7 +20,7 @@
 
 static nh_api_PixelPosition Position = {0};
 static nh_api_Viewport *Viewport_p = NULL;
-static tk_core_TTY *TTY_p = NULL;
+static tk_api_Session *Session_p = NULL;
 
 // HELPER ==========================================================================================
 
@@ -31,7 +31,7 @@ static void handleInput(
     {
         case NH_API_WSI_EVENT_MOUSE :
         case NH_API_WSI_EVENT_KEYBOARD :
-            tk_api_sendEvent(TTY_p, Event);
+            tk_api_sendEvent(Session_p, Event);
             break;
         case NH_API_WSI_EVENT_WINDOW :
             switch (Event.Window.type) 
@@ -43,7 +43,7 @@ static void handleInput(
                     break;
                 case NH_API_WINDOW_FOCUS_OUT :
                 case NH_API_WINDOW_FOCUS_IN :
-                    tk_api_sendEvent(TTY_p, Event);
+                    tk_api_sendEvent(Session_p, Event);
                     break;
             }
             break;
@@ -72,16 +72,16 @@ int main(int argc, char **argv_pp)
 
     tk_api_initialize();
 
-    TTY_p = tk_api_openTTY(NULL, NULL);
-    if (!TTY_p) {return 1;}
+    Session_p = tk_api_openSession(NULL, NULL);
+    if (!Session_p) {return 1;}
 
     nh_api_registerConfig("/etc/termoskanne.conf", 21);
 
 //    if (Args.stdio) {
-//        if (tk_api_claimStandardIO(TTY_p)) {return 1;}
+//        if (tk_api_claimStandardIO(TY_p)) {return 1;}
 //    } else {
-        tk_terminal_Terminal *Terminal_p = tk_api_openTerminal(NULL, TTY_p);
-        if (!Terminal_p) {return 1;}
+        tk_api_Renderer *Renderer_p = tk_api_openRenderer(NULL, Session_p);
+        if (!Renderer_p) {return 1;}
 
         nh_api_Window *Window_p = 
             nh_api_createWindow(NULL, nh_api_getSurfaceRequirements());
@@ -93,14 +93,14 @@ int main(int argc, char **argv_pp)
         Viewport_p = nh_api_createViewport(Surface_p, NULL, NULL);
         if (!Viewport_p) {return 1;}
 
-        if (tk_api_setViewport(Terminal_p, Viewport_p) != TK_TERMINAL_SUCCESS) {
+        if (tk_api_setViewport(Renderer_p, Viewport_p) != TK_API_SUCCESS) {
             return 1;
         }
 
         nh_api_setWindowEventListener(Window_p, handleInput);
 //    }
 
-    while (nh_api_getWorkload(TTY_p)) {
+    while (nh_api_getWorkload(Session_p)) {
         if (!nh_api_run()) {usleep(10000);} // 10 milliseconds
     }
 

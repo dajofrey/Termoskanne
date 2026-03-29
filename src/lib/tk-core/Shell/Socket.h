@@ -33,7 +33,7 @@
  *  @{
  */
 
-    typedef TK_CORE_RESULT (*tk_core_sendCommandToShell_f)(
+    typedef TK_API_RESULT (*tk_core_sendCommandToShell_f)(
         int pid, TK_CORE_PROGRAM_E type 
     );
 
@@ -43,7 +43,7 @@
  *  @{
  */
 
-    TK_CORE_RESULT tk_core_createShellSocket(
+    TK_API_RESULT tk_core_createShellSocket(
         tk_core_ShellSocket *Socket_p, int pid
     );
 
@@ -51,7 +51,7 @@
         tk_core_ShellSocket *Socket_p, int pid
     );
 
-    TK_CORE_RESULT tk_core_handleShellSocket(
+    TK_API_RESULT tk_core_handleShellSocket(
         tk_core_ShellSocket *Socket_p
     );
 
