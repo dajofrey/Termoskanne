@@ -75,15 +75,16 @@ tk_core_Clipboard *tk_core_getClipboard()
 // INIT/FREE =======================================================================================
 // The next functions comprise the in/exit points of nhtty.
 
-typedef struct tk_core_OpenTTY {
+typedef struct tk_core_OpenSession {
     char *config_p;
-    tk_core_Interface *Interface_p;
-} tk_core_OpenTTY;
+    tk_api_Interface *Interfaces_p;
+    int interfaces;
+} tk_core_OpenSession;
 
 static void *tk_core_initTTY(
     nh_core_Workload *Workload_p)
 {
-    tk_core_OpenTTY *Args_p = Workload_p->args_p;
+    tk_core_OpenSession *Args_p = Workload_p->args_p;
 
     static char *path_p = "tk-core/Core/Core.c";
     static char *name_p = "tk-core Workload";
@@ -126,11 +127,10 @@ static void *tk_core_initTTY(
 
     TK_CHECK_NULL_2(NULL, tk_core_insertAndFocusWindow(Session_p, 0))
 
-    if (Args_p->Interface_p == NULL) {
-        Args_p->Interface_p = tk_core_createShellInterface();
+    for (int i = 0; i < Args_p->interfaces; ++i) {
+        tk_core_addProgram(Session_p, Args_p->Interfaces_p+i, false);
     }
-    tk_core_addProgram(Session_p, Args_p->Interface_p, false);
- 
+
     return Session_p;
 }
 
@@ -149,8 +149,8 @@ static void tk_core_freeTTY(
     }
 
     for (int i = 0; i < Session_p->Prototypes.size; ++i) {
-        if (((tk_core_Interface*)Session_p->Prototypes.pp[i])->Callbacks.destroyPrototype_f) {
-            ((tk_core_Interface*)Session_p->Prototypes.pp[i])->Callbacks.destroyPrototype_f(Session_p->Prototypes.pp[i]);
+        if (((tk_api_Interface*)Session_p->Prototypes.pp[i])->Callbacks.destroyPrototype_f) {
+            ((tk_api_Interface*)Session_p->Prototypes.pp[i])->Callbacks.destroyPrototype_f(Session_p->Prototypes.pp[i]);
         }
     }
     nh_core_freeList(&Session_p->Prototypes, false);
@@ -305,14 +305,15 @@ static NH_SIGNAL tk_core_runTTYCommand(
 // The next functions are called by lib/netzhaut/nhtty.h functions.
 
 tk_core_Session *tk_core_openSession(
-    char *config_p, tk_core_Interface *Interface_p)
+    char *config_p, tk_api_Interface *Interfaces_p, int interfaces)
 {
-    tk_core_OpenTTY OpenTTY;
-    OpenTTY.config_p = config_p;
-    OpenTTY.Interface_p = Interface_p;
+    tk_core_OpenSession OpenSession;
+    OpenSession.config_p = config_p;
+    OpenSession.Interfaces_p = Interfaces_p;
+    OpenSession.interfaces = interfaces;
 
     tk_core_Session *Session_p = nh_core_activateWorkload(
-        tk_core_initTTY, tk_core_runTTY, tk_core_freeTTY, tk_core_runTTYCommand, &OpenTTY, true
+        tk_core_initTTY, tk_core_runTTY, tk_core_freeTTY, tk_core_runTTYCommand, &OpenSession, true
     );
 
     return Session_p;

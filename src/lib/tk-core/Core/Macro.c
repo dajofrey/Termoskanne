@@ -181,10 +181,6 @@ TK_API_RESULT tk_core_destroyWindows(
 static TK_API_RESULT tk_core_updateMacroTab(
     tk_core_MacroTab *Tab_p, bool *refresh_p)
 {
-    if (Tab_p->Topbar.hasFocus) {
-        TK_CHECK(tk_core_updateTopbar(&Tab_p->Topbar))
-    }
-
     if (Tab_p->MicroWindow.Tabs_p == NULL || Tab_p->MicroWindow.Tabs_p->size == 0) {
         return TK_API_SUCCESS;
     }

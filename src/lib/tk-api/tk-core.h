@@ -20,13 +20,6 @@ typedef enum TK_API_RESULT {
     TK_API_ERROR_INVALID_ARGUMENT,
 } TK_API_RESULT;
 
-typedef enum TK_CORE_PROGRAM_E {
-    TK_CORE_PROGRAM_SHELL,
-    TK_CORE_PROGRAM_LOGGER,
-    TK_CORE_PROGRAM_EDITOR,
-    TK_CORE_PROGRAM_TAGGER,
-} TK_CORE_PROGRAM_E;
-
 typedef enum TK_CORE_MARK_E {
     TK_CORE_MARK_LINE_VERTICAL       = 1 << 0, // Internal use.
     TK_CORE_MARK_LINE_HORIZONTAL     = 1 << 1, // Internal use.
@@ -46,7 +39,7 @@ typedef enum TK_CORE_MARK_E {
 
 typedef struct tk_api_Session tk_api_Session;
 typedef struct tk_core_Program tk_core_Program;
-typedef struct tk_core_Interface tk_core_Interface;
+typedef struct tk_api_Interface tk_api_Interface;
 typedef struct tk_core_Glyph tk_core_Glyph;
 
 typedef void *(*tk_core_init_f)(void *arg_p);
@@ -58,7 +51,7 @@ typedef TK_API_RESULT (*tk_core_handleInput_f)(tk_core_Program *Program_p, nh_ap
 typedef TK_API_RESULT (*tk_core_update_f)(tk_core_Program *Program_p);
 typedef TK_API_RESULT (*tk_core_handleCommand_f)(tk_core_Program *Program_p);
 typedef void (*tk_core_destroy_f)(void *p);
-typedef void (*tk_core_destroyPrototype_f)(tk_core_Interface *Prototype_p);
+typedef void (*tk_core_destroyPrototype_f)(tk_api_Interface *Prototype_p);
 
 // STRUCTS =========================================================================================
 
@@ -98,7 +91,7 @@ typedef struct tk_core_Row {
     bool *update_p;
 } tk_core_Row;
 
-typedef struct tk_core_InterfaceCallbacks {
+typedef struct tk_api_InterfaceCallbacks {
     tk_core_init_f init_f;
     tk_core_draw_f draw_f;
     tk_core_drawTopbar_f drawTopbar_f;
@@ -109,18 +102,18 @@ typedef struct tk_core_InterfaceCallbacks {
     tk_core_handleCommand_f handleCommand_f;
     tk_core_destroy_f destroy_f;
     tk_core_destroyPrototype_f destroyPrototype_f;
-} tk_core_InterfaceCallbacks;
+} tk_api_InterfaceCallbacks;
 
-typedef struct tk_core_Interface {
+typedef struct tk_api_Interface {
     NH_API_UTF32 name_p[64];
     NH_API_UTF32 **commands_pp;
     unsigned int commands;
-    tk_core_InterfaceCallbacks Callbacks;
+    tk_api_InterfaceCallbacks Callbacks;
     void *initArg_p;
-} tk_core_Interface;
+} tk_api_Interface;
 
 typedef struct tk_core_Program {
-    tk_core_Interface *Prototype_p;
+    tk_api_Interface *Prototype_p;
     void *handle_p;
     bool refresh;
     bool close;
@@ -131,7 +124,7 @@ typedef struct tk_core_Program {
 // FUNCTIONS =======================================================================================
 
 tk_api_Session *tk_api_openSession(
-    char *config_p, tk_core_Interface *Interface_p
+    char *config_p, tk_api_Interface *Interfaces_p, int interfaces
 );
 
 TK_API_RESULT tk_api_closeSession(

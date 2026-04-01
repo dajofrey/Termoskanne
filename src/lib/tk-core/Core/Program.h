@@ -21,11 +21,11 @@ typedef struct tk_core_Session tk_core_Session;
  */
 
     TK_API_RESULT tk_core_addProgram(
-        tk_core_Session *Session_p, tk_core_Interface *Prototype_p, bool once
+        tk_core_Session *Session_p, tk_api_Interface *Prototype_p, bool once
     );
 
     tk_core_Program *tk_core_createProgramInstance(
-        tk_core_Interface *Prototype_p, bool once
+        tk_api_Interface *Prototype_p, bool once
     );
 
     TK_API_RESULT tk_core_destroyProgramInstance(

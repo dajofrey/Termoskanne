@@ -437,12 +437,12 @@ tk_core_ContextMenu *tk_core_createMouseMenu(
         nh_encoding_appendUTF32(&Menu, apps_p, sizeof(apps_p)/sizeof(apps_p[0]));
         int width = 0;
         for (int i = 0; i < Session_p->Prototypes.size; ++i) {
-            if (nh_encoding_getUTF32Length(((tk_core_Interface*)Session_p->Prototypes.pp[i])->name_p) > width) {
-                width = nh_encoding_getUTF32Length(((tk_core_Interface*)Session_p->Prototypes.pp[i])->name_p);
+            if (nh_encoding_getUTF32Length(((tk_api_Interface*)Session_p->Prototypes.pp[i])->name_p) > width) {
+                width = nh_encoding_getUTF32Length(((tk_api_Interface*)Session_p->Prototypes.pp[i])->name_p);
             }
         }
         for (int i = 0; i < Session_p->Prototypes.size; ++i) {
-            tk_core_Interface *Prototype_p = Session_p->Prototypes.pp[i];
+            tk_api_Interface *Prototype_p = Session_p->Prototypes.pp[i];
             nh_encoding_appendUTF32(&Menu, Prototype_p->name_p, nh_encoding_getUTF32Length(Prototype_p->name_p)); 
             for (int j = width - nh_encoding_getUTF32Length(Prototype_p->name_p); j > 0; --j) {
                 nh_encoding_appendUTF32Codepoint(&Menu, ' '); 

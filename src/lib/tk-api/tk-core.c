@@ -37,13 +37,13 @@ static bool tk_api_add() {
 }
 
 tk_api_Session *tk_api_openSession(
-    char *config_p, tk_core_Interface *Interface_p)
+    char *config_p, tk_api_Interface *Interfaces_p, int interfaces)
 {
     if (!tk_api_add()) {return NULL;}
-    typedef tk_api_Session *(*tk_core_openSession_f)( char *config_p, tk_core_Interface *Interface_p); 
+    typedef tk_api_Session *(*tk_core_openSession_f)( char *config_p, tk_api_Interface *Interfaces_p, int interfaces); 
     nh_core_Loader *Loader_p = nh_api_getLoader();
     tk_core_openSession_f openSession_f = !Loader_p ? NULL : Loader_p->loadExternalSymbol_f(name_p, "tk_core_openSession");
-    return openSession_f ? openSession_f(config_p, Interface_p) : NULL;
+    return openSession_f ? openSession_f(config_p, Interfaces_p, interfaces) : NULL;
 }
 
 TK_API_RESULT tk_api_closeSession(

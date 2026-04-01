@@ -34,7 +34,7 @@
  */
 
     typedef TK_API_RESULT (*tk_core_sendCommandToShell_f)(
-        int pid, TK_CORE_PROGRAM_E type 
+        int pid, int type 
     );
 
 /** @} */

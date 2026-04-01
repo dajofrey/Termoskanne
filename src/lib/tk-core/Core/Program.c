@@ -28,7 +28,7 @@
 // PROGRAM INSTANCE ================================================================================
 
 tk_core_Program *tk_core_createProgramInstance(
-    tk_core_Interface *Interface_p, bool once)
+    tk_api_Interface *Interface_p, bool once)
 {
     tk_core_Program *Program_p = (tk_core_Program*)nh_core_allocate(sizeof(tk_core_Program));
     TK_CHECK_MEM_2(NULL, Program_p)
@@ -62,7 +62,7 @@ TK_API_RESULT tk_core_destroyProgramInstance(
 // INTERFACE =======================================================================================
 
 TK_API_RESULT tk_core_addProgram(
-    tk_core_Session *Session_p, tk_core_Interface *Prototype_p, bool once)
+    tk_core_Session *Session_p, tk_api_Interface *Prototype_p, bool once)
 {
 //    if (once) {
 //        tk_core_MacroTile *Tile_p = Session_p->Window_p->Tile_p;
@@ -93,7 +93,7 @@ TK_API_RESULT tk_core_addProgram(
 
     // Check if there already exists a program with this name.
     for (int i = 0; i < Session_p->Prototypes.size; ++i) {
-        if (nh_encoding_compareUTF32(((tk_core_Interface*)Session_p->Prototypes.pp[i])->name_p, Prototype_p->name_p)) {
+        if (nh_encoding_compareUTF32(((tk_api_Interface*)Session_p->Prototypes.pp[i])->name_p, Prototype_p->name_p)) {
             return TK_API_ERROR_BAD_STATE;
         }
     }
@@ -107,7 +107,7 @@ TK_API_RESULT tk_core_addProgram(
         tk_core_Tile *Tile_p = Tiles.pp[i];
         bool add = true;
         for (int j = 0; TK_CORE_MACRO_TAB(Tile_p)->MicroWindow.Tabs_p && j < TK_CORE_MACRO_TAB(Tile_p)->MicroWindow.Tabs_p->size; ++j) {
-            tk_core_Interface *MicroTileProgramPrototype_p = 
+            tk_api_Interface *MicroTileProgramPrototype_p = 
                 ((tk_core_MicroTab*)TK_CORE_MACRO_TAB(Tile_p)->MicroWindow.Tabs_p->pp[j])->Prototype_p;
             if (!MicroTileProgramPrototype_p) {continue;}
             if (nh_encoding_compareUTF32(MicroTileProgramPrototype_p->name_p, Prototype_p->name_p)) {

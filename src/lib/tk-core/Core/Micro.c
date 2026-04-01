@@ -61,7 +61,7 @@ TK_API_RESULT tk_core_getMicroTiles(
 // MICRO TABS ======================================================================================
 
 static tk_core_MicroTab *tk_core_createMicroTab(
-    tk_core_Interface *Prototype_p, bool once)
+    tk_api_Interface *Prototype_p, bool once)
 {
     tk_core_MicroTab *Tab_p = (tk_core_MicroTab*)nh_core_allocate(sizeof(tk_core_MicroTab));
     TK_CHECK_MEM_2(NULL, Tab_p)
@@ -86,7 +86,7 @@ nh_core_List *tk_core_createMicroTabs(
     *Tabs_p = nh_core_initList(8); // Don't change size to Session_p->Prototypes.size, it might not be initialized.
 
     for (int i = 0; i < Session_p->Prototypes.size; ++i) {
-        tk_core_Interface *Prototype_p = Session_p->Prototypes.pp[i];
+        tk_api_Interface *Prototype_p = Session_p->Prototypes.pp[i];
         tk_core_MicroTab *Tab_p = tk_core_createMicroTab(Prototype_p, false);
         TK_CHECK_NULL_2(NULL, Tab_p)
         nh_core_appendToList(Tabs_p, Tab_p);
@@ -103,7 +103,7 @@ static void tk_core_freeMicroTab(
 }
 
 TK_API_RESULT tk_core_appendMicroTab(
-    tk_core_MicroWindow *Window_p, tk_core_Interface *Prototype_p, bool once)
+    tk_core_MicroWindow *Window_p, tk_api_Interface *Prototype_p, bool once)
 {
     tk_core_MicroTab *Tab_p = tk_core_createMicroTab(Prototype_p, once);
     TK_CHECK_NULL(Tab_p)

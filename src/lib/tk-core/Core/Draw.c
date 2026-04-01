@@ -41,10 +41,7 @@ TK_API_RESULT tk_core_getCursorPosition(
     *x_p = -1;
     *y_p = -1;
 
-    if (TK_CORE_MACRO_TAB(MacroTile_p)->Topbar.hasFocus) {
-        TK_CHECK(tk_core_getTopbarCursor(&TK_CORE_MACRO_TAB(MacroTile_p)->Topbar, x_p, y_p, MacroTile_p->rowPosition == 0))
-    }
-    else if (TK_CORE_MICRO_TILE(MicroTile_p)->Program_p != NULL && TK_CORE_MICRO_TILE(MicroTile_p)->Program_p->Prototype_p->Callbacks.getCursorPosition_f != NULL) {
+    if (TK_CORE_MICRO_TILE(MicroTile_p)->Program_p != NULL && TK_CORE_MICRO_TILE(MicroTile_p)->Program_p->Prototype_p->Callbacks.getCursorPosition_f != NULL) {
         TK_CHECK(TK_CORE_MICRO_TILE(MicroTile_p)->Program_p->Prototype_p->Callbacks.getCursorPosition_f(TK_CORE_MICRO_TILE(MicroTile_p)->Program_p, x_p, y_p))
         if (*x_p < 0 || *y_p < 0) {
              // Indicates that the program doesn't want the cursor to be shown.

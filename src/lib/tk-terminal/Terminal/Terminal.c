@@ -10,6 +10,7 @@
 
 #include "Shell.h"
 #include "Socket.h"
+#include "Topbar.h"
 
 #include "../Common/Macros.h"
 #include "../Common/Config.h"
@@ -507,7 +508,7 @@ static TK_API_RESULT tk_core_handleFastScroll(
     return TK_API_SUCCESS;
 }
 
-static TK_API_RESULT tk_core_updateShell(
+static TK_API_RESULT tk_terminal_updateTerminal(
     tk_core_Program *Program_p)
 {
     tk_core_Shell *Shell_p = Program_p->handle_p;
@@ -860,7 +861,7 @@ static TK_API_RESULT tk_core_sendMouseEvent(
     return TK_API_SUCCESS;
 }
 
-static TK_API_RESULT tk_core_handleShellInput(
+static TK_API_RESULT tk_terminal_handleTerminalInput(
     tk_core_Program *Program_p, nh_api_WSIEvent Event)
 {
     tk_core_Shell *Shell_p = Program_p->handle_p;
@@ -982,7 +983,7 @@ static TK_API_RESULT tk_core_handleShellInput(
 
 // CURSOR ==========================================================================================
 
-static TK_API_RESULT tk_core_getShellCursor(
+static TK_API_RESULT tk_terminal_getTerminalCursor(
     tk_core_Program *Program_p, int *x_p, int *y_p)
 {
     if (((tk_core_Shell*)Program_p->handle_p)->scroll != 0) {return TK_API_SUCCESS;}
@@ -1087,7 +1088,7 @@ static void tk_core_drawSelectionIfRequired(
     }
 }
 
-static TK_API_RESULT tk_core_drawShellRow(
+static TK_API_RESULT tk_terminal_drawTerminalRow(
     tk_core_Program *Program_p, tk_core_Glyph *Glyphs_p, int width, int height, int row)
 {
     tk_core_Shell *Shell_p = Program_p->handle_p;
@@ -1190,7 +1191,7 @@ static TK_API_RESULT tk_core_handleShellCommand(
 
 // INIT/DESTROY ====================================================================================
 
-static void *tk_core_initShell(
+static void *tk_terminal_initTerminal(
     void *arg_p)
 {
     tk_core_Shell *Shell_p = (tk_core_Shell*)nh_core_allocate(sizeof(tk_core_Shell));
@@ -1219,35 +1220,35 @@ static void tk_core_destroyShell(
 
 // PROTOTYPE =======================================================================================
 
-static void tk_core_destroyShellPrototype(
-    tk_core_Interface *Prototype_p)
+static void tk_core_destroyTerminalPrototype(
+    tk_api_Interface *Interface_p)
 {
-    nh_core_free(Prototype_p->commands_pp[0]);
-    nh_core_free(Prototype_p->commands_pp[1]);
-    nh_core_free(Prototype_p->commands_pp);
-    nh_core_free(Prototype_p);
+    nh_core_free(Interface_p->commands_pp[0]);
+    nh_core_free(Interface_p->commands_pp[1]);
+    nh_core_free(Interface_p->commands_pp);
+    nh_core_free(Interface_p);
 }
 
-tk_core_Interface *tk_core_createShellInterface()
+tk_api_Interface *tk_terminal_createTerminalInterface()
 {
-    tk_core_Interface *Prototype_p = (tk_core_Interface*)nh_core_allocate(sizeof(tk_core_Interface));
-    TK_CHECK_MEM_2(NULL, Prototype_p)
+    tk_api_Interface *Interface_p = (tk_api_Interface*)nh_core_allocate(sizeof(tk_api_Interface));
+    TK_CHECK_MEM_2(NULL, Interface_p)
 
-    memset(Prototype_p, 0, sizeof(tk_core_Interface));
+    memset(Interface_p, 0, sizeof(tk_api_Interface));
 
-    Prototype_p->Callbacks.init_f = tk_core_initShell;
-    Prototype_p->Callbacks.draw_f = tk_core_drawShellRow;
-    Prototype_p->Callbacks.drawTopbar_f = tk_core_drawShellTopbar;
-    Prototype_p->Callbacks.getTitle_f = tk_core_getShellTitle;
-    Prototype_p->Callbacks.handleInput_f = tk_core_handleShellInput;
-    Prototype_p->Callbacks.handleCommand_f = tk_core_handleShellCommand;
-    Prototype_p->Callbacks.getCursorPosition_f = tk_core_getShellCursor;
-    Prototype_p->Callbacks.update_f = tk_core_updateShell;
-    Prototype_p->Callbacks.destroyPrototype_f = tk_core_destroyShellPrototype;
-    Prototype_p->Callbacks.destroy_f = tk_core_destroyShell;
+    Interface_p->Callbacks.init_f = tk_terminal_initTerminal;
+    Interface_p->Callbacks.draw_f = tk_terminal_drawTerminalRow;
+    Interface_p->Callbacks.drawTopbar_f = tk_terminal_drawTopbar;
+    Interface_p->Callbacks.getTitle_f = tk_core_getShellTitle;
+    Interface_p->Callbacks.handleInput_f = tk_terminal_handleTerminalInput;
+    Interface_p->Callbacks.handleCommand_f = tk_core_handleShellCommand;
+    Interface_p->Callbacks.getCursorPosition_f = tk_terminal_getTerminalCursor;
+    Interface_p->Callbacks.update_f = tk_terminal_updateTerminal;
+    Interface_p->Callbacks.destroyPrototype_f = tk_core_destroyShellPrototype;
+    Interface_p->Callbacks.destroy_f = tk_core_destroyShell;
 
     NH_API_UTF32 name_p[6] = {'s', 'h', 'e', 'l', 'l', 0};
-    memcpy(Prototype_p->name_p, name_p, sizeof(name_p));
+    memcpy(Interface_p->name_p, name_p, sizeof(name_p));
 
     NH_API_UTF32 command1_p[5] = {'c', 'o', 'p', 'y', 0};
     NH_API_UTF32 command2_p[6] = {'p', 'a', 's', 't', 'e', 0};
@@ -1263,8 +1264,8 @@ tk_core_Interface *tk_core_createShellInterface()
     memcpy(commands_pp[0], command1_p, sizeof(command1_p));
     memcpy(commands_pp[1], command2_p, sizeof(command2_p));
 
-    Prototype_p->commands_pp = commands_pp;
-    Prototype_p->commands = 2;
+    Interface_p->commands_pp = commands_pp;
+    Interface_p->commands = 2;
 
-    return Prototype_p;
+    return Interface_p;
 }

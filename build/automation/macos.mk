@@ -8,7 +8,8 @@ CFLAGS = -fPIC -std=gnu99 -Wl,-rpath,$(CURDIR)/lib,-rpath,$(NETZHAUT_PATH)/lib
 CFLAGS += -g -gfull -O0 -Wl,-undefined,dynamic_lookup
 
 # Define the linker and linker flags
-LDFLAGS_TK_CORE = -lutil -Lexternal/st-0.8.5/ -lst
+LDFLAGS_TK_CORE = -lutil
+LDFLAGS_TK_TERMINAL = -lutil -Lexternal/st-0.8.5/ -lst
 LDFLAGS_TK  = -Llib -ltk-api -L$(NETZHAUT_PATH)/lib -lnh-api
 LDFLAGS_TK += -Wl,-rpath,@loader_path/../external/Netzhaut/lib
 
@@ -16,6 +17,7 @@ LDFLAGS_TK += -Wl,-rpath,@loader_path/../external/Netzhaut/lib
 SRC_DIR_TK_CORE = src/lib/tk-core
 SRC_DIR_TK_GFX = src/lib/tk-gfx
 SRC_DIR_TK_API = src/lib/tk-api
+SRC_DIR_TK_TERMINAL = src/lib/tk-terminal
 SRC_DIR_TK = src/bin/ttyr
 SRC_DIR_ST = external/st-0.8.5
 
@@ -27,7 +29,6 @@ SRC_FILES_TK_CORE = \
     Core/Macro.c \
     Core/Titlebar.c \
     Core/Topbar.c \
-    Core/TopbarMessage.c \
     Core/Tiling.c \
     Core/StandardIO.c \
     Core/View.c \
@@ -69,10 +70,19 @@ SRC_FILES_TK_GFX = \
     Common/Terminate.c \
     Common/Config.c \
 	
+SRC_FILES_TK_TERMINAL = \
+    Terminal/Terminal.c \
+    Terminal/Socket.c \
+    Terminal/Topbar.c \
+    Common/Initialize.c \
+    Common/Terminate.c \
+    Common/Config.c \
+	
 SRC_FILES_TK_API = \
     tk-api.c \
     tk-core.c \
     tk-gfx.c \
+    tk-terminal.c \
  
 SRC_FILES_TK = Main.c
 
@@ -82,6 +92,7 @@ SRC_FILES_ST = st.c
 OBJ_FILES_TK_CORE = $(patsubst %.c, %.o, $(addprefix $(SRC_DIR_TK_CORE)/, $(SRC_FILES_TK_CORE)))
 OBJ_FILES_TK_GFX = $(patsubst %.c, %.o, $(addprefix $(SRC_DIR_TK_GFX)/, $(SRC_FILES_TK_GFX)))
 OBJ_FILES_TK_API = $(patsubst %.c, %.o, $(addprefix $(SRC_DIR_TK_API)/, $(SRC_FILES_TK_API)))
+OBJ_FILES_TK_TERMINAL = $(patsubst %.c, %.o, $(addprefix $(SRC_DIR_TK_TERMINAL)/, $(SRC_FILES_TK_TERMINAL)))
 OBJ_FILES_TK = $(patsubst %.c, %.o, $(addprefix $(SRC_DIR_TK)/, $(SRC_FILES_TK)))
 OBJ_FILES_ST = $(patsubst %.c, %.o, $(addprefix $(SRC_DIR_ST)/, $(SRC_FILES_ST)))
 
@@ -89,18 +100,26 @@ OBJ_FILES_ST = $(patsubst %.c, %.o, $(addprefix $(SRC_DIR_ST)/, $(SRC_FILES_ST))
 LIB_TK_CORE = lib/libtk-core.dylib
 LIB_TK_GFX = lib/libtk-gfx.dylib
 LIB_TK_API = lib/libtk-api.dylib
+LIB_TK_TERMINAL = lib/libtk-terminal.dylib
 LIB_ST = external/st-0.8.5/libst.so
 BIN_TK = bin/termoskanne
 
-# Build targets for each library
-all: build_netzhaut $(LIB_ST) $(LIB_TK_CORE) $(LIB_TK_GFX) $(LIB_TK_API) $(BIN_TK)
-lib: build_netzhaut $(LIB_ST) $(LIB_TK_CORE) $(LIB_TK_GFX) $(LIB_TK_API)
+# Keep this as default (first) target 
+all: build_netzhaut $(LIB_ST) $(LIB_TK_CORE) $(LIB_TK_GFX) $(LIB_TK_TERMINAL) $(LIB_TK_API) $(BIN_TK)
+lib: build_netzhaut $(LIB_ST) $(LIB_TK_CORE) $(LIB_TK_GFX) $(LIB_TK_TERMINAL) $(LIB_TK_API)
 bin: build_netzhaut $(BIN_TK)
+
+# Build targets for each library
+lib-tk-api: $(LIB_TK_API)
+lib-tk-core: $(LIB_TK_CORE)
+lib-tk-gfx: $(LIB_TK_GFX)
+lib-tk-terminal: $(LIB_ST) $(LIB_TK_TERMINAL)
 
 build_netzhaut:
 ifeq ($(NETZHAUT_PATH),$(CURDIR)/external/Netzhaut)
 	(cd external/Netzhaut && git submodule update --init --recursive && make -f build/automation/lib-macos.mk lib-nh-api lib-nh-core lib-nh-encoding lib-nh-wsi lib-nh-gfx lib-nh-monitor)
 endif
+
 create_lib_dir:
 	mkdir -p lib
 create_bin_dir:
@@ -109,6 +128,7 @@ create_bin_dir:
 # Custom compiler flags
 $(OBJ_FILES_TK_GFX): CFLAGS += -g -I$(NETZHAUT_PATH)/external -I$(NETZHAUT_PATH)/src/lib
 $(OBJ_FILES_TK_CORE): CFLAGS += -g -I$(NETZHAUT_PATH)/external -I$(NETZHAUT_PATH)/src/lib
+$(OBJ_FILES_TK_TERMINAL): CFLAGS += -g -I$(NETZHAUT_PATH)/external -I$(NETZHAUT_PATH)/src/lib
 $(OBJ_FILES_TK_API): CFLAGS += -g -I$(NETZHAUT_PATH)/external -I$(NETZHAUT_PATH)/src/lib
 $(OBJ_FILES_TK): CFLAGS += -g -Iexternal -I$(NETZHAUT_PATH)/src/lib -Isrc/lib
 
@@ -116,6 +136,8 @@ $(OBJ_FILES_TK): CFLAGS += -g -Iexternal -I$(NETZHAUT_PATH)/src/lib -Isrc/lib
 %.o: $(SRC_DIR_TK_CORE)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 %.o: $(SRC_DIR_TK_GFX)/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+%.o: $(SRC_DIR_TK_TERMINAL)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 %.o: $(SRC_DIR_TK_API)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -126,7 +148,9 @@ $(OBJ_FILES_TK): CFLAGS += -g -Iexternal -I$(NETZHAUT_PATH)/src/lib -Isrc/lib
 
 # Rule to link object files into the shared libraries
 $(LIB_TK_CORE): create_lib_dir $(OBJ_FILES_TK_CORE)
-	$(CC) $(CFLAGS) -Wl,-rpath,':$(CURDIR)/external/st-0.8.5' -dynamiclib -o $@ $(OBJ_FILES_TK_CORE) $(LDFLAGS_TK_CORE)
+	$(CC) $(CFLAGS) -dynamiclib -o $@ $(OBJ_FILES_TK_CORE) $(LDFLAGS_TK_CORE)
+$(LIB_TK_TERMINAL): create_lib_dir $(OBJ_FILES_TK_TERMINAL)
+	$(CC) $(CFLAGS) -Wl,-rpath,':$(CURDIR)/external/st-0.8.5' -dynamiclib -o $@ $(OBJ_FILES_TK_TERMINAL) $(LDFLAGS_TK_TERMINAL)
 $(LIB_TK_GFX): create_lib_dir $(OBJ_FILES_TK_GFX)
 	$(CC) $(CFLAGS) -dynamiclib -o $@ $(OBJ_FILES_TK_GFX) $(LDFLAGS_TK_GFX)
 $(LIB_TK_API): create_lib_dir $(OBJ_FILES_TK_API)
@@ -161,6 +185,7 @@ clean: clean-netzhaut
 	rm -f $(OBJ_FILES_TK_CORE) $(LIB_TK_CORE)
 	rm -f $(OBJ_FILES_TK_GFX) $(LIB_TK_GFX)
 	rm -f $(OBJ_FILES_TK_API) $(LIB_TK_API)
+	rm -f $(OBJ_FILES_TK_TERMINAL) $(LIB_TK_TERMINAL)
 	rm -f $(OBJ_FILES_ST) $(LIB_ST)
 	rm -f $(OBJ_FILES_TK) $(BIN_TK)
 	rm -rf bin lib

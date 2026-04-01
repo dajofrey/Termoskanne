@@ -1,5 +1,5 @@
-#ifndef TK_CORE_SHELL_SHELL_H
-#define TK_CORE_SHELL_SHELL_H
+#ifndef TK_CORE_TERMINAL_TERMINAL_H
+#define TK_CORE_TERMINAL_TERMINAL_H
 
 /**
  * TTýr - Terminal Emulator
@@ -12,7 +12,7 @@
 #include <stddef.h>
 #include <unistd.h>
 
-tk_core_Interface *tk_core_createShellInterface(
+tk_api_Interface *tk_core_createTerminalInterface(
 );
 
 #endif 

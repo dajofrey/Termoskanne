@@ -22,7 +22,7 @@
     } tk_core_MicroTile;
 
     typedef struct tk_core_MicroTab {
-        tk_core_Interface *Prototype_p; /**<Type of programs spawned by this micro tab.*/
+        tk_api_Interface *Prototype_p; /**<Type of programs spawned by this micro tab.*/
         tk_core_Tile *RootTile_p;       /**<Root tile.*/
         tk_core_Tile *Tile_p;           /**<Current focused tile.*/
         tk_core_Tile *LastFocus_p;
@@ -53,7 +53,7 @@
     );
     
     TK_API_RESULT tk_core_appendMicroTab(
-        tk_core_MicroWindow *Window_p, tk_core_Interface *Prototype_p, bool once
+        tk_core_MicroWindow *Window_p, tk_api_Interface *Prototype_p, bool once
     );
 
     TK_API_RESULT tk_core_getMicroTiles(

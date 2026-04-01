@@ -1,7 +1,7 @@
 // LICENSE NOTICE ==================================================================================
 
 /**
- * Termoskanne - Terminal Emulator 
+ * Monoco - Text-based Tooling
  * Copyright (C) 2022  Dajo Frey
  * Published under MIT.
  */
@@ -72,7 +72,9 @@ int main(int argc, char **argv_pp)
 
     tk_api_initialize();
 
-    Session_p = tk_api_openSession(NULL, NULL);
+    tk_api_Interface TerminalInterface = tk_api_createTerminalInterface();
+
+    Session_p = tk_api_openSession(NULL, &TerminalInterface, 1);
     if (!Session_p) {return 1;}
 
     nh_api_registerConfig("/etc/termoskanne.conf", 21);

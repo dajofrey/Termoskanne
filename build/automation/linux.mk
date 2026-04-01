@@ -29,7 +29,6 @@ SRC_FILES_TK_CORE = \
     Core/Macro.c \
     Core/Titlebar.c \
     Core/Topbar.c \
-    Core/TopbarMessage.c \
     Core/Tiling.c \
     Core/StandardIO.c \
     Core/View.c \

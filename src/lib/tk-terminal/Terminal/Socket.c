@@ -105,7 +105,7 @@ TK_API_RESULT tk_core_handleShellSocket(
     memset(buffer_p, 0, buffer);
     int size = recv(new_socket, buffer_p, buffer-1, 0);
     if (size > 0) {
-        TK_CORE_PROGRAM_E type = atoi(buffer_p);
+//        TK_CORE_PROGRAM_E type = atoi(buffer_p);
 //        tk_core_addProgram(nh_core_getWorkloadArg(), tk_core_createProgramPrototype(type), true);
     }
 
@@ -115,7 +115,7 @@ TK_API_RESULT tk_core_handleShellSocket(
 }
 
 TK_API_RESULT tk_core_sendCommandToShell(
-    int pid, TK_CORE_PROGRAM_E type)
+    int pid, int type)
 {
     char path_p[255] = {0};
     tk_core_setUDSFilePath(path_p, pid);

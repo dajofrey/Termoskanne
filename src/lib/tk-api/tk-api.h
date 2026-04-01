@@ -1,8 +1,6 @@
 #ifndef TK_API_H
 #define TK_API_H
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 /**
  * TTýr - Terminal Emulator
  * Copyright (C) 2022  Dajo Frey
@@ -11,8 +9,7 @@
 
 #include "tk-core.h"
 #include "tk-gfx.h"
-
-#endif
+#include "tk-terminal.h"
 
 /** @defgroup api_nhtty nhtty
  *  @brief Environment for running text based programs.

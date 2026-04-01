@@ -46,7 +46,7 @@
  *  @{
  */
 
-    tk_core_Interface *tk_core_createEditorPrototype(
+    tk_api_Interface *tk_core_createEditorPrototype(
     );
 
 /** @} */

@@ -449,17 +449,17 @@ typedef enum TK_CORE_EDITOR_COMMAND_E {
 } TK_CORE_EDITOR_COMMAND_E;
 
 static void tk_core_destroyEditorPrototype(
-    tk_core_Interface *Prototype_p)
+    tk_api_Interface *Prototype_p)
 {
     nh_core_free(Prototype_p);
 }
 
-tk_core_Interface *tk_core_createEditorPrototype()
+tk_api_Interface *tk_core_createEditorPrototype()
 {
-    tk_core_Interface *Prototype_p = (tk_core_Interface*)nh_core_allocate(sizeof(tk_core_Interface));
+    tk_api_Interface *Prototype_p = (tk_api_Interface*)nh_core_allocate(sizeof(tk_api_Interface));
     TK_CHECK_MEM_2(NULL, Prototype_p)
 
-    memset(Prototype_p, 0, sizeof(tk_core_Interface));
+    memset(Prototype_p, 0, sizeof(tk_api_Interface));
 
     Prototype_p->Callbacks.init_f = tk_core_initEditor;
     Prototype_p->Callbacks.draw_f = tk_core_drawEditor;
