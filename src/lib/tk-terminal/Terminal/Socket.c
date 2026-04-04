@@ -12,8 +12,8 @@
 
 #include "../Common/Macros.h"
 
-#include "../Core/Program.h"
-#include "../Core/Session.h"
+#include "../../tk-core/Core/Program.h"
+#include "../../tk-core/Core/Session.h"
 
 #include "nh-core/System/Memory.h"
 #include "nh-core/System/Thread.h"

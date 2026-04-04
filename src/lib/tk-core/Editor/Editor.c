@@ -174,9 +174,9 @@ static TK_API_RESULT tk_core_handleEditorInput(
         case CTRL_KEY('i') :
         case 27 :
             Editor_p->insertMode = c == 27 ? false : !Editor_p->insertMode; 
-            TK_CHECK(tk_core_setDefaultMessage(
-                NULL, Editor_p->insertMode ? TK_CORE_MESSAGE_EDITOR_INSERT_ACTIVATED : TK_CORE_MESSAGE_EDITOR_INSERT_DEACTIVATED 
-            ))
+//            TK_CHECK(tk_core_setDefaultMessage(
+//                NULL, Editor_p->insertMode ? TK_CORE_MESSAGE_EDITOR_INSERT_ACTIVATED : TK_CORE_MESSAGE_EDITOR_INSERT_DEACTIVATED 
+//            ))
             Program_p->refresh = true;
             break;
 

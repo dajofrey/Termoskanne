@@ -125,9 +125,9 @@ tk_core_File *tk_core_openFile(
 
     TK_CHECK_2(NULL, tk_core_renderFileEditor(FileEditor_p))
 
-    TK_CHECK_2(NULL, tk_core_setCustomSuffixMessage(
-        NULL, TK_CORE_MESSAGE_EDITOR_FILE_OPENED, Node_p->Path.p, Node_p->Path.length
-    ))
+//    TK_CHECK_2(NULL, tk_core_setCustomSuffixMessage(
+//        NULL, TK_CORE_MESSAGE_EDITOR_FILE_OPENED, Node_p->Path.p, Node_p->Path.length
+//    ))
 
     return File_p;
 }
@@ -267,7 +267,7 @@ TK_API_RESULT tk_core_cycleThroughFiles(
         // Move tree listing cursor to focused file.
         TK_CHECK(tk_core_setTreeListingCursor(Program_p, File_p))
         // Update message.
-        tk_core_setCustomSuffixMessage(NULL, TK_CORE_MESSAGE_EDITOR_FILE_EDIT, File_p->Node_p->Path.p, File_p->Node_p->Path.length);
+//        tk_core_setCustomSuffixMessage(NULL, TK_CORE_MESSAGE_EDITOR_FILE_EDIT, File_p->Node_p->Path.p, File_p->Node_p->Path.length);
     }
 
     return TK_API_SUCCESS;

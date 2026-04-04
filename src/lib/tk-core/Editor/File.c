@@ -162,9 +162,9 @@ TK_API_RESULT tk_core_writeFile(
             break;
     }
 
-    TK_CHECK(tk_core_setCustomSuffixMessage(
-        NULL, TK_CORE_MESSAGE_EDITOR_FILE_SAVED, File_p->Node_p->Path.p, File_p->Node_p->Path.length
-    ))
+//    TK_CHECK(tk_core_setCustomSuffixMessage(
+//        NULL, TK_CORE_MESSAGE_EDITOR_FILE_SAVED, File_p->Node_p->Path.p, File_p->Node_p->Path.length
+//    ))
 
     return TK_API_SUCCESS;
 }
@@ -205,7 +205,7 @@ TK_API_RESULT tk_core_handleFileInput(
 {
     if (File_p->readOnly) {
         *refresh_p = true;
-        TK_CHECK(tk_core_setDefaultMessage(NULL, TK_CORE_MESSAGE_EDITOR_READ_ONLY))
+//        TK_CHECK(tk_core_setDefaultMessage(NULL, TK_CORE_MESSAGE_EDITOR_READ_ONLY))
     }
 
     nh_core_List FileViews = ((tk_core_Editor*)Program_p->handle_p)->View.FileEditor.FileViews;

@@ -17,7 +17,7 @@
 
 // DEBUG ===========================================================================================
 
-TK_API_RESULT tk_core_terminate()
+TK_API_RESULT tk_terminal_terminate()
 {
      return TK_API_SUCCESS;
 }

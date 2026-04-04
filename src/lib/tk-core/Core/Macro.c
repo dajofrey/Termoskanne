@@ -52,7 +52,6 @@ tk_core_Tile *tk_core_createMacroTile(
         } else {
             MacroTab_p->active = i == 0;
         }
-        MacroTab_p->Topbar = tk_core_initTopbar();
         MacroTab_p->MicroWindow = MicroTabs_pp == NULL || Parent_p == NULL ?
             tk_core_initMicroWindow(MicroTabs_pp != NULL ? MicroTabs_pp[i] : NULL) : TK_CORE_MACRO_TAB_2(Parent_p, i)->MicroWindow;
         nh_core_appendToList(&MacroTabs, MacroTab_p);
@@ -74,7 +73,6 @@ void tk_core_destroyMacroTile(
 {
     for (int i = 0; i < Tile_p->MacroTabs.size; ++i) {
         tk_core_MacroTab *Tab_p = Tile_p->MacroTabs.pp[i];
-        tk_core_freeTopbar(&Tab_p->Topbar);
         tk_core_destroyMicroWindow(&Tab_p->MicroWindow);
     }
 
@@ -318,12 +316,12 @@ static TK_API_RESULT tk_core_handleKeyboardInput(
     tk_core_MacroTile *MacroTile_p = Window_p->Tile_p->p;
     tk_core_MacroTab *MacroTab_p = MacroTile_p->MacroTabs.pp[MacroTile_p->current];
 
-    if (MacroTab_p->Topbar.Message.block) {
-        bool _continue = false;
-        TK_CHECK(MacroTab_p->Topbar.Message.callback_f(Event.Keyboard, &_continue))
-        Window_p->Tile_p->refresh = true;
-        if (!_continue) {return TK_API_SUCCESS;}
-    }
+//    if (MacroTab_p->Topbar.Message.block) {
+//        bool _continue = false;
+//        TK_CHECK(MacroTab_p->Topbar.Message.callback_f(Event.Keyboard, &_continue))
+//        Window_p->Tile_p->refresh = true;
+//        if (!_continue) {return TK_API_SUCCESS;}
+//    }
 
     tk_core_Session *Session_p = nh_core_getWorkloadArg();
 
@@ -421,7 +419,7 @@ static TK_API_RESULT tk_core_handleKeyboardInput(
     }
 
     if (TK_CORE_TOPBAR_KEY == Event.Keyboard.codepoint && Event.Keyboard.trigger == NH_API_TRIGGER_PRESS) {
-        tk_core_toggleTopbar(&MacroTab_p->Topbar);
+//        tk_core_toggleTopbar(&MacroTab_p->Topbar);
         Window_p->Tile_p->refresh = true;
     }
     else if (MacroTab_p->Topbar.hasFocus) {
@@ -434,7 +432,7 @@ static TK_API_RESULT tk_core_handleKeyboardInput(
         ))
     }
     else {
-        TK_CHECK(tk_core_setDefaultMessage(&MacroTab_p->Topbar, TK_CORE_MESSAGE_MISC_NO_CURRENT_PROGRAM))
+//        TK_CHECK(tk_core_setDefaultMessage(&MacroTab_p->Topbar, TK_CORE_MESSAGE_MISC_NO_CURRENT_PROGRAM))
     }
 
     if (tk_core_getCurrentProgram(&MacroTab_p->MicroWindow)->refresh) {

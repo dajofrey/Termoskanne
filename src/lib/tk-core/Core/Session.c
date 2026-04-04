@@ -22,7 +22,6 @@
 #include "ContextMenu.h"
 #include "Titlebar.h"
 
-#include "../Shell/Shell.h"
 #include "../Common/Macros.h"
 
 #include "nh-core/System/Thread.h"

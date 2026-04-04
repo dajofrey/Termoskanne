@@ -1,5 +1,5 @@
-#ifndef TK_API_TK_GFX_H
-#define TK_API_TK_GFX_H
+#ifndef TK_API_GFX_H
+#define TK_API_GFX_H
 
 // INCLUDES ========================================================================================
 
@@ -18,4 +18,4 @@ TK_API_RESULT tk_api_setViewport(
     tk_api_Renderer *Renderer_p, nh_api_Viewport *Viewport_p
 );
 
-#endif // TK_API_TK_GFX_H
+#endif

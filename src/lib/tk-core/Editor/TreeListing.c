@@ -173,9 +173,9 @@ static TK_API_RESULT tk_core_openNode(
     }
 
     if (Node_p->Children.size == 0) {
-        TK_CHECK(tk_core_setCustomSuffixMessage(
-            NULL, TK_CORE_MESSAGE_EDITOR_EMPTY_DIRECTORY, Node_p->Path.p, Node_p->Path.length
-        ))
+//        TK_CHECK(tk_core_setCustomSuffixMessage(
+//            NULL, TK_CORE_MESSAGE_EDITOR_EMPTY_DIRECTORY, Node_p->Path.p, Node_p->Path.length
+//        ))
     }
 
     free(namelist_pp);
@@ -229,7 +229,7 @@ tk_core_TreeListingNode *tk_core_insertTreeListingNode(
         Listing_p->dirty = true;
     }
     else {
-        TK_CHECK_2(NULL, tk_core_setDefaultMessage(NULL, TK_CORE_MESSAGE_EDITOR_FILE_ALREADY_EXISTS))
+//        TK_CHECK_2(NULL, tk_core_setDefaultMessage(NULL, TK_CORE_MESSAGE_EDITOR_FILE_ALREADY_EXISTS))
         nh_encoding_freeUTF32(&Path);
     }
 
@@ -247,9 +247,9 @@ static TK_API_RESULT tk_core_removeFile(
     remove(Path.p);
     nh_encoding_freeUTF8(&Path);
 
-    TK_CHECK(tk_core_setCustomSuffixMessage(
-        NULL, TK_CORE_MESSAGE_EDITOR_FILE_REMOVED, Node_p->Path.p, Node_p->Path.length
-    ))
+//    TK_CHECK(tk_core_setCustomSuffixMessage(
+//        NULL, TK_CORE_MESSAGE_EDITOR_FILE_REMOVED, Node_p->Path.p, Node_p->Path.length
+//    ))
 
     return TK_API_SUCCESS;
 }
@@ -264,7 +264,7 @@ static TK_API_RESULT tk_core_delete(
     if (c == 'y' || c == 'n') 
     {
         if (c == 'n') {
-            TK_CHECK(tk_core_setDefaultMessage(NULL, TK_CORE_MESSAGE_BINARY_QUERY_DELETE_INTERRUPTED))
+//            TK_CHECK(tk_core_setDefaultMessage(NULL, TK_CORE_MESSAGE_BINARY_QUERY_DELETE_INTERRUPTED))
         }
         if (c == 'y') {
 //            tk_core_Program *Program_p = tk_core_getCurrentProgram(&tk_core_getSession()->Tab_p->Tile_p->TopBar);
@@ -290,9 +290,9 @@ static TK_API_RESULT tk_core_setCurrentToRoot(
         Listing_p->Root_p = Current_p;
     }
 
-    TK_CHECK(tk_core_setCustomSuffixMessage(
-        NULL, TK_CORE_MESSAGE_EDITOR_NEW_ROOT, Listing_p->Root_p->Path.p, Listing_p->Root_p->Path.length
-    ))
+//    TK_CHECK(tk_core_setCustomSuffixMessage(
+//        NULL, TK_CORE_MESSAGE_EDITOR_NEW_ROOT, Listing_p->Root_p->Path.p, Listing_p->Root_p->Path.length
+//    ))
 
     return TK_API_SUCCESS;
 }
@@ -334,9 +334,9 @@ static TK_API_RESULT tk_core_setParentToRoot(
         if (!isChild) {return TK_API_ERROR_BAD_STATE;}
     }
 
-    TK_CHECK(tk_core_setCustomSuffixMessage(
-        NULL, TK_CORE_MESSAGE_EDITOR_NEW_ROOT, Listing_p->Root_p->Path.p, Listing_p->Root_p->Path.length
-    ))
+//    TK_CHECK(tk_core_setCustomSuffixMessage(
+//        NULL, TK_CORE_MESSAGE_EDITOR_NEW_ROOT, Listing_p->Root_p->Path.p, Listing_p->Root_p->Path.length
+//    ))
 
     return TK_API_SUCCESS;
 }
@@ -368,9 +368,9 @@ static TK_API_RESULT tk_core_closeFileFromTreeListing(
 {
     tk_core_Editor *Editor_p = Program_p->handle_p;
 
-    TK_CHECK(tk_core_setCustomSuffixMessage(
-        NULL, TK_CORE_MESSAGE_EDITOR_FILE_CLOSED, File_p->Node_p->Path.p, File_p->Node_p->Path.length
-    ))
+//    TK_CHECK(tk_core_setCustomSuffixMessage(
+//        NULL, TK_CORE_MESSAGE_EDITOR_FILE_CLOSED, File_p->Node_p->Path.p, File_p->Node_p->Path.length
+//    ))
  
     tk_core_destroyFileViews(&Editor_p->View.FileEditor, File_p);
     TK_CHECK(tk_core_closeFile(&Editor_p->FileEditor, File_p))
@@ -478,10 +478,10 @@ TK_API_RESULT tk_core_handleTreeListingInput(
             else { // delete ?
                 nh_encoding_UTF32String Question = nh_encoding_initUTF32(128);
                 int deleteLength;
-                NH_API_UTF32 *delete_p = tk_core_getMessage(TK_CORE_MESSAGE_BINARY_QUERY_DELETE, &deleteLength);
-                NH_CORE_CHECK_2(TK_API_ERROR_BAD_STATE, nh_encoding_appendUTF32(&Question, delete_p, deleteLength))
-                NH_CORE_CHECK_2(TK_API_ERROR_BAD_STATE, nh_encoding_appendUTF32(&Question, Current_p->Path.p, Current_p->Path.length))
-                TK_CHECK(tk_core_setBinaryQueryMessage(NULL, Question.p, Question.length, NULL, tk_core_delete))
+//                NH_API_UTF32 *delete_p = tk_core_getMessage(TK_CORE_MESSAGE_BINARY_QUERY_DELETE, &deleteLength);
+//                NH_CORE_CHECK_2(TK_API_ERROR_BAD_STATE, nh_encoding_appendUTF32(&Question, delete_p, deleteLength))
+//                NH_CORE_CHECK_2(TK_API_ERROR_BAD_STATE, nh_encoding_appendUTF32(&Question, Current_p->Path.p, Current_p->Path.length))
+//                TK_CHECK(tk_core_setBinaryQueryMessage(NULL, Question.p, Question.length, NULL, tk_core_delete))
                 nh_encoding_freeUTF32(&Question);
             }
             break;

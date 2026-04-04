@@ -11,7 +11,7 @@
 #include "Config.h"
 #include "Macros.h"
 
-#include "../Core/Session.h"
+#include "../../tk-core/Core/Session.h"
 
 #include "nh-core/Config/Config.h"
 #include "nh-core/System/Memory.h"
@@ -62,6 +62,6 @@ static tk_terminal_Config tk_terminal_getStaticConfig()
 tk_terminal_Config tk_terminal_updateConfig( 
     void *Session_p) 
 { 
-    ((tk_core_Session*)Session_p)->Config = tk_terminal_getStaticConfig(); 
-    return ((tk_core_Session*)Session_p)->Config; 
+//    ((tk_core_Session*)Session_p)->Config = tk_terminal_getStaticConfig(); 
+   return tk_terminal_getStaticConfig(); 
 } 

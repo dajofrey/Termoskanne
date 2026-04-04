@@ -1,5 +1,5 @@
-#ifndef TK_API_TK_CORE_H
-#define TK_API_TK_CORE_H
+#ifndef TK_API_CORE_H
+#define TK_API_CORE_H
 
 // INCLUDES ========================================================================================
 
@@ -143,4 +143,4 @@ TK_API_RESULT tk_api_sendEvent(
     tk_api_Session *Session_p, nh_api_WSIEvent Event
 );
 
-#endif // TK_API_TK_CORE_H
+#endif

@@ -8,13 +8,12 @@
 
 // INCLUDES ========================================================================================
 
-#include "Shell.h"
+#include "Terminal.h"
 #include "Socket.h"
 #include "Topbar.h"
 
-#include "../Common/Macros.h"
 #include "../Common/Config.h"
-#include "../Core/Program.h"
+#include "../Common/Macros.h"
 
 #include "nh-core/Util/List.h"
 #include "nh-core/Util/String.h"
@@ -23,6 +22,8 @@
 #include "nh-encoding/Encodings/UTF8.h"
 #include "nh-encoding/Encodings/UTF32.h"
 #include "nh-wsi/Window/Listener.h"
+
+#include "../../tk-core/Core/Program.h"
 
 #include "../../../../external/st-0.8.5/st.h"
 #include "../../../../external/st-0.8.5/config.h"
@@ -1244,7 +1245,7 @@ tk_api_Interface *tk_terminal_createTerminalInterface()
     Interface_p->Callbacks.handleCommand_f = tk_core_handleShellCommand;
     Interface_p->Callbacks.getCursorPosition_f = tk_terminal_getTerminalCursor;
     Interface_p->Callbacks.update_f = tk_terminal_updateTerminal;
-    Interface_p->Callbacks.destroyPrototype_f = tk_core_destroyShellPrototype;
+    Interface_p->Callbacks.destroyPrototype_f = tk_core_destroyTerminalPrototype;
     Interface_p->Callbacks.destroy_f = tk_core_destroyShell;
 
     NH_API_UTF32 name_p[6] = {'s', 'h', 'e', 'l', 'l', 0};

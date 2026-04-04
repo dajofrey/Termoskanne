@@ -9,11 +9,10 @@
 // INCLUDES ========================================================================================
 
 #include "Topbar.h"
-#include "Program.h"
-#include "Session.h"
 
 #include "../Common/Macros.h"
 
+#include "../../tk-core/Core/Session.h"
 #include "../../tk-gfx/Renderer/Renderer.h"
 
 #include "nh-core/System/Memory.h"

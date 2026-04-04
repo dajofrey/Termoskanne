@@ -1,5 +1,5 @@
-#ifndef TK_CORE_COMMON_CONFIG_H
-#define TK_CORE_COMMON_CONFIG_H
+#ifndef TK_TERMINAL_COMMON_CONFIG_H
+#define TK_TERMINAL_COMMON_CONFIG_H
 
 // INCLUDES ========================================================================================
 

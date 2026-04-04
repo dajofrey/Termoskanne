@@ -524,7 +524,7 @@ TK_API_RESULT tk_core_handleTextFileInput(
     }
  
     if (!insertMode) {
-        tk_core_setCustomSuffixMessage(NULL, TK_CORE_MESSAGE_EDITOR_IGNORE_INPUT, &c, 1);
+//        tk_core_setCustomSuffixMessage(NULL, TK_CORE_MESSAGE_EDITOR_IGNORE_INPUT, &c, 1);
         *refresh_p = true;
     }
 

@@ -12,7 +12,6 @@
 #include "Session.h"
 
 #include "../Editor/Editor.h"
-#include "../Shell/Shell.h"
 #include "../Common/Macros.h"
 
 #include "nh-core/Loader/Loader.h"

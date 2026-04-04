@@ -1,7 +1,5 @@
-#ifndef TK_CORE_TERMINATE_H
-#define TK_CORE_TERMINATE_H
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#ifndef TK_TERMINAL_TERMINATE_H
+#define TK_TERMINAL_TERMINATE_H
 
 /**
  * TTýr - Terminal Emulator
@@ -11,13 +9,11 @@
 
 #include "Includes.h"
 
-#endif
-
 /** @addtogroup lib_nhtty_functions
  *  @{
  */
 
-    TK_API_RESULT tk_core_terminate(
+    TK_API_RESULT tk_terminal_terminate(
     );
     
 /** @} */

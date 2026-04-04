@@ -31,75 +31,71 @@ static TK_API_RESULT tk_core_getSetting(
     switch (index) {
         case 0 :
             if (Values_p->size != 1) {return TK_API_ERROR_BAD_STATE;}
-            Config_p->Shell.maxScroll = atoi(Values_p->pp[0]);
+            Config_p->windows = atoi(Values_p->pp[0]);
             break;
         case 1 :
             if (Values_p->size != 1) {return TK_API_ERROR_BAD_STATE;}
-            Config_p->windows = atoi(Values_p->pp[0]);
+            Config_p->tabs = atoi(Values_p->pp[0]);
             break;
         case 2 :
             if (Values_p->size != 1) {return TK_API_ERROR_BAD_STATE;}
-            Config_p->tabs = atoi(Values_p->pp[0]);
+            Config_p->Menu.program = atoi(Values_p->pp[0]);
             break;
         case 3 :
             if (Values_p->size != 1) {return TK_API_ERROR_BAD_STATE;}
-            Config_p->Menu.program = atoi(Values_p->pp[0]);
+            Config_p->Menu.split = atoi(Values_p->pp[0]);
             break;
         case 4 :
             if (Values_p->size != 1) {return TK_API_ERROR_BAD_STATE;}
-            Config_p->Menu.split = atoi(Values_p->pp[0]);
+            Config_p->Menu.append = atoi(Values_p->pp[0]);
             break;
         case 5 :
             if (Values_p->size != 1) {return TK_API_ERROR_BAD_STATE;}
-            Config_p->Menu.append = atoi(Values_p->pp[0]);
+            Config_p->Menu.window = atoi(Values_p->pp[0]);
             break;
         case 6 :
             if (Values_p->size != 1) {return TK_API_ERROR_BAD_STATE;}
-            Config_p->Menu.window = atoi(Values_p->pp[0]);
+            Config_p->Menu.tab = atoi(Values_p->pp[0]);
             break;
         case 7 :
             if (Values_p->size != 1) {return TK_API_ERROR_BAD_STATE;}
-            Config_p->Menu.tab = atoi(Values_p->pp[0]);
+            Config_p->Menu.close = atoi(Values_p->pp[0]);
             break;
         case 8 :
             if (Values_p->size != 1) {return TK_API_ERROR_BAD_STATE;}
-            Config_p->Menu.close = atoi(Values_p->pp[0]);
+            Config_p->Menu.debug = atoi(Values_p->pp[0]);
             break;
         case 9 :
             if (Values_p->size != 1) {return TK_API_ERROR_BAD_STATE;}
-            Config_p->Menu.debug = atoi(Values_p->pp[0]);
-            break;
-        case 10 :
-            if (Values_p->size != 1) {return TK_API_ERROR_BAD_STATE;}
             Config_p->Titlebar.on = atoi(Values_p->pp[0]);
             break;
-        case 11 :
+        case 10 :
             if (Values_p->size != 4) {return TK_API_ERROR_BAD_STATE;} 
             Config_p->Titlebar.Foreground.r = ((float)atoi(Values_p->pp[0]))/255.0f; 
             Config_p->Titlebar.Foreground.g = ((float)atoi(Values_p->pp[1]))/255.0f; 
             Config_p->Titlebar.Foreground.b = ((float)atoi(Values_p->pp[2]))/255.0f; 
             Config_p->Titlebar.Foreground.a = ((float)atoi(Values_p->pp[3]))/255.0f; 
             break;
-        case 12 :
+        case 11 :
             if (Values_p->size != 4) {return TK_API_ERROR_BAD_STATE;} 
             Config_p->Titlebar.Background.r = ((float)atoi(Values_p->pp[0]))/255.0f; 
             Config_p->Titlebar.Background.g = ((float)atoi(Values_p->pp[1]))/255.0f; 
             Config_p->Titlebar.Background.b = ((float)atoi(Values_p->pp[2]))/255.0f; 
             Config_p->Titlebar.Background.a = ((float)atoi(Values_p->pp[3]))/255.0f; 
             break;
-        case 13 :
+        case 12 :
             if (Values_p->size != 1) {return TK_API_ERROR_BAD_STATE;}
             Config_p->Topbar.on = atoi(Values_p->pp[0]);
             break;
-        case 14 :
+        case 13 :
             if (Values_p->size != 1) {return TK_API_ERROR_BAD_STATE;}
             Config_p->Sidebar.on = atoi(Values_p->pp[0]);
             break;
-        case 15 :
+        case 14 :
             if (Values_p->size != 1) {return TK_API_ERROR_BAD_STATE;}
             Config_p->clean = atoi(Values_p->pp[0]);
             break;
-        case 16 :
+        case 15 :
             if (Values_p->size != 1) {return TK_API_ERROR_BAD_STATE;}
             Config_p->highlight = atoi(Values_p->pp[0]);
             break;
@@ -114,7 +110,6 @@ static tk_core_Config tk_core_getStaticConfig()
     memset(&Config, 0, sizeof(tk_core_Config));
 
     static const char *options_pp[] = {
-        "tk-core.shell.maxScroll",
         "tk-core.windows",
         "tk-core.tabs",
         "tk-core.menu.program",

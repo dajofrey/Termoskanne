@@ -569,19 +569,19 @@ TK_API_RESULT tk_core_resetTiling(
 static TK_API_RESULT tk_core_updateTilingMessages(
     tk_core_MacroWindow *Window_p)
 {
-    if (Window_p->Tiling.mode == TK_CORE_TILING_MODE_MACRO) {
-        if (Window_p->Tile_p->Parent_p == NULL) {
-            TK_CHECK(tk_core_setDefaultMessage(&TK_CORE_MACRO_TAB(Window_p->Tile_p)->Topbar, TK_CORE_MESSAGE_MACRO_TILING_WASD))
-        } else {
-            TK_CHECK(tk_core_setDefaultMessage(&TK_CORE_MACRO_TAB(Window_p->Tile_p)->Topbar, TK_CORE_MESSAGE_MACRO_TILING_WASDF))
-        }
-    } else if (Window_p->Tiling.mode == TK_CORE_TILING_MODE_MICRO) {
-        if (TK_CORE_MICRO_TAB(TK_CORE_MACRO_TAB(Window_p->Tile_p))->Tile_p->Parent_p == NULL) {
-            TK_CHECK(tk_core_setDefaultMessage(&TK_CORE_MACRO_TAB(Window_p->Tile_p)->Topbar, TK_CORE_MESSAGE_MICRO_TILING_WASD))
-        } else {
-            TK_CHECK(tk_core_setDefaultMessage(&TK_CORE_MACRO_TAB(Window_p->Tile_p)->Topbar, TK_CORE_MESSAGE_MICRO_TILING_WASDF))
-        }
-    }
+//    if (Window_p->Tiling.mode == TK_CORE_TILING_MODE_MACRO) {
+//        if (Window_p->Tile_p->Parent_p == NULL) {
+//            TK_CHECK(tk_core_setDefaultMessage(&TK_CORE_MACRO_TAB(Window_p->Tile_p)->Topbar, TK_CORE_MESSAGE_MACRO_TILING_WASD))
+//        } else {
+//            TK_CHECK(tk_core_setDefaultMessage(&TK_CORE_MACRO_TAB(Window_p->Tile_p)->Topbar, TK_CORE_MESSAGE_MACRO_TILING_WASDF))
+//        }
+//    } else if (Window_p->Tiling.mode == TK_CORE_TILING_MODE_MICRO) {
+//        if (TK_CORE_MICRO_TAB(TK_CORE_MACRO_TAB(Window_p->Tile_p))->Tile_p->Parent_p == NULL) {
+//            TK_CHECK(tk_core_setDefaultMessage(&TK_CORE_MACRO_TAB(Window_p->Tile_p)->Topbar, TK_CORE_MESSAGE_MICRO_TILING_WASD))
+//        } else {
+//            TK_CHECK(tk_core_setDefaultMessage(&TK_CORE_MACRO_TAB(Window_p->Tile_p)->Topbar, TK_CORE_MESSAGE_MICRO_TILING_WASDF))
+//        }
+//    }
 
     return TK_API_SUCCESS;
 }

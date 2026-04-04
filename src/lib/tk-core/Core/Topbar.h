@@ -49,13 +49,6 @@ typedef struct tk_core_MicroWindow tk_core_MicroWindow;
  *  @{
  */
 
-    tk_core_Topbar tk_core_initTopbar(
-    );
-
-    TK_API_RESULT tk_core_freeTopbar(
-        tk_core_Topbar *Topbar_p
-    );
-
     TK_API_RESULT tk_core_handleTopbarInput(
         tk_core_Tile *Tile_p, nh_api_WSIEvent Event 
     );

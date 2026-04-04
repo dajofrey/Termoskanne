@@ -28,10 +28,6 @@ typedef struct tk_core_TopbarConfig {
     bool on;
 } tk_core_TopbarConfig;
 
-typedef struct tk_core_ShellConfig {
-    unsigned int maxScroll;
-} tk_core_ShellConfig;
-
 typedef struct tk_core_SidebarConfig {
     bool on;
 } tk_core_SidebarConfig;
@@ -40,7 +36,6 @@ typedef struct tk_core_Config {
     char *name_p;
     tk_core_TitlebarConfig Titlebar;
     tk_core_TopbarConfig Topbar;
-    tk_core_ShellConfig Shell;
     tk_core_MenuConfig Menu;
     tk_core_SidebarConfig Sidebar;
     int windows;

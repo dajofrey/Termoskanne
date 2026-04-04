@@ -18,6 +18,25 @@
 
 // FUNCTIONS ========================================================================================
 
+static bool added = false;
+static const char name_p[] = "tk-terminal";
+static const char *dependencies_pp[16] = {
+    "tk-core",
+};
+
+static bool tk_api_add() {
+    nh_core_Loader *Loader_p = nh_api_getLoader();
+    if (Loader_p == NULL) {
+        return false;
+    }
+    if (!added) {
+        Loader_p->addModule_f(name_p, TK_API_PATH_P, dependencies_pp, 1);
+        added = true;
+    }
+    return added;
+}
+
+
 tk_api_Interface *tk_api_createTerminalInterface()
 {
     if (!tk_api_add()) {return NULL;}

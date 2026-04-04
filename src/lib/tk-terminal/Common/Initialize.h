@@ -1,5 +1,5 @@
-#ifndef TK_CORE_INITIALIZE_H
-#define TK_CORE_INITIALIZE_H
+#ifndef TK_TERMINAL_INITIALIZE_H
+#define TK_TERMINAL_INITIALIZE_H
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -17,7 +17,7 @@
  *  @{
  */
 
-    TK_API_RESULT tk_core_initialize(
+    TK_API_RESULT tk_terminal_initialize(
     );
     
 /** @} */

@@ -1,7 +1,7 @@
 #ifndef TK_GFX_VULKAN_RENDER_H
 #define TK_GFX_VULKAN_RENDER_H
 
-#include "../Terminal/Graphics.h"
+#include "../Renderer/Graphics.h"
 #include "../Common/Includes.h"
 
 /** @addtogroup lib_nh-css_functions 

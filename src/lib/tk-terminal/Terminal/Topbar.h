@@ -7,15 +7,15 @@
  * Published under GNU LGPL. See TTyr/LICENSE.LGPL file.
  */
 
-#include "Tiling.h"
-#include "Program.h"
-
 #include "nh-core/Util/Array.h"
 #include "nh-core/Util/Time.h"
 #include "nh-encoding/Encodings/UTF32.h"
 
 #include "../Common/Includes.h"
 #include "../Common/Config.h"
+
+#include "../../tk-core/Core/Tiling.h"
+#include "../../tk-core/Core/Program.h"
 
 typedef struct tk_core_MicroWindow tk_core_MicroWindow;
 
