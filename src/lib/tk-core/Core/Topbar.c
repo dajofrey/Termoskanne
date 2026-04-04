@@ -65,7 +65,6 @@ TK_API_RESULT tk_core_drawTopbarRow(
     tk_core_Tile *Tile_p, tk_core_Glyph *Glyphs_p, int cols, int row, bool standardIO)
 {
     tk_core_Session *Session_p = nh_core_getWorkloadArg();
-    tk_core_Topbar *Topbar_p = &TK_CORE_MACRO_TAB(Tile_p)->Topbar;
  
     for (int i = 0; i < cols; ++i) {
         Glyphs_p[i] = tk_core_getGlyphHelper(' ');
@@ -94,8 +93,11 @@ TK_API_RESULT tk_core_drawTopbarRow(
         Glyphs_p[i].Background.custom = true;
     }
  
+    tk_core_Program *Program_p = tk_core_getCurrentProgram(&((tk_core_MacroTab*)((tk_core_MacroTile*)Tile_p->p)->MacroTabs.pp[0])->MicroWindow);
 
-    // TODO
+    if (Program_p) {
+        Program_p->Prototype_p->Callbacks.drawTopbar_f(Tile_p, Glyphs_p, cols, row, standardIO);
+    }
 
     return TK_API_SUCCESS;
 }

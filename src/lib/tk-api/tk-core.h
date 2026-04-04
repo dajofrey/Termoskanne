@@ -41,10 +41,11 @@ typedef struct tk_api_Session tk_api_Session;
 typedef struct tk_core_Program tk_core_Program;
 typedef struct tk_api_Interface tk_api_Interface;
 typedef struct tk_core_Glyph tk_core_Glyph;
+typedef struct tk_core_Tile tk_core_Tile;
 
 typedef void *(*tk_core_init_f)(void *arg_p);
 typedef TK_API_RESULT (*tk_core_draw_f)(tk_core_Program *Program_p, tk_core_Glyph *Glyphs_p, int width, int height, int row);
-typedef TK_API_RESULT (*tk_core_drawTopbar_f)(tk_core_Program *Program_p, tk_core_Glyph *Glyphs_p, int width);
+typedef TK_API_RESULT (*tk_core_drawTopbar_f)(tk_core_Tile *Tile_p, tk_core_Glyph *Glyphs_p, int cols, int row, bool standardIO);
 typedef TK_API_RESULT (*tk_core_getTitle_f)(tk_core_Program *Program_p, NH_API_UTF32 *title_p, int length);
 typedef TK_API_RESULT (*tk_core_getCursorPosition_f)(tk_core_Program *Program_p, int *x_p, int *y_p);
 typedef TK_API_RESULT (*tk_core_handleInput_f)(tk_core_Program *Program_p, nh_api_WSIEvent Event);

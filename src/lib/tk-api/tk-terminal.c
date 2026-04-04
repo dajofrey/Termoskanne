@@ -21,7 +21,7 @@
 static bool added = false;
 static const char name_p[] = "tk-terminal";
 static const char *dependencies_pp[16] = {
-    "tk-core",
+    "nh-encoding",
 };
 
 static bool tk_api_add() {
@@ -43,5 +43,6 @@ tk_api_Interface *tk_api_createTerminalInterface()
     typedef tk_api_Interface *(*tk_terminal_createTerminalInterface_f)(); 
     nh_core_Loader *Loader_p = nh_api_getLoader();
     tk_terminal_createTerminalInterface_f createTerminalInterface_f = !Loader_p ? NULL : Loader_p->loadExternalSymbol_f(name_p, "tk_terminal_createTerminalInterface");
+printf("%p\n", createTerminalInterface_f);
     return createTerminalInterface_f ? createTerminalInterface_f() : NULL;
 }

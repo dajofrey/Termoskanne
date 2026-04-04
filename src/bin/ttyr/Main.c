@@ -72,9 +72,14 @@ int main(int argc, char **argv_pp)
 
     tk_api_initialize();
 
-    tk_api_Interface TerminalInterface = tk_api_createTerminalInterface();
+    tk_api_Interface *TerminalInterface_p = tk_api_createTerminalInterface();
 
-    Session_p = tk_api_openSession(NULL, &TerminalInterface, 1);
+    if (!TerminalInterface_p) {
+        puts("TerminalInterface creation failed.");
+        return 1;
+    }
+
+    Session_p = tk_api_openSession(NULL, TerminalInterface_p, 1);
     if (!Session_p) {return 1;}
 
     nh_api_registerConfig("/etc/termoskanne.conf", 21);

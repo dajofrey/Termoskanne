@@ -12,7 +12,7 @@
 #include <stddef.h>
 #include <unistd.h>
 
-tk_api_Interface *tk_core_createTerminalInterface(
+tk_api_Interface *tk_terminal_createTerminalInterface(
 );
 
 #endif 
