@@ -99,6 +99,10 @@ static TK_API_RESULT tk_core_getSetting(
             if (Values_p->size != 1) {return TK_API_ERROR_BAD_STATE;}
             Config_p->highlight = atoi(Values_p->pp[0]);
             break;
+        case 16 :
+            if (Values_p->size != 1) {return TK_API_ERROR_BAD_STATE;}
+            Config_p->footer = atoi(Values_p->pp[0]);
+            break;
     }
 
     return TK_API_SUCCESS;
@@ -126,6 +130,7 @@ static tk_core_Config tk_core_getStaticConfig()
         "tk-core.sidebar",
         "tk-core.clean",
         "tk-core.highlight",
+        "tk-core.footer",
     };
 
     int options = sizeof(options_pp)/sizeof(options_pp[0]);

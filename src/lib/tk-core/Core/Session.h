@@ -74,6 +74,7 @@
         bool ctrl;
         bool close;
         bool ignoreNext;
+        int hover3;
         nh_api_KeyboardEvent LastEvent;
         nh_core_SystemTime LastAlt;
         bool hasFocus;

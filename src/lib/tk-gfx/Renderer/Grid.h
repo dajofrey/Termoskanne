@@ -61,6 +61,7 @@ typedef struct tk_gfx_Grid {
     int borderPixel;
     int borderPixelLeft;
     int separatorPixel;
+    float verticalGap;
 } tk_gfx_Grid;
 
 // FUNCTIONS =======================================================================================

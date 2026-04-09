@@ -6,7 +6,7 @@
 
 TK_API_RESULT tk_gfx_renderUsingOpenGL(
     tk_gfx_Config *Config_p, tk_gfx_Graphics *Graphics_p, tk_gfx_Grid *Grid_p,
-    tk_gfx_Grid *BackdropGrid_p, unsigned int sidebar
+    tk_gfx_Grid *BackdropGrid_p
 );
 
 #endif

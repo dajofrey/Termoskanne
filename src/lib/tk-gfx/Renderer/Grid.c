@@ -346,7 +346,7 @@ TK_API_RESULT tk_gfx_updateTile(
             TK_GFX_CHECK(tk_gfx_updateTile(Grid_p, state_p, Update_p, update_p, fontSize))
         } else {
             Update_p->row++;
-            memset(&Update_p->Glyph, 0, sizeof(tk_core_Glyph));
+            Update_p->Glyph.codepoint = 0;
             TK_GFX_CHECK(tk_gfx_updateTile(Grid_p, state_p, Update_p, update_p, fontSize))
         }
     }
@@ -460,6 +460,9 @@ TK_API_RESULT tk_gfx_updateGrid(
     Grid_p->cols = Grid_p->Size.width / nh_gfx_getTextWidth(Text_p);
     Grid_p->rows = Grid_p->Size.height / Grid_p->TileSize.height;
  
+    float tmp = ((float)Grid_p->Size.height)/((float)Grid_p->TileSize.height);
+    Grid_p->verticalGap = (tmp - ((float)Grid_p->rows)) * Grid_p->TileSize.height;
+
     // Add gap tiles.
     Grid_p->cols += 1;
     Grid_p->rows += 1;

@@ -21,6 +21,7 @@
 #include "Macro.h"
 #include "ContextMenu.h"
 #include "Titlebar.h"
+#include "Bottombar.h"
 
 #include "../Common/Macros.h"
 
@@ -133,7 +134,7 @@ static void *tk_core_initTTY(
     return Session_p;
 }
 
-static void tk_core_freeTTY(
+static void tk_core_freeSession(
     void *p)
 {
     tk_core_Session *Session_p = p;
@@ -210,7 +211,7 @@ static TK_API_RESULT tk_core_handleWindowResize(
     return TK_API_SUCCESS;
 }
 
-static NH_SIGNAL tk_core_runTTY(
+static NH_SIGNAL tk_core_runSession(
     void *p)
 {
     tk_core_Session *Session_p = p;
@@ -229,6 +230,7 @@ static NH_SIGNAL tk_core_runTTY(
 
     if (Session_p->Window_p->refreshGrid1) {
         TK_CHECK_2(NH_SIGNAL_ERROR, tk_core_drawTitlebar(Session_p))
+        TK_CHECK_2(NH_SIGNAL_ERROR, tk_core_drawBottombar(Session_p))
         TK_CHECK_2(NH_SIGNAL_ERROR, tk_core_refreshGrid1(Session_p))
     }
     if (Session_p->Window_p->refreshGrid2) {
@@ -275,7 +277,7 @@ typedef struct tk_core_AddProgramData {
 /**
  * Here, most commands that came in through the API are handled.
  */
-static NH_SIGNAL tk_core_runTTYCommand(
+static NH_SIGNAL tk_core_runSessionCommand(
     void *p, nh_core_WorkloadCommand *Command_p)
 {
     tk_core_Session *Session_p = p;
@@ -312,7 +314,7 @@ tk_core_Session *tk_core_openSession(
     OpenSession.interfaces = interfaces;
 
     tk_core_Session *Session_p = nh_core_activateWorkload(
-        tk_core_initTTY, tk_core_runTTY, tk_core_freeTTY, tk_core_runTTYCommand, &OpenSession, true
+        tk_core_initTTY, tk_core_runSession, tk_core_freeSession, tk_core_runSessionCommand, &OpenSession, true
     );
 
     return Session_p;

@@ -691,11 +691,6 @@ TK_API_RESULT tk_gfx_renderGraphics(
     tk_gfx_Config *Config_p, tk_gfx_Graphics *Graphics_p, tk_gfx_Grid *Grid_p,
     tk_gfx_Grid *ElevatedGrid_p, tk_gfx_Grid *BackdropGrid_p, tk_core_Config *CoreConfig_p)
 {
-    unsigned int offset = 0;
-    if (CoreConfig_p->Sidebar.on) {
-        offset = tk_gfx_getSidebarOffset(Grid_p);
-    }
-
     switch (Graphics_p->State.Viewport_p->Surface_p->api)
     {
         case NH_GFX_API_VULKAN :
@@ -706,7 +701,7 @@ TK_API_RESULT tk_gfx_renderGraphics(
            return TK_API_ERROR_BAD_STATE;
 #endif
        case NH_GFX_API_OPENGL :
-           TK_GFX_CHECK(tk_gfx_renderUsingOpenGL(Config_p, Graphics_p, Grid_p, BackdropGrid_p, offset))
+           TK_GFX_CHECK(tk_gfx_renderUsingOpenGL(Config_p, Graphics_p, Grid_p, BackdropGrid_p))
            break;
        default :
            return TK_API_ERROR_BAD_STATE;

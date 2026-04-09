@@ -226,26 +226,11 @@ static inline tk_core_Color tk_gfx_getGlyphColor2(
                 Color.b *= 0.3f;
                 return Color;
             }
-            if (Glyph_p->mark & TK_CORE_MARK_ACCENT_2) {
-                tk_core_Color Color = tk_gfx_getAccentColor(Config_p, col, row, Grid_p->cols, Grid_p->rows);
-                Color.r *= 0.6f;
-                Color.g *= 0.6f;
-                Color.b *= 0.6f;
-                return Color;
-            }
             return State_p->BackgroundGradient.Color;
         }
         if (Glyph_p->mark & TK_CORE_MARK_ACCENT) {
             return tk_gfx_getAccentColor(Config_p, col, row, Grid_p->cols, Grid_p->rows);
         }
-	if (Glyph_p->mark & TK_CORE_MARK_ACCENT_2) {
-                tk_core_Color Color = tk_gfx_getAccentColor(Config_p, col, row, Grid_p->cols, Grid_p->rows);
-                Color.r *= 0.6f;
-                Color.g *= 0.6f;
-                Color.b *= 0.6f;
-                return Color;
-            }
- 
         if (Glyph_p->Foreground.custom) {
             return Glyph_p->Foreground.Color;
         }

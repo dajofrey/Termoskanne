@@ -42,6 +42,7 @@ typedef struct tk_core_Config {
     int tabs;
     bool clean;
     bool highlight;
+    bool footer;
 } tk_core_Config;
 
 // FUNCTIONS =======================================================================================

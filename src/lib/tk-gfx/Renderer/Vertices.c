@@ -316,6 +316,13 @@ static TK_API_RESULT tk_gfx_getForegroundVerticesDefault(
         Vertices_p[3].x += offset;
     }
 
+    if (G_p->mark & TK_CORE_MARK_FOOTER) {
+        float offset = (float)((float)(Grid_p->verticalGap) / (float)Grid_p->Size.width)*1.5f;
+        Vertices_p[0].y -= offset; 
+        Vertices_p[1].y -= offset;
+        Vertices_p[2].y -= offset;
+        Vertices_p[3].y -= offset;
+    }
 
     nh_verticesToArray(Vertices_p, vertices_p, 4, true, 0);
 
@@ -685,19 +692,3 @@ TK_API_RESULT tk_gfx_getForegroundVertices(
     return TK_API_SUCCESS;
 }
 
-unsigned int tk_gfx_getSidebarOffset(
-    tk_gfx_Grid *Grid_p)
-{
-    float width = (float)((float)(Grid_p->TileSize.width) / (float)Grid_p->Size.width) * 2.0f;
-    float lineWidthInPixel = (float)Grid_p->separatorPixel;
-    float w = (lineWidthInPixel / (float)Grid_p->Size.width) * 2.0f;
- 
-    float x = -1.0f;
-    x -= (float)((float)Grid_p->xOffset/(float)Grid_p->Size.width)*2.0f;
-
-    float x1 = x;
-    float x2 = (x + (width/2)) - w/2;
-
-    float result = ((x2 - x1) * Grid_p->Size.width)/2.0f;
-    return (unsigned int) result;
-}

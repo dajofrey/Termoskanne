@@ -79,7 +79,11 @@ TK_API_RESULT tk_core_updateView(
     }
     View_p->Row.Glyphs_p = (tk_core_Glyph*)nh_core_allocate(sizeof(tk_core_Glyph)*View_p->cols);
 
-    for (int i = 0; i < (macro && Config_p->Titlebar.on && View_p->previousRows > 0 ? View_p->previousRows+1 : View_p->previousRows); ++i) {
+    int offset = 0;
+    if (Config_p && Config_p->Titlebar.on) {offset++;}
+    if (Config_p && Config_p->footer) {offset++;}
+
+    for (int i = 0; i < (macro && Config_p->Titlebar.on && View_p->previousRows > 0 ? View_p->previousRows + offset : View_p->previousRows); ++i) {
         nh_core_free(View_p->Grid1_p[i].Glyphs_p);
         nh_core_free(View_p->Grid1_p[i].update_p);
         nh_core_free(View_p->Grid2_p[i].Glyphs_p);
@@ -110,6 +114,10 @@ TK_API_RESULT tk_core_updateView(
     View_p->PreviousSize = View_p->Size;
 
     if (macro && Config_p->Titlebar.on) {
+        View_p->previousRows--;
+        View_p->rows--;
+    }
+    if (macro && Config_p->footer) {
         View_p->previousRows--;
         View_p->rows--;
     }
@@ -295,6 +303,18 @@ TK_API_RESULT tk_core_forwardGrid1(
             Update.cursor = false;
             nh_core_appendToArray(Array_p, &Update, 1);
             View_p->Grid1_p[View_p->rows].update_p[col] = false;
+        }
+    }
+    if (Config_p->footer) {
+        for (int col = 0; col < View_p->cols; ++col) {
+            if (View_p->Grid1_p[View_p->rows+1].update_p[col] == 0) {continue;}
+            tk_gfx_TileUpdate Update;
+            Update.row = View_p->rows+1;
+            Update.col = col;
+            Update.Glyph = View_p->Grid1_p[View_p->rows+1].Glyphs_p[col];
+            Update.cursor = false;
+            nh_core_appendToArray(Array_p, &Update, 1);
+            View_p->Grid1_p[View_p->rows+1].update_p[col] = false;
         }
     }
 

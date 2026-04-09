@@ -33,8 +33,4 @@ TK_API_RESULT tk_gfx_getOverlayVertices(
     int row, float *vertices_p, int fontSize
 );
 
-unsigned int tk_gfx_getSidebarOffset(
-    tk_gfx_Grid *Grid_p
-);
-
 #endif // TK_GFX_TERMINAL_VERTICES_H 
