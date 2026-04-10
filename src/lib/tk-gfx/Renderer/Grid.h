@@ -60,6 +60,9 @@ typedef struct tk_gfx_Grid {
     bool **updates_pp;
     int borderPixel;
     int borderPixelLeft;
+    int borderPixelRight;
+    int borderPixelTop;
+    int borderPixelBottom;
     int separatorPixel;
     float verticalGap;
 } tk_gfx_Grid;
@@ -84,7 +87,7 @@ TK_API_RESULT tk_gfx_freeGrid(
 
 TK_API_RESULT tk_gfx_updateBackdropGrid(
     tk_gfx_Config *Config_p, tk_core_Config *CoreConfig_p, tk_gfx_Grid *BackdropGrid_p,
-    void *state_p, nh_gfx_Text *Text_p
+    void *state_p, nh_gfx_Text *Text_p, tk_gfx_Grid *Grid_p
 );
 
 TK_API_RESULT tk_gfx_updateGrid(

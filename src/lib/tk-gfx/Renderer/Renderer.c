@@ -152,7 +152,7 @@ static TK_API_RESULT tk_gfx_updateSize(
     
     TK_GFX_CHECK(tk_gfx_updateGrid(&Renderer_p->Config, &Renderer_p->Session_p->Config, &Renderer_p->Grid, &Renderer_p->Graphics.State, &Renderer_p->Text))
     TK_GFX_CHECK(tk_gfx_updateGrid(&Renderer_p->Config, &Renderer_p->Session_p->Config, &Renderer_p->ElevatedGrid, &Renderer_p->Graphics.State, &Renderer_p->Text))
-    TK_GFX_CHECK(tk_gfx_updateBackdropGrid(&Renderer_p->Config, &Renderer_p->Session_p->Config, &Renderer_p->BackdropGrid, &Renderer_p->Graphics.State, &Renderer_p->Text))
+    TK_GFX_CHECK(tk_gfx_updateBackdropGrid(&Renderer_p->Config, &Renderer_p->Session_p->Config, &Renderer_p->BackdropGrid, &Renderer_p->Graphics.State, &Renderer_p->Text, &Renderer_p->Grid))
 
     // Update view size, subtract gap tiles.
     Renderer_p->View_p->cols = Renderer_p->Grid.cols-1;
@@ -213,7 +213,7 @@ static bool tk_gfx_updateConfigIfRequired(
 
         TK_GFX_CHECK(tk_gfx_updateBackdropGrid(
             &Renderer_p->Config, &Renderer_p->Session_p->Config, &Renderer_p->BackdropGrid,
-            &Renderer_p->Graphics.State, &Renderer_p->Text))
+            &Renderer_p->Graphics.State, &Renderer_p->Text, &Renderer_p->Grid))
 
         Renderer_p->Graphics.BackdropData.update = true;
         Renderer_p->Graphics.ElevatedData.update = true;
@@ -231,7 +231,7 @@ static bool tk_gfx_updateConfigIfRequired(
 
         TK_GFX_CHECK(tk_gfx_updateBackdropGrid(
             &Renderer_p->Config, &Renderer_p->Session_p->Config, &Renderer_p->BackdropGrid,
-            &Renderer_p->Graphics.State, &Renderer_p->Text))
+            &Renderer_p->Graphics.State, &Renderer_p->Text, &Renderer_p->Grid))
 
         Renderer_p->Graphics.BackdropData.update = true;
         Renderer_p->Graphics.ElevatedData.update = true;
@@ -249,7 +249,7 @@ static bool tk_gfx_updateConfigIfRequired(
 
         TK_GFX_CHECK(tk_gfx_updateBackdropGrid(
             &Renderer_p->Config, &Renderer_p->Session_p->Config, &Renderer_p->BackdropGrid,
-            &Renderer_p->Graphics.State, &Renderer_p->Text))
+            &Renderer_p->Graphics.State, &Renderer_p->Text, &Renderer_p->Grid))
 
         Renderer_p->Graphics.BackdropData.update = true;
         Renderer_p->Graphics.ElevatedData.update = true;

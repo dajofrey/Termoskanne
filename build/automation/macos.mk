@@ -44,8 +44,6 @@ SRC_FILES_TK_CORE = \
     Editor/TextFile.c \
     Editor/TextFileInput.c \
     Editor/SyntaxHighlights.c \
-    Shell/Shell.c \
-    Shell/Socket.c \
     Common/Result.c \
     Common/About.c \
     Common/Log.c \

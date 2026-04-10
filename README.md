@@ -1,9 +1,10 @@
-# Termoskanne
+# Monoco
 
 ![Screenshot](./build/icons/gradient128x128.png)
 
-Terminal Emulator (Framework) written in C
-
+Text-based UI environment with builtin 
+- Terminal
+- Editor
 
 ## README Content
 

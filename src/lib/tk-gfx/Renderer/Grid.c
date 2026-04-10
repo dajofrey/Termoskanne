@@ -356,7 +356,7 @@ TK_API_RESULT tk_gfx_updateTile(
 
 TK_API_RESULT tk_gfx_updateBackdropGrid(
     tk_gfx_Config *Config_p, tk_core_Config *CoreConfig_p, tk_gfx_Grid *BackdropGrid_p,
-    void *state_p, nh_gfx_Text *Text_p)
+    void *state_p, nh_gfx_Text *Text_p, tk_gfx_Grid *Grid_p)
 {
     tk_gfx_GraphicsState *State_p = state_p;
 
@@ -379,18 +379,22 @@ TK_API_RESULT tk_gfx_updateBackdropGrid(
     int borderRowsPixelOffset = borderRowsPixel-BackdropGrid_p->borderPixel;
 
     BackdropGrid_p->xOffset = borderColsPixelOffset;
-    BackdropGrid_p->yOffset = borderRowsPixelOffset;
+    BackdropGrid_p->yOffset = BackdropGrid_p->TileSize.height;
 
-    BackdropGrid_p->Size.width = State_p->Viewport_p->Settings.Size.width+(borderColsPixel*2);
-    BackdropGrid_p->Size.height = State_p->Viewport_p->Settings.Size.height+(borderRowsPixel*2);
+    if (Grid_p->borderPixelTop > 0) {
+        BackdropGrid_p->yOffset = borderRowsPixelOffset;
+    }
+
+    BackdropGrid_p->Size.width = State_p->Viewport_p->Settings.Size.width;
+    BackdropGrid_p->Size.height = State_p->Viewport_p->Settings.Size.height;
 
     bool cutOffBorders = Config_p->style == 0 && Config_p->border == 1 && CoreConfig_p->Sidebar.on == true;
-    if (cutOffBorders) {
-        BackdropGrid_p->Size.height = State_p->Viewport_p->Settings.Size.height+(BackdropGrid_p->borderPixel*1);
-    }
-    if (!CoreConfig_p->Titlebar.on && CoreConfig_p->Topbar.on) {
-        BackdropGrid_p->Size.height = State_p->Viewport_p->Settings.Size.height+(BackdropGrid_p->borderPixel*1);
-    }
+//    if (cutOffBorders) {
+//        BackdropGrid_p->Size.height = State_p->Viewport_p->Settings.Size.height+(BackdropGrid_p->borderPixel);
+//    }
+//    if (!CoreConfig_p->Titlebar.on && CoreConfig_p->Topbar.on) {
+//        BackdropGrid_p->Size.height = State_p->Viewport_p->Settings.Size.height+(BackdropGrid_p->borderPixel*1);
+//    }
 
     BackdropGrid_p->cols = BackdropGrid_p->Size.width / nh_gfx_getTextWidth(Text_p) + 2;
     BackdropGrid_p->rows = BackdropGrid_p->Size.height / BackdropGrid_p->TileSize.height + 2;
@@ -474,12 +478,15 @@ TK_API_RESULT tk_gfx_updateGrid(
 
     bool cutOffBorders = Config_p->border == 1 && CoreConfig_p->Sidebar.on == true;
 
-    Grid_p->separatorPixel = Grid_p->TileSize.width/3;
-    Grid_p->borderPixel     = Config_p->border ? Grid_p->separatorPixel : 0;
-    Grid_p->borderPixelLeft = cutOffBorders ? 0 : Grid_p->borderPixel;
+    Grid_p->separatorPixel    = Grid_p->TileSize.width/3;
+    Grid_p->borderPixel       = Config_p->border ? Grid_p->separatorPixel : 0;
+    Grid_p->borderPixelTop    = 0;
+    Grid_p->borderPixelBottom = 0;
+    Grid_p->borderPixelLeft   = 0;
+    Grid_p->borderPixelRight  = Grid_p->borderPixel;
 
-    Grid_p->Size.width = State_p->Viewport_p->Settings.Size.width-(Grid_p->borderPixel+Grid_p->borderPixelLeft);
-    Grid_p->Size.height = State_p->Viewport_p->Settings.Size.height-(Grid_p->borderPixel+Grid_p->borderPixelLeft);
+    Grid_p->Size.width = State_p->Viewport_p->Settings.Size.width-(Grid_p->borderPixelRight+Grid_p->borderPixelLeft);
+    Grid_p->Size.height = State_p->Viewport_p->Settings.Size.height-(Grid_p->borderPixelTop+Grid_p->borderPixelBottom);
 
     if (!CoreConfig_p->Titlebar.on && CoreConfig_p->Topbar.on) {
         Grid_p->Size.height = State_p->Viewport_p->Settings.Size.height-(Grid_p->borderPixel*1);

@@ -219,14 +219,14 @@ TK_API_RESULT tk_gfx_renderUsingOpenGL(
             "glViewport",
             nh_gfx_glint(NULL, 0),
             nh_gfx_glint(NULL, 0),
-            nh_gfx_glsizei(NULL, Grid_p->Size.width+Grid_p->borderPixel+Grid_p->borderPixelLeft),
-            nh_gfx_glsizei(NULL, Grid_p->Size.height+Grid_p->borderPixel+Grid_p->borderPixel));
+            nh_gfx_glsizei(NULL, Grid_p->Size.width+Grid_p->borderPixelRight+Grid_p->borderPixelLeft),
+            nh_gfx_glsizei(NULL, Grid_p->Size.height+Grid_p->borderPixelTop+Grid_p->borderPixelBottom));
  
         nh_gfx_addOpenGLCommand(
             Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p,
             "glScissor",
             nh_gfx_glint(NULL, Grid_p->borderPixelLeft),
-            nh_gfx_glint(NULL, Grid_p->borderPixel),
+            nh_gfx_glint(NULL, Grid_p->borderPixelBottom),
             nh_gfx_glsizei(NULL, Grid_p->Size.width),
             nh_gfx_glsizei(NULL, Grid_p->Size.height));
         
@@ -250,7 +250,7 @@ TK_API_RESULT tk_gfx_renderUsingOpenGL(
         Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p,
         "glViewport",
         nh_gfx_glint(NULL, Grid_p->borderPixelLeft),
-        nh_gfx_glint(NULL, Grid_p->borderPixel),
+        nh_gfx_glint(NULL, Grid_p->borderPixelBottom),
         nh_gfx_glsizei(NULL, Grid_p->Size.width),
         nh_gfx_glsizei(NULL, Grid_p->Size.height));
 
@@ -273,22 +273,22 @@ TK_API_RESULT tk_gfx_renderUsingOpenGL(
     TK_GFX_CHECK(tk_gfx_updateOpenGLBackground(&Graphics_p->State, &Graphics_p->MainData))
     TK_GFX_CHECK(tk_gfx_drawOpenGLBackground(&Graphics_p->State, &Graphics_p->MainData))
 
-    TK_GFX_CHECK(tk_gfx_updateOpenGLBoxes(&Graphics_p->State, &Graphics_p->Boxes))
-    TK_GFX_CHECK(tk_gfx_drawOpenGLInactiveCursor(Graphics_p, Grid_p))
+	//    TK_GFX_CHECK(tk_gfx_updateOpenGLBoxes(&Graphics_p->State, &Graphics_p->Boxes))
+	    TK_GFX_CHECK(tk_gfx_drawOpenGLInactiveCursor(Graphics_p, Grid_p))
 
     nh_gfx_addOpenGLCommand(
         Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p,
         "glScissor",
         nh_gfx_glint(NULL, 0),
         nh_gfx_glint(NULL, 0),
-        nh_gfx_glsizei(NULL, Grid_p->Size.width+Grid_p->borderPixelLeft),
-        nh_gfx_glsizei(NULL, Grid_p->Size.height+Grid_p->borderPixel));
+        nh_gfx_glsizei(NULL, Grid_p->Size.width),
+        nh_gfx_glsizei(NULL, Grid_p->Size.height));
  
     nh_gfx_addOpenGLCommand(
         Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p,
         "glViewport",
         nh_gfx_glint(NULL, Grid_p->borderPixelLeft),
-        nh_gfx_glint(NULL, Grid_p->borderPixel),
+        nh_gfx_glint(NULL, Grid_p->borderPixelBottom),
         nh_gfx_glsizei(NULL, Grid_p->Size.width),
         nh_gfx_glsizei(NULL, Grid_p->Size.height));
  
@@ -311,9 +311,9 @@ TK_API_RESULT tk_gfx_renderUsingOpenGL(
         Graphics_p->State.Viewport_p->OpenGL.CommandBuffer_p,
         "glViewport",
         nh_gfx_glint(NULL, Grid_p->borderPixelLeft),
-        nh_gfx_glint(NULL, Grid_p->borderPixel),
-        nh_gfx_glsizei(NULL, Grid_p->Size.width),
-        nh_gfx_glsizei(NULL, Grid_p->Size.height));
+        nh_gfx_glint(NULL, Grid_p->borderPixelBottom),
+        nh_gfx_glsizei(NULL, Grid_p->Size.width-Grid_p->borderPixelRight),
+        nh_gfx_glsizei(NULL, Grid_p->Size.height-Grid_p->borderPixelTop));
  
     TK_GFX_CHECK(tk_gfx_updateOpenGLBackground(&Graphics_p->State, &Graphics_p->ElevatedData))
     TK_GFX_CHECK(tk_gfx_drawOpenGLBackground(&Graphics_p->State, &Graphics_p->ElevatedData))
