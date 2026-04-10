@@ -133,9 +133,12 @@ static tk_core_Color tk_gfx_getOceanColor(
     int col, int row, int total_cols, int total_rows, tk_core_Color base)
 {
     float depth = (float)row / total_rows;
-    tk_core_Color shallow = tk_gfx_colorFromRGB(102, 255, 255);  // Light cyan
-    tk_core_Color deep = tk_gfx_colorFromRGB(0, 0, 128);         // Navy blue
-    return tk_gfx_blend(shallow, deep, depth);
+    tk_core_Color Shallow = tk_gfx_colorFromRGB(102, 255, 255);  // Light cyan
+    tk_core_Color Deep = tk_gfx_colorFromRGB(56, 133, 128);         // Navy blue
+    tk_core_Color Result = tk_gfx_blend(Shallow, Deep, depth);
+
+
+    return Result;
 }
 
 static tk_core_Color tk_gfx_getSunsetColor(
@@ -190,16 +193,16 @@ static inline tk_core_Color tk_gfx_getGlyphColor2(
     if (target == 2) {
         if (Glyph_p->overlay == TK_CORE_MARK_ACCENT_BACKGROUND) {
             tk_core_Color Color = tk_gfx_getAccentColor(Config_p, col, row, Grid_p->cols, Grid_p->rows);
-            Color.r *= 0.6f;
-            Color.g *= 0.6f;
-            Color.b *= 0.6f;
+            Color.r *= 0.7f;
+            Color.g *= 0.7f;
+            Color.b *= 0.7f;
             return Color;
         }
         if (Glyph_p->overlay == TK_CORE_MARK_ACCENT_BACKGROUND_2) {
             tk_core_Color Color = tk_gfx_getAccentColor(Config_p, col, row, Grid_p->cols, Grid_p->rows);
-            Color.r *= 0.8f;
-            Color.g *= 0.8f;
-            Color.b *= 0.8f;
+            Color.r *= 0.9f;
+            Color.g *= 0.9f;
+            Color.b *= 0.9f;
             return Color;
         }
         if (Glyph_p->overlay == TK_CORE_MARK_ACCENT_BACKGROUND_3) {
@@ -238,7 +241,7 @@ static inline tk_core_Color tk_gfx_getGlyphColor2(
     }
 
     // Background.
-    if (Glyph_p->mark & TK_CORE_MARK_HIGHLIGHT) {
+    if (Glyph_p->mark & TK_CORE_MARK_HIGHLIGHT && Config_p->highContrast) {
         return Config_p->Highlight;
     }
     if ((Glyph_p->Attributes.reverse && !(Glyph_p->Attributes.blink && State_p->Blink.on)) 
@@ -256,25 +259,18 @@ static inline tk_core_Color tk_gfx_getGlyphColor2(
     }
     if (Glyph_p->Background.custom) {
         if (Config_p->highContrast == 0) {
-            if (Glyph_p->mark & TK_CORE_MARK_SIDEBAR && !(Glyph_p->mark & TK_CORE_MARK_ACCENT_BACKGROUND)) {
+            if (Glyph_p->mark & TK_CORE_MARK_ACCENT_BACKGROUND) {
                 tk_core_Color Color = tk_gfx_getAccentColor(Config_p, col, row, Grid_p->cols, Grid_p->rows);
                 Color.r *= 0.7f;
                 Color.g *= 0.7f;
                 Color.b *= 0.7f;
                 return Color;
             }
-            if (Glyph_p->mark & TK_CORE_MARK_ACCENT_BACKGROUND) {
-                tk_core_Color Color = tk_gfx_getAccentColor(Config_p, col, row, Grid_p->cols, Grid_p->rows);
-                Color.r *= 0.6f;
-                Color.g *= 0.6f;
-                Color.b *= 0.6f;
-                return Color;
-            }
             if (Glyph_p->mark & TK_CORE_MARK_ACCENT_BACKGROUND_2) {
                 tk_core_Color Color = tk_gfx_getAccentColor(Config_p, col, row, Grid_p->cols, Grid_p->rows);
-                Color.r *= 0.8f;
-                Color.g *= 0.8f;
-                Color.b *= 0.8f;
+                Color.r *= 0.9f;
+                Color.g *= 0.9f;
+                Color.b *= 0.9f;
                 return Color;
             }
             if (Glyph_p->mark & TK_CORE_MARK_ACCENT_BACKGROUND_3) {

@@ -187,8 +187,7 @@ static TK_API_RESULT tk_gfx_drawOpenGLInactiveCursor(
 }
 
 TK_API_RESULT tk_gfx_renderUsingOpenGL(
-    tk_gfx_Config *Config_p, tk_gfx_Graphics *Graphics_p, tk_gfx_Grid *Grid_p,
-    tk_gfx_Grid *BackdropGrid_p)
+    tk_gfx_Config *Config_p, tk_gfx_Graphics *Graphics_p, tk_gfx_Grid *Grid_p, tk_gfx_Grid *BackdropGrid_p)
 {
     bool blockUntilRender = Graphics_p->MainData.Background.Action.init || Graphics_p->MainData.Foreground.Action.init;
 
@@ -206,8 +205,9 @@ TK_API_RESULT tk_gfx_renderUsingOpenGL(
 
     TK_GFX_CHECK(tk_gfx_updateOpenGLBackground(&Graphics_p->State, &Graphics_p->BackdropData))
     TK_GFX_CHECK(tk_gfx_drawOpenGLBackground(&Graphics_p->State, &Graphics_p->BackdropData))
-    TK_GFX_CHECK(tk_gfx_updateOpenGLForeground(Config_p, &Graphics_p->State, &Graphics_p->BackdropData))
 
+// TODO foreground for backdrop
+//    TK_GFX_CHECK(tk_gfx_updateOpenGLForeground(Config_p, &Graphics_p->State, &Graphics_p->BackdropData))
 // the next line dumps on macos
 //    TK_GFX_CHECK(tk_gfx_drawOpenGLForeground(&Graphics_p->State, &Graphics_p->BackdropData))
 

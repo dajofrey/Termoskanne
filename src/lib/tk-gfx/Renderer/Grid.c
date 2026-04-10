@@ -399,7 +399,8 @@ TK_API_RESULT tk_gfx_updateBackdropGrid(
         for (int col = 0; col < BackdropGrid_p->cols; ++col) {
             tk_gfx_Tile *Tile_p = tk_gfx_getTile(BackdropGrid_p, row, col);
             TK_GFX_CHECK_NULL(Tile_p)
-            Tile_p->Glyph.mark = TK_CORE_MARK_ACCENT | TK_CORE_MARK_LINE_GRAPHICS | TK_CORE_MARK_BORDER;
+            Tile_p->Glyph.mark = TK_CORE_MARK_ACCENT_BACKGROUND_2 | TK_CORE_MARK_ACCENT;
+            Tile_p->Glyph.Background.custom = true;
             Tile_p->Glyph.Attributes.reverse = true;
             TK_GFX_CHECK(tk_gfx_getBackgroundVertices(
                 State_p, BackdropGrid_p, &Tile_p->Glyph, col, row, Tile_p->Background.vertices_p, Config_p->fontSize
@@ -409,6 +410,33 @@ TK_API_RESULT tk_gfx_updateBackdropGrid(
                     State_p, BackdropGrid_p, &Tile_p->Glyph, col, row, Tile_p->Foreground.vertices_p, Config_p->fontSize 
                 ))
             }
+        }
+    }
+
+   if (Config_p->highContrast && CoreConfig_p->Titlebar.on) { 
+        int row = 1;
+        for (int col = 0; col < BackdropGrid_p->cols; ++col) {
+            tk_gfx_Tile *Tile_p = tk_gfx_getTile(BackdropGrid_p, row, col);
+            TK_GFX_CHECK_NULL(Tile_p)
+            Tile_p->Glyph.mark = TK_CORE_MARK_LINE_GRAPHICS | TK_CORE_MARK_HIGHLIGHT;
+            Tile_p->Glyph.Background.custom = false;
+            Tile_p->Glyph.Attributes.reverse = true;
+            TK_GFX_CHECK(tk_gfx_getBackgroundVertices(
+                State_p, BackdropGrid_p, &Tile_p->Glyph, col, row, Tile_p->Background.vertices_p, Config_p->fontSize
+            ))
+        }
+    }
+
+   else if (!Config_p->style > 0 && CoreConfig_p->Titlebar.on) { 
+        int row = 1;
+        for (int col = 0; col < BackdropGrid_p->cols; ++col) {
+            tk_gfx_Tile *Tile_p = tk_gfx_getTile(BackdropGrid_p, row, col);
+            TK_GFX_CHECK_NULL(Tile_p)
+            Tile_p->Glyph.mark = TK_CORE_MARK_ACCENT_BACKGROUND | TK_CORE_MARK_HIGHLIGHT;
+            Tile_p->Glyph.Background.custom = true;
+            TK_GFX_CHECK(tk_gfx_getBackgroundVertices(
+                State_p, BackdropGrid_p, &Tile_p->Glyph, col, row, Tile_p->Background.vertices_p, Config_p->fontSize
+            ))
         }
     }
 

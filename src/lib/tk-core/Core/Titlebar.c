@@ -105,7 +105,7 @@ TK_API_RESULT tk_core_drawTitlebar(
     for (int i = 0; i < cols ; ++i) {
         memset(&Row_p->Glyphs_p[i], 0, sizeof(tk_core_Glyph));
         Row_p->Glyphs_p[i].mark |= TK_CORE_MARK_HIGHLIGHT;
-        Row_p->Glyphs_p[i].mark |= TK_CORE_MARK_ACCENT_BACKGROUND_2;
+        Row_p->Glyphs_p[i].mark |= TK_CORE_MARK_ACCENT_BACKGROUND;
         Row_p->Glyphs_p[i].Background.custom = true;
 
         if (((tk_gfx_Renderer*)Session_p->Renderer_p)->Config.highContrast) {
@@ -115,15 +115,8 @@ TK_API_RESULT tk_core_drawTitlebar(
         Row_p->update_p[i] = true;
     }
 
-    TK_CORE_MARK_E background = Session_p->Titlebar.hover >= cols - 3 && Session_p->Titlebar.hover <= cols - 1 ? TK_CORE_MARK_ACCENT_BACKGROUND : TK_CORE_MARK_ACCENT_BACKGROUND_2;
+    TK_CORE_MARK_E background = Session_p->Titlebar.hover >= cols - 3 && Session_p->Titlebar.hover <= cols - 1 ? TK_CORE_MARK_ACCENT_BACKGROUND_2 : TK_CORE_MARK_ACCENT_BACKGROUND;
     TK_CORE_MARK_E mark = TK_CORE_MARK_HIGHLIGHT;
-
-    if (background & TK_CORE_MARK_ACCENT_BACKGROUND) {
-        // for high-contrast
-        Glyphs_p[cols - 1].Attributes.reverse = false;
-        Glyphs_p[cols - 2].Attributes.reverse = false;
-        Glyphs_p[cols - 3].Attributes.reverse = false;
-    }
 
     Row_p->Glyphs_p[cols - 1].mark = mark | background;
     Row_p->update_p[cols - 1] = true;
@@ -139,14 +132,7 @@ TK_API_RESULT tk_core_drawTitlebar(
     Row_p->update_p[cols - 3] = true;
     Row_p->Glyphs_p[cols - 3].Background.custom = true;
 
-    background = Session_p->Titlebar.hover >= cols - 6 && Session_p->Titlebar.hover <= cols - 4 ? TK_CORE_MARK_ACCENT_BACKGROUND : TK_CORE_MARK_ACCENT_BACKGROUND_2;
-
-    if (background & TK_CORE_MARK_ACCENT_BACKGROUND) {
-        // for high-contrast
-        Glyphs_p[cols - 4].Attributes.reverse = false;
-        Glyphs_p[cols - 5].Attributes.reverse = false;
-        Glyphs_p[cols - 6].Attributes.reverse = false;
-    }
+    background = Session_p->Titlebar.hover >= cols - 6 && Session_p->Titlebar.hover <= cols - 4 ? TK_CORE_MARK_ACCENT_BACKGROUND_2 : TK_CORE_MARK_ACCENT_BACKGROUND;
 
     Row_p->Glyphs_p[cols - 4].mark = mark | background;
     Row_p->update_p[cols - 4] = true;
@@ -159,14 +145,7 @@ TK_API_RESULT tk_core_drawTitlebar(
     Row_p->update_p[cols - 6] = true;
     Row_p->Glyphs_p[cols - 6].Background.custom = true;
 
-    background = Session_p->Titlebar.hover >= cols - 9 && Session_p->Titlebar.hover <= cols - 7 ? TK_CORE_MARK_ACCENT_BACKGROUND : TK_CORE_MARK_ACCENT_BACKGROUND_2;
-
-    if (background == TK_CORE_MARK_ACCENT_BACKGROUND) {
-        // for high-contrast
-        Glyphs_p[cols - 7].Attributes.reverse = false;
-        Glyphs_p[cols - 8].Attributes.reverse = false;
-        Glyphs_p[cols - 9].Attributes.reverse = false;
-    }
+    background = Session_p->Titlebar.hover >= cols - 9 && Session_p->Titlebar.hover <= cols - 7 ? TK_CORE_MARK_ACCENT_BACKGROUND_2 : TK_CORE_MARK_ACCENT_BACKGROUND;
 
     Row_p->Glyphs_p[cols - 7].mark = mark | background;
     Row_p->update_p[cols - 7] = true;
@@ -182,7 +161,7 @@ TK_API_RESULT tk_core_drawTitlebar(
     Row_p->update_p[cols - 9] = true;
     Row_p->Glyphs_p[cols - 9].Background.custom = true;
 
-    background = (Session_p->Titlebar.hover >= cols - 12 && Session_p->Titlebar.hover <= cols - 10) || Session_p->Config.Sidebar.on ? TK_CORE_MARK_HIGHLIGHT | TK_CORE_MARK_ACCENT_BACKGROUND : TK_CORE_MARK_ACCENT_BACKGROUND_2;
+    background = (Session_p->Titlebar.hover >= cols - 12 && Session_p->Titlebar.hover <= cols - 10) || Session_p->Config.Sidebar.on ? TK_CORE_MARK_HIGHLIGHT | TK_CORE_MARK_ACCENT_BACKGROUND_2 : TK_CORE_MARK_ACCENT_BACKGROUND;
 
     if (background & TK_CORE_MARK_ACCENT_BACKGROUND) {
         // for high-contrast

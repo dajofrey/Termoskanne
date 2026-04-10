@@ -131,12 +131,6 @@ TK_API_RESULT tk_terminal_drawTopbar(
 
             if (TK_CORE_MACRO_TILE(Tile_p)->current == i) {
 
-                Glyphs_p[count - 2].Attributes.reverse = false;
-                Glyphs_p[count - 1].Attributes.reverse = false;
-                Glyphs_p[count - 0].Attributes.reverse = false;
-                Glyphs_p[count + 1].Attributes.reverse = false;
-                Glyphs_p[count + 2].Attributes.reverse = false;
-
                 Glyphs_p[count - 2].codepoint = 0;
                 Glyphs_p[count - 2].mark |= TK_CORE_MARK_HIGHLIGHT | TK_CORE_MARK_ACCENT_BACKGROUND;
                 Glyphs_p[count - 2].Background.custom = true;

@@ -145,6 +145,7 @@ TK_API_RESULT tk_core_drawBottombar(
 
     Row_p->Glyphs_p[cols - 5].codepoint = 'I';
     Row_p->Glyphs_p[cols - 5].mark = mark | background;
+    Row_p->Glyphs_p[cols - 5].Attributes.bold = true;
 
     Row_p->Glyphs_p[cols - 6].mark = mark | background;
     Row_p->update_p[cols - 6] = true;
@@ -173,7 +174,7 @@ TK_API_RESULT tk_core_drawBottombar(
     Row_p->update_p[cols - 9] = true;
     Row_p->Glyphs_p[cols - 9].Background.custom = true;
 
-    background = (Session_p->hover3 >= cols - 12 && Session_p->hover3 <= cols - 10) || Session_p->Config.Sidebar.on ? TK_CORE_MARK_HIGHLIGHT | TK_CORE_MARK_ACCENT_BACKGROUND : TK_CORE_MARK_ACCENT_BACKGROUND_2;
+    background = (Session_p->hover3 >= cols - 12 && Session_p->hover3 <= cols - 10) || Session_p->Config.Sidebar.on ? TK_CORE_MARK_HIGHLIGHT | TK_CORE_MARK_ACCENT_BACKGROUND_2 : TK_CORE_MARK_ACCENT_BACKGROUND_2;
 
     if (background & TK_CORE_MARK_ACCENT_BACKGROUND) {
         // for high-contrast
